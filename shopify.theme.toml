@@ -1,0 +1,38 @@
+# Shopify CLI Theme Configuration
+# Pitagora Enterprise Theme v1.0.0
+
+[environments.development]
+store = "your-development-store.myshopify.com"
+theme = "development-theme-id"
+
+[environments.staging]
+store = "your-staging-store.myshopify.com" 
+theme = "staging-theme-id"
+
+[environments.production]
+store = "your-production-store.myshopify.com"
+theme = "live-theme-id"
+
+# Theme settings
+[theme]
+name = "Pitagora"
+version = "1.0.0"
+author = "Enterprise Hybrid"
+
+# Development settings
+[development]
+notify_on_file_change = true
+open_browser = true
+host = "127.0.0.1"
+port = 9292
+
+# Ignore patterns
+ignore = [
+  "*.md",
+  "*.txt",
+  ".git/**",
+  "node_modules/**",
+  ".DS_Store",
+  "*.log",
+  "backup/**"
+]

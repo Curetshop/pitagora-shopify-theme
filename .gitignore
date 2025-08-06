@@ -1,0 +1,22 @@
+# Shopify Theme Development
+.DS_Store
+.shopifyignore
+node_modules/
+.env
+.env.local
+
+# Theme files
+*.zip
+backup/
+temp/
+
+# IDE
+.vscode/
+.idea/
+
+# OS
+Thumbs.db
+*.log
+
+# Shopify CLI
+.shopify/

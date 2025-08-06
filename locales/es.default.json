@@ -1,0 +1,234 @@
+{
+  "general": {
+    "accessibility": {
+      "skip_to_content": "Saltar al contenido",
+      "loading": "Cargando...",
+      "close": "Cerrar",
+      "back": "Volver",
+      "next": "Siguiente",
+      "previous": "Anterior",
+      "play": "Reproducir",
+      "pause": "Pausar",
+      "open": "Abrir",
+      "scroll_to_top": "Volver arriba"
+    },
+    "meta": {
+      "tags": "Etiquetado \"{{ tags }}\"",
+      "page": "Página {{ page }}"
+    },
+    "404": {
+      "title": "Página no encontrada",
+      "subtext": "La página que estás buscando no existe.",
+      "link": "Continuar comprando"
+    },
+    "pagination": {
+      "previous": "Anterior",
+      "next": "Siguiente",
+      "current_page": "Página {{ current }} de {{ total }}"
+    },
+    "password_page": {
+      "opening_soon": "Próximamente",
+      "spread_the_word": "Corre la voz",
+      "login_form_heading": "Entrar a la tienda",
+      "login_form_password_label": "Contraseña",
+      "login_form_password_placeholder": "Tu contraseña",
+      "login_form_submit": "Entrar",
+      "signup_form_heading": "Notificarme",
+      "signup_form_email_label": "Email",
+      "signup_form_submit": "Enviar",
+      "admin_link_html": "¿Eres el propietario de la tienda? <a href=\"/admin\" class=\"text-link\">Entra aquí</a>"
+    }
+  },
+  "products": {
+    "product": {
+      "add_to_cart": "Añadir al carrito",
+      "sold_out": "Agotado",
+      "unavailable": "No disponible",
+      "pre_order": "Pre-ordenar",
+      "quick_view": "Vista rápida",
+      "view_details": "Ver detalles",
+      "vendor": "Vendedor",
+      "sku": "SKU",
+      "quantity": "Cantidad",
+      "regular_price": "Precio regular",
+      "sale_price": "Precio de oferta",
+      "unit_price": "Precio unitario",
+      "save_amount": "Ahorra {{ amount }}",
+      "include_taxes": "Impuestos incluidos",
+      "shipping_calculated_at_checkout": "Envío calculado en el checkout",
+      "pickup_available_at_html": "Recogida disponible en <span class=\"color-foreground\">{{ location_name }}</span>",
+      "pickup_unavailable_at_html": "Recogida no disponible en <span class=\"color-foreground\">{{ location_name }}</span>"
+    },
+    "general": {
+      "view_all": "Ver todo",
+      "products": "Productos",
+      "loading_products": "Cargando productos...",
+      "no_products": "No hay productos en esta colección"
+    }
+  },
+  "collections": {
+    "general": {
+      "view_all": "Ver todo",
+      "no_matches": "Lo sentimos, no hay productos que coincidan con tu búsqueda.",
+      "items_with_count": {
+        "one": "{{ count }} artículo",
+        "other": "{{ count }} artículos"
+      }
+    },
+    "sorting": {
+      "title": "Ordenar por",
+      "featured": "Destacados",
+      "best_selling": "Más vendidos",
+      "alphabetically_az": "Alfabéticamente, A-Z",
+      "alphabetically_za": "Alfabéticamente, Z-A",
+      "price_low_to_high": "Precio, menor a mayor",
+      "price_high_to_low": "Precio, mayor a menor",
+      "date_old_to_new": "Fecha, antigua a nueva",
+      "date_new_to_old": "Fecha, nueva a antigua"
+    },
+    "filters": {
+      "title_tags": "Filtrar",
+      "all_tags": "Todos los productos",
+      "categories": "Categorías",
+      "clear_all": "Limpiar todo",
+      "apply": "Aplicar",
+      "clear": "Limpiar"
+    }
+  },
+  "search": {
+    "no_results": "No se encontraron resultados para \"{{ terms }}\". Revisa la ortografía o usa una palabra más general.",
+    "results_with_count": {
+      "one": "{{ count }} resultado",
+      "other": "{{ count }} resultados"
+    },
+    "title": "Resultados de búsqueda",
+    "page": "Página",
+    "search": "Buscar",
+    "placeholder": "Buscar productos..."
+  },
+  "cart": {
+    "general": {
+      "title": "Carrito",
+      "note": "Agregar una nota al pedido",
+      "subtotal": "Subtotal",
+      "taxes_and_shipping_at_checkout": "Impuestos y envío calculados en el checkout",
+      "taxes_and_shipping_policy_at_checkout_html": "Impuestos y <a href=\"{{ link }}\">envío</a> calculados en el checkout",
+      "taxes_included_but_shipping_at_checkout": "Impuestos incluidos y envío calculado en el checkout",
+      "taxes_included_and_shipping_policy_html": "Impuestos incluidos. <a href=\"{{ link }}\">Envío</a> calculado en el checkout",
+      "update": "Actualizar",
+      "checkout": "Finalizar compra",
+      "empty": "Tu carrito está vacío",
+      "continue_shopping": "Continuar comprando",
+      "close": "Cerrar carrito",
+      "reduce_quantity": "Reducir cantidad",
+      "increase_quantity": "Aumentar cantidad"
+    }
+  },
+  "sections": {
+    "header": {
+      "announcement": "Anuncio",
+      "menu": "Menú",
+      "cart_count": {
+        "one": "{{ count }} artículo",
+        "other": "{{ count }} artículos"
+      }
+    },
+    "cart": {
+      "title": "Tu carrito",
+      "caption": "Artículos del carrito",
+      "remove_title": "Eliminar {{ title }}",
+      "subtotal": "Subtotal",
+      "new_subtotal": "Nuevo subtotal",
+      "note": "Instrucciones especiales del pedido",
+      "checkout": "Finalizar compra",
+      "empty": "Tu carrito está vacío",
+      "cart_error": "Hubo un error al actualizar tu carrito. Inténtalo de nuevo.",
+      "cart_quantity_error_html": "Solo puedes añadir [quantity] de este artículo a tu carrito.",
+      "taxes_and_shipping_policy_at_checkout_html": "Impuestos y <a href=\"{{ link }}\">envío</a> calculados en el checkout",
+      "taxes_included_but_shipping_at_checkout": "Impuestos incluidos y envío calculado en el checkout",
+      "taxes_included_and_shipping_policy_html": "Impuestos incluidos. <a href=\"{{ link }}\">Envío</a> calculado en el checkout",
+      "taxes_and_shipping_at_checkout": "Impuestos y envío calculados en el checkout"
+    },
+    "footer": {
+      "payment": "Métodos de pago"
+    },
+    "featured_blog": {
+      "view_all": "Ver todo",
+      "onboarding_title": "Entrada del blog",
+      "onboarding_content": "Dale a tus clientes un resumen de tu entrada del blog"
+    },
+    "featured_collection": {
+      "view_all": "Ver todo",
+      "view_all_label": "Ver todos los productos de la colección {{ collection_name }}"
+    },
+    "collection_list": {
+      "view_all": "Ver todo"
+    },
+    "collection_template": {
+      "title": "Colección",
+      "empty": "No se encontraron productos",
+      "use_fewer_filters_html": "Usa menos filtros o <a class=\"{{ class }}\" href=\"{{ link }}\">elimina todos</a>"
+    }
+  },
+  "localization": {
+    "country_label": "País/región",
+    "language_label": "Idioma",
+    "update_language": "Actualizar idioma",
+    "update_country": "Actualizar país/región"
+  },
+  "customer": {
+    "account": {
+      "title": "Cuenta",
+      "details": "Detalles de la cuenta",
+      "view_addresses": "Ver direcciones",
+      "return": "Volver a detalles de la cuenta"
+    },
+    "account_fallback": "Cuenta",
+    "log_in": "Entrar",
+    "log_out": "Salir",
+    "create_account": "Crear cuenta",
+    "addresses": {
+      "title": "Direcciones",
+      "default": "Predeterminada",
+      "add_new": "Agregar nueva dirección",
+      "edit_address": "Editar dirección",
+      "first_name": "Nombre",
+      "last_name": "Apellido",
+      "company": "Empresa",
+      "address1": "Dirección 1",
+      "address2": "Dirección 2",
+      "city": "Ciudad",
+      "country": "País/región",
+      "province": "Provincia",
+      "zip": "Código postal",
+      "phone": "Teléfono",
+      "set_default": "Establecer como dirección predeterminada",
+      "add": "Agregar dirección",
+      "update": "Actualizar dirección",
+      "cancel": "Cancelar",
+      "edit": "Editar",
+      "delete": "Eliminar",
+      "delete_confirm": "¿Estás seguro de que quieres eliminar esta dirección?"
+    },
+    "login_page": {
+      "title": "Entrar",
+      "email": "Email",
+      "password": "Contraseña",
+      "forgot_password": "¿Olvidaste tu contraseña?",
+      "sign_in": "Entrar",
+      "guest_title": "Continuar como invitado",
+      "guest_continue": "Continuar"
+    }
+  },
+  "homepage": {
+    "onboarding": {
+      "product_title": "Título del producto de ejemplo",
+      "product_description": "Esta área se usa para describir los detalles de tu producto. Informa a los clientes sobre el aspecto, la sensación y el estilo de tu producto. Agrega detalles sobre el color, los materiales utilizados, el tamaño y dónde se hizo.",
+      "collection_title": "Título de la colección de ejemplo",
+      "blog_title": "Título de tu publicación",
+      "blog_excerpt": "Tu tienda no ha publicado ninguna entrada del blog. Un blog se puede usar para hablar sobre lanzamientos de nuevos productos, consejos u otras noticias que quieras compartir con tus clientes. Puedes consultar el blog de comercio electrónico de Shopify para obtener inspiración e ideas para tu propia tienda y blog.",
+      "blog_author": "Nombre del autor",
+      "no_content": "Esta sección no incluye contenido actualmente. Agrega contenido a esta sección usando la barra lateral."
+    }
+  }
+}

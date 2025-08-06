@@ -1,0 +1,232 @@
+{%- comment -%}
+  CSS Variables System - Based on Focal v4 architecture
+  Generates dynamic CSS custom properties from theme settings
+{%- endcomment -%}
+
+{%- liquid
+  assign heading_font_italic = settings.heading_font | font_modify: 'style', 'italic'
+  assign body_font_italic = settings.body_font | font_modify: 'style', 'italic' 
+  assign body_font_bold = settings.body_font | font_modify: 'weight', '600'
+  
+  unless body_font_bold
+    assign body_font_bold = settings.body_font | font_modify: 'weight', '500'
+  endunless
+  
+  unless body_font_bold
+    assign body_font_bold = settings.body_font | font_modify: 'weight', 'bolder'
+  endunless
+  
+  assign body_font_bold_italic = body_font_bold | font_modify: 'style', 'italic'
+-%}
+
+{%- comment -%} Font Preloading - Performance optimization {%- endcomment -%}
+{%- unless settings.heading_font.system? -%}
+  <link rel="preload" href="{{ settings.heading_font | font_url }}" as="font" type="font/woff2" crossorigin>
+{%- endunless -%}
+
+{%- unless settings.body_font.system? -%}
+  <link rel="preload" href="{{ settings.body_font | font_url }}" as="font" type="font/woff2" crossorigin>
+{%- endunless -%}
+
+<style>
+  {%- comment -%} Font Face Declarations {%- endcomment -%}
+  {{ settings.heading_font | font_face: font_display: 'swap' }}
+  
+  {%- if heading_font_italic -%}
+    {{ heading_font_italic | font_face: font_display: 'swap' }}
+  {%- endif -%}
+
+  {{ settings.body_font | font_face: font_display: 'swap' }}
+  
+  {%- if body_font_italic -%}
+    {{ body_font_italic | font_face: font_display: 'swap' }}
+  {%- endif -%}
+  
+  {%- if body_font_bold -%}
+    {{ body_font_bold | font_face: font_display: 'swap' }}
+  {%- endif -%}
+  
+  {%- if body_font_bold_italic -%}
+    {{ body_font_bold_italic | font_face: font_display: 'swap' }}
+  {%- endif -%}
+
+  {%- comment -%} CSS Custom Properties - Dynamic theme variables {%- endcomment -%}
+  :root {
+    /* Colors */
+    --color-primary: {{ settings.color_primary | default: '#000000' }};
+    --color-primary-rgb: {{ settings.color_primary | default: '#000000' | color_to_rgb | remove: 'rgb(' | remove: ')' }};
+    --color-secondary: {{ settings.color_secondary | default: '#666666' }};
+    --color-secondary-rgb: {{ settings.color_secondary | default: '#666666' | color_to_rgb | remove: 'rgb(' | remove: ')' }};
+    --color-background: {{ settings.color_background | default: '#ffffff' }};
+    --color-background-rgb: {{ settings.color_background | default: '#ffffff' | color_to_rgb | remove: 'rgb(' | remove: ')' }};
+    --color-text: {{ settings.color_text | default: '#000000' }};
+    --color-text-rgb: {{ settings.color_text | default: '#000000' | color_to_rgb | remove: 'rgb(' | remove: ')' }};
+    --color-accent: {{ settings.color_accent | default: '#ff6b35' }};
+    --color-accent-rgb: {{ settings.color_accent | default: '#ff6b35' | color_to_rgb | remove: 'rgb(' | remove: ')' }};
+    
+    /* Color variations */
+    --color-primary-light: rgba(var(--color-primary-rgb), 0.1);
+    --color-primary-dark: rgba(var(--color-primary-rgb), 0.8);
+    --color-text-light: rgba(var(--color-text-rgb), 0.7);
+    --color-text-lighter: rgba(var(--color-text-rgb), 0.5);
+    
+    /* Typography */
+    --font-heading: {{ settings.heading_font.family | default: 'Arial, sans-serif' }}, {{ settings.heading_font.fallback_families }};
+    --font-body: {{ settings.body_font.family | default: 'Arial, sans-serif' }}, {{ settings.body_font.fallback_families }};
+    --font-heading-scale: {{ settings.heading_font_scale | default: 120 | divided_by: 100.0 }};
+    --font-body-scale: {{ settings.body_font_scale | default: 100 | divided_by: 100.0 }};
+    --font-heading-weight: {{ settings.heading_font.weight | default: 'normal' }};
+    --font-body-weight: {{ settings.body_font.weight | default: 'normal' }};
+    
+    /* Font sizes - Fluid typography */
+    --font-size-xs: calc(0.75rem * var(--font-body-scale));
+    --font-size-sm: calc(0.875rem * var(--font-body-scale));
+    --font-size-base: calc(1rem * var(--font-body-scale));
+    --font-size-lg: calc(1.125rem * var(--font-body-scale));
+    --font-size-xl: calc(1.25rem * var(--font-body-scale));
+    --font-size-2xl: calc(1.5rem * var(--font-heading-scale));
+    --font-size-3xl: calc(1.875rem * var(--font-heading-scale));
+    --font-size-4xl: calc(2.25rem * var(--font-heading-scale));
+    --font-size-5xl: calc(3rem * var(--font-heading-scale));
+    
+    /* Layout & Spacing */
+    --container-width: {{ settings.container_width | default: '1400' | append: 'px' }};
+    --border-radius-sm: {{ settings.button_border_radius | default: 4 | divided_by: 2 }}px;
+    --border-radius: {{ settings.button_border_radius | default: 4 }}px;
+    --border-radius-lg: {{ settings.button_border_radius | default: 4 | times: 1.5 }}px;
+    
+    /* Spacing scale */
+    --spacing-xs: 0.5rem;
+    --spacing-sm: 0.75rem;
+    --spacing-md: 1rem;
+    --spacing-lg: 1.5rem;
+    --spacing-xl: 2rem;
+    --spacing-2xl: 3rem;
+    --spacing-3xl: 4rem;
+    
+    /* Grid & Breakpoints */
+    --grid-gutter: var(--spacing-md);
+    --grid-columns: {{ settings.collection_layout | default: 3 }};
+    
+    /* Shadows */
+    --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+    --shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06);
+    --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+    --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+    
+    /* Transitions */
+    --transition-fast: 150ms ease-in-out;
+    --transition-base: 250ms ease-in-out;
+    --transition-slow: 350ms ease-in-out;
+    
+    /* Z-index scale */
+    --z-index-dropdown: 100;
+    --z-index-sticky: 200;
+    --z-index-overlay: 500;
+    --z-index-modal: 1000;
+    --z-index-toast: 1500;
+    
+    /* Logo */
+    --logo-width: {{ settings.logo_width | default: 160 }}px;
+    --logo-width-mobile: calc(var(--logo-width) * 0.8);
+  }
+  
+  {%- comment -%} Mobile-specific variables {%- endcomment -%}
+  @media (max-width: 767px) {
+    :root {
+      --font-heading-scale: {{ settings.heading_font_scale | default: 120 | divided_by: 100.0 | times: 0.9 }};
+      --container-width: 100%;
+      --grid-columns: 2;
+      --spacing-md: 0.75rem;
+      --spacing-lg: 1rem;
+      --spacing-xl: 1.5rem;
+    }
+  }
+  
+  {%- comment -%} Dark mode support (if enabled) {%- endcomment -%}
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --color-background: #1a1a1a;
+      --color-text: #ffffff;
+      --shadow: 0 1px 3px 0 rgba(255, 255, 255, 0.1);
+    }
+  }
+  
+  {%- comment -%} High contrast mode {%- endcomment -%}
+  @media (prefers-contrast: high) {
+    :root {
+      --color-primary: #000000;
+      --color-background: #ffffff;
+      --color-text: #000000;
+    }
+  }
+  
+  {%- comment -%} Reduced motion support {%- endcomment -%}
+  @media (prefers-reduced-motion: reduce) {
+    :root {
+      --transition-fast: 0ms;
+      --transition-base: 0ms;
+      --transition-slow: 0ms;
+    }
+    
+    * {
+      animation-duration: 0.01ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.01ms !important;
+    }
+  }
+</style>
+
+{%- comment -%} Performance optimization - Inline critical CSS {%- endcomment -%}
+<style>
+  /* Critical CSS - Above the fold */
+  body {
+    font-family: var(--font-body);
+    font-size: var(--font-size-base);
+    line-height: 1.6;
+    color: var(--color-text);
+    background-color: var(--color-background);
+    margin: 0;
+    padding: 0;
+  }
+  
+  .container {
+    max-width: var(--container-width);
+    margin: 0 auto;
+    padding: 0 var(--spacing-md);
+  }
+  
+  /* Loading states */
+  .loading {
+    opacity: 0.6;
+    pointer-events: none;
+  }
+  
+  /* Accessibility */
+  .visually-hidden {
+    position: absolute !important;
+    overflow: hidden;
+    width: 1px;
+    height: 1px;
+    margin: -1px;
+    padding: 0;
+    border: 0;
+    clip: rect(0 0 0 0);
+  }
+  
+  .skip-link {
+    position: absolute;
+    top: -40px;
+    left: 6px;
+    z-index: var(--z-index-modal);
+    padding: 8px;
+    background: var(--color-primary);
+    color: var(--color-background);
+    text-decoration: none;
+    transition: top var(--transition-fast);
+  }
+  
+  .skip-link:focus {
+    top: 6px;
+  }
+</style>

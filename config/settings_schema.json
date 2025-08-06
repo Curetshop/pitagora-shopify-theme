@@ -1,0 +1,498 @@
+[
+  {
+    "name": "theme_info",
+    "theme_name": "Pitagora",
+    "theme_author": "Enterprise Hybrid",
+    "theme_version": "1.0.0",
+    "theme_documentation_url": "https://github.com/pitagora-theme/docs",
+    "theme_support_url": "mailto:support@pitagora-theme.com"
+  },
+  {
+    "name": "Colors",
+    "settings": [
+      {
+        "type": "paragraph",
+        "content": "Customize your brand colors. These colors will be used throughout the theme for consistency."
+      },
+      {
+        "type": "color",
+        "id": "color_primary",
+        "label": "Primary color",
+        "default": "#000000",
+        "info": "Used for buttons, links, and accents"
+      },
+      {
+        "type": "color",
+        "id": "color_secondary",
+        "label": "Secondary color", 
+        "default": "#666666",
+        "info": "Used for secondary elements and text"
+      },
+      {
+        "type": "color",
+        "id": "color_background",
+        "label": "Background color",
+        "default": "#ffffff"
+      },
+      {
+        "type": "color",
+        "id": "color_text",
+        "label": "Text color",
+        "default": "#000000"
+      },
+      {
+        "type": "color",
+        "id": "color_accent",
+        "label": "Accent color",
+        "default": "#ff6b35",
+        "info": "Used for highlights and special elements"
+      }
+    ]
+  },
+  {
+    "name": "Typography", 
+    "settings": [
+      {
+        "type": "paragraph",
+        "content": "Choose fonts that reflect your brand personality. Font loading is optimized for performance."
+      },
+      {
+        "type": "font_picker",
+        "id": "heading_font",
+        "label": "Heading font",
+        "default": "assistant_n4",
+        "info": "Used for headings and titles"
+      },
+      {
+        "type": "range",
+        "id": "heading_font_scale",
+        "min": 100,
+        "max": 150,
+        "step": 5,
+        "unit": "%",
+        "label": "Heading font scale",
+        "default": 120
+      },
+      {
+        "type": "font_picker",
+        "id": "body_font",
+        "label": "Body font",
+        "default": "assistant_n4",
+        "info": "Used for body text and paragraphs"
+      },
+      {
+        "type": "range",
+        "id": "body_font_scale",
+        "min": 90,
+        "max": 120,
+        "step": 5,
+        "unit": "%",
+        "label": "Body font scale",
+        "default": 100
+      }
+    ]
+  },
+  {
+    "name": "Layout & Appearance",
+    "settings": [
+      {
+        "type": "paragraph",
+        "content": "Control the overall appearance and spacing of your theme elements."
+      },
+      {
+        "type": "range",
+        "id": "button_border_radius",
+        "min": 0,
+        "max": 30,
+        "step": 2,
+        "unit": "px",
+        "label": "Button border radius",
+        "default": 4
+      },
+      {
+        "type": "select",
+        "id": "container_width",
+        "label": "Container width",
+        "options": [
+          {
+            "value": "1200",
+            "label": "1200px"
+          },
+          {
+            "value": "1400", 
+            "label": "1400px"
+          },
+          {
+            "value": "1600",
+            "label": "1600px"
+          },
+          {
+            "value": "fullwidth",
+            "label": "Full width"
+          }
+        ],
+        "default": "1400"
+      },
+      {
+        "type": "checkbox",
+        "id": "animations_enabled",
+        "label": "Enable animations",
+        "default": true,
+        "info": "Smooth transitions and hover effects"
+      },
+      {
+        "type": "checkbox",
+        "id": "rounded_corners",
+        "label": "Rounded corners",
+        "default": true,
+        "info": "Apply rounded corners to cards and buttons"
+      }
+    ]
+  },
+  {
+    "name": "Header",
+    "settings": [
+      {
+        "type": "image_picker",
+        "id": "logo",
+        "label": "Logo image"
+      },
+      {
+        "type": "range",
+        "id": "logo_width",
+        "min": 80,
+        "max": 300,
+        "step": 10,
+        "unit": "px",
+        "label": "Logo width",
+        "default": 160
+      },
+      {
+        "type": "text",
+        "id": "logo_text",
+        "label": "Logo text",
+        "info": "Used when no logo image is uploaded"
+      },
+      {
+        "type": "checkbox",
+        "id": "sticky_header",
+        "label": "Sticky header",
+        "default": true,
+        "info": "Header stays visible when scrolling"
+      },
+      {
+        "type": "checkbox",
+        "id": "predictive_search",
+        "label": "Enable predictive search",
+        "default": true,
+        "info": "Show search suggestions as user types"
+      },
+      {
+        "type": "checkbox",
+        "id": "cart_drawer",
+        "label": "Cart drawer",
+        "default": true,
+        "info": "Open cart in sliding drawer instead of page"
+      }
+    ]
+  },
+  {
+    "name": "Product pages",
+    "settings": [
+      {
+        "type": "paragraph",
+        "content": "Customize how products are displayed and behave on product pages."
+      },
+      {
+        "type": "select",
+        "id": "product_image_layout",
+        "label": "Product image layout",
+        "options": [
+          {
+            "value": "grid",
+            "label": "Grid"
+          },
+          {
+            "value": "slider",
+            "label": "Slider"
+          },
+          {
+            "value": "stack",
+            "label": "Stacked"
+          }
+        ],
+        "default": "slider"
+      },
+      {
+        "type": "checkbox",
+        "id": "enable_zoom",
+        "label": "Enable image zoom",
+        "default": true
+      },
+      {
+        "type": "checkbox",
+        "id": "enable_quick_view",
+        "label": "Enable quick view",
+        "default": true,
+        "info": "Allow customers to preview products in modal"
+      },
+      {
+        "type": "checkbox",
+        "id": "show_vendor",
+        "label": "Show product vendor",
+        "default": true
+      },
+      {
+        "type": "checkbox", 
+        "id": "show_sku",
+        "label": "Show SKU",
+        "default": false
+      },
+      {
+        "type": "checkbox",
+        "id": "enable_reviews",
+        "label": "Enable product reviews",
+        "default": true
+      }
+    ]
+  },
+  {
+    "name": "Collection pages",
+    "settings": [
+      {
+        "type": "paragraph",
+        "content": "Control how products are displayed in collections and search results."
+      },
+      {
+        "type": "range",
+        "id": "products_per_page",
+        "min": 12,
+        "max": 48,
+        "step": 4,
+        "label": "Products per page",
+        "default": 24
+      },
+      {
+        "type": "select",
+        "id": "collection_layout",
+        "label": "Product grid layout",
+        "options": [
+          {
+            "value": "2",
+            "label": "2 columns"
+          },
+          {
+            "value": "3", 
+            "label": "3 columns"
+          },
+          {
+            "value": "4",
+            "label": "4 columns"
+          }
+        ],
+        "default": "3"
+      },
+      {
+        "type": "checkbox",
+        "id": "enable_filtering",
+        "label": "Enable filtering",
+        "default": true,
+        "info": "Allow customers to filter products by price, color, etc."
+      },
+      {
+        "type": "checkbox",
+        "id": "enable_sorting",
+        "label": "Enable sorting",
+        "default": true
+      },
+      {
+        "type": "select",
+        "id": "product_hover_effect",
+        "label": "Product hover effect",
+        "options": [
+          {
+            "value": "none",
+            "label": "None"
+          },
+          {
+            "value": "second_image",
+            "label": "Show second image"
+          },
+          {
+            "value": "quick_view",
+            "label": "Show quick view button"
+          }
+        ],
+        "default": "second_image"
+      }
+    ]
+  },
+  {
+    "name": "Cart",
+    "settings": [
+      {
+        "type": "paragraph",
+        "content": "Configure cart behavior and promotional features."
+      },
+      {
+        "type": "text",
+        "id": "free_shipping_threshold",
+        "label": "Free shipping threshold",
+        "info": "Amount needed for free shipping (without currency symbol)"
+      },
+      {
+        "type": "textarea",
+        "id": "cart_message",
+        "label": "Cart message",
+        "info": "Message displayed in cart drawer/page"
+      },
+      {
+        "type": "checkbox",
+        "id": "cart_recommendations",
+        "label": "Show recommended products",
+        "default": true
+      },
+      {
+        "type": "checkbox",
+        "id": "cart_notes",
+        "label": "Enable cart notes",
+        "default": true,
+        "info": "Allow customers to add notes to their order"
+      }
+    ]
+  },
+  {
+    "name": "Social media",
+    "settings": [
+      {
+        "type": "paragraph",
+        "content": "Connect your social media accounts for sharing and displaying social proof."
+      },
+      {
+        "type": "text",
+        "id": "social_twitter",
+        "label": "Twitter/X URL",
+        "info": "https://twitter.com/yourhandle"
+      },
+      {
+        "type": "text",
+        "id": "social_facebook", 
+        "label": "Facebook URL",
+        "info": "https://facebook.com/yourpage"
+      },
+      {
+        "type": "text",
+        "id": "social_instagram",
+        "label": "Instagram URL", 
+        "info": "https://instagram.com/yourhandle"
+      },
+      {
+        "type": "text",
+        "id": "social_youtube",
+        "label": "YouTube URL",
+        "info": "https://youtube.com/yourchannel"
+      },
+      {
+        "type": "text",
+        "id": "social_tiktok",
+        "label": "TikTok URL",
+        "info": "https://tiktok.com/@yourhandle"
+      },
+      {
+        "type": "checkbox",
+        "id": "enable_social_sharing",
+        "label": "Enable social sharing",
+        "default": true,
+        "info": "Show social sharing buttons on product pages"
+      }
+    ]
+  },
+  {
+    "name": "Analytics & Tracking",
+    "settings": [
+      {
+        "type": "paragraph", 
+        "content": "Connect analytics and tracking tools to understand your customer behavior and optimize conversions."
+      },
+      {
+        "type": "text",
+        "id": "google_analytics_4",
+        "label": "Google Analytics 4 Measurement ID", 
+        "info": "Format: G-XXXXXXXXXX"
+      },
+      {
+        "type": "text",
+        "id": "facebook_pixel",
+        "label": "Meta Pixel ID",
+        "info": "Facebook/Meta Pixel for conversion tracking"
+      },
+      {
+        "type": "text",
+        "id": "hotjar_site_id",
+        "label": "Hotjar Site ID",
+        "info": "For heatmaps and session recordings"
+      },
+      {
+        "type": "checkbox",
+        "id": "enhanced_ecommerce",
+        "label": "Enhanced E-commerce tracking",
+        "default": true,
+        "info": "Track detailed purchase and product interaction data"
+      }
+    ]
+  },
+  {
+    "name": "Performance",
+    "settings": [
+      {
+        "type": "paragraph",
+        "content": "Optimize your store's performance and loading speed."
+      },
+      {
+        "type": "checkbox",
+        "id": "lazy_loading",
+        "label": "Enable lazy loading",
+        "default": true,
+        "info": "Images load only when they come into view"
+      },
+      {
+        "type": "checkbox",
+        "id": "preload_links",
+        "label": "Preload important links",
+        "default": true,
+        "info": "Preload pages on hover for faster navigation"
+      },
+      {
+        "type": "select",
+        "id": "image_quality",
+        "label": "Image quality",
+        "options": [
+          {
+            "value": "80",
+            "label": "High (larger files)"
+          },
+          {
+            "value": "70",
+            "label": "Medium (recommended)" 
+          },
+          {
+            "value": "60",
+            "label": "Low (smaller files)"
+          }
+        ],
+        "default": "70"
+      }
+    ]
+  },
+  {
+    "name": "Favicon",
+    "settings": [
+      {
+        "type": "image_picker",
+        "id": "favicon",
+        "label": "Favicon",
+        "info": "32x32px PNG recommended"
+      }
+    ]
+  }
+]

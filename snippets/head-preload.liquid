@@ -1,0 +1,43 @@
+{%- comment -%}
+  Head Preload - Performance optimization
+  Preloads critical resources for faster page loading
+{%- endcomment -%}
+
+{%- comment -%} Preload critical stylesheets {%- endcomment -%}
+<link rel="preload" href="{{ 'app.css' | asset_url }}" as="style" onload="this.onload=null;this.rel='stylesheet'">
+
+{%- comment -%} Preload critical JavaScript {%- endcomment -%}
+<link rel="preload" href="{{ 'app.js' | asset_url }}" as="script">
+
+{%- comment -%} Preload logo image if exists {%- endcomment -%}
+{%- if settings.logo != blank -%}
+  <link rel="preload" href="{{ settings.logo | image_url: width: settings.logo_width }}" as="image">
+{%- endif -%}
+
+{%- comment -%} Preload hero/featured images on homepage {%- endcomment -%}
+{%- if template.name == 'index' -%}
+  {%- for block in section.blocks limit: 1 -%}
+    {%- if block.settings.image != blank -%}
+      <link rel="preload" href="{{ block.settings.image | image_url: width: 1920 }}" as="image">
+    {%- endif -%}
+  {%- endfor -%}
+{%- endif -%}
+
+{%- comment -%} Preload product images on product page {%- endcomment -%}
+{%- if template.name == 'product' and product.featured_media -%}
+  <link rel="preload" href="{{ product.featured_media | image_url: width: 800 }}" as="image">
+{%- endif -%}
+
+{%- comment -%} DNS prefetch for external services {%- endcomment -%}
+<link rel="dns-prefetch" href="//fonts.googleapis.com">
+<link rel="dns-prefetch" href="//fonts.gstatic.com">
+{%- if settings.google_analytics_4 != blank -%}
+  <link rel="dns-prefetch" href="//www.googletagmanager.com">
+  <link rel="dns-prefetch" href="//www.google-analytics.com">
+{%- endif -%}
+{%- if settings.facebook_pixel != blank -%}
+  <link rel="dns-prefetch" href="//connect.facebook.net">
+{%- endif -%}
+{%- if settings.hotjar_site_id != blank -%}
+  <link rel="dns-prefetch" href="//static.hotjar.com">
+{%- endif -%}
