@@ -1,0 +1,562 @@
+{%- comment -%}
+FAQ Section - Pitagora Theme
+Display frequently asked questions with collapsible accordion interface
+{%- endcomment -%}
+
+<style>
+  #shopify-section-{{ section.id }} {
+    --faq-bg: {{ section.settings.background_color | default: 'transparent' }};
+    --faq-text: {{ section.settings.text_color | default: 'inherit' }};
+    --faq-border: {{ section.settings.border_color | default: 'var(--color-border)' }};
+    --faq-accent: {{ section.settings.accent_color | default: 'var(--color-primary)' }};
+  }
+</style>
+
+<div 
+  class="faq section-padding faq--{{ section.settings.layout_style }}"
+  style="background: var(--faq-bg); color: var(--faq-text);"
+>
+  <div class="page-width">
+    {%- if section.settings.heading != blank or section.settings.subheading != blank -%}
+      <div class="section-header text-center">
+        {%- if section.settings.subheading != blank -%}
+          <p class="section-header__subheading">{{ section.settings.subheading | escape }}</p>
+        {%- endif -%}
+        
+        {%- if section.settings.heading != blank -%}
+          <h2 class="section-header__heading h2">{{ section.settings.heading | escape }}</h2>
+        {%- endif -%}
+      </div>
+    {%- endif -%}
+
+    {%- if section.settings.description != blank -%}
+      <div class="faq__description rte text-center">
+        {{ section.settings.description }}
+      </div>
+    {%- endif -%}
+
+    {%- if section.blocks.size > 0 -%}
+      <div class="faq__wrapper">
+        {%- liquid
+          assign faq_columns = section.settings.columns | default: 1
+          assign items_per_column = section.blocks.size | divided_by: faq_columns | ceil
+        -%}
+        
+        {%- if faq_columns > 1 -%}
+          <div class="faq__columns" style="display: grid; grid-template-columns: repeat({{ faq_columns }}, 1fr); gap: 2rem;">
+            {%- for i in (1..faq_columns) -%}
+              <div class="faq__column">
+                {%- assign start_index = forloop.index0 | times: items_per_column -%}
+                {%- assign end_index = start_index | plus: items_per_column | minus: 1 -%}
+                
+                {%- for block in section.blocks limit: items_per_column offset: start_index -%}
+                  {% render 'faq-item', block: block, index: forloop.index | plus: start_index %}
+                {%- endfor -%}
+              </div>
+            {%- endfor -%}
+          </div>
+        {%- else -%}
+          <div class="faq__single-column">
+            {%- for block in section.blocks -%}
+              <div class="faq__item" {{ block.shopify_attributes }}>
+                <button 
+                  class="faq__question"
+                  type="button"
+                  aria-expanded="{% if section.settings.first_item_open and forloop.first %}true{% else %}false{% endif %}"
+                  aria-controls="faq-answer-{{ block.id }}"
+                  data-faq-trigger
+                >
+                  <span class="faq__question-text">{{ block.settings.question | escape }}</span>
+                  <span class="faq__question-icon" aria-hidden="true">
+                    {% render 'icon-chevron-down' %}
+                  </span>
+                </button>
+                
+                <div 
+                  class="faq__answer"
+                  id="faq-answer-{{ block.id }}"
+                  aria-hidden="{% if section.settings.first_item_open and forloop.first %}false{% else %}true{% endif %}"
+                  {% if section.settings.first_item_open and forloop.first %}style="max-height: none;"{% endif %}
+                >
+                  <div class="faq__answer-content rte">
+                    {{ block.settings.answer }}
+                  </div>
+                </div>
+              </div>
+            {%- endfor -%}
+          </div>
+        {%- endif -%}
+      </div>
+
+      {%- if section.settings.show_contact_info -%}
+        <div class="faq__contact">
+          <div class="faq__contact-content">
+            <h3>{{ section.settings.contact_heading | default: 'Still have questions?' | escape }}</h3>
+            <p>{{ section.settings.contact_text | default: 'Get in touch with our support team.' | escape }}</p>
+            
+            {%- if section.settings.contact_button_text != blank -%}
+              <a 
+                href="{{ section.settings.contact_button_url | default: '/pages/contact' }}" 
+                class="button button--{{ section.settings.contact_button_style }}"
+              >
+                {{ section.settings.contact_button_text | escape }}
+              </a>
+            {%- endif -%}
+          </div>
+        </div>
+      {%- endif -%}
+    {%- else -%}
+      <div class="faq__placeholder">
+        <p>Add FAQ blocks to display frequently asked questions</p>
+      </div>
+    {%- endif -%}
+  </div>
+</div>
+
+<style>
+  .faq__wrapper {
+    margin-top: 2rem;
+  }
+  
+  .faq__description {
+    margin-top: 1rem;
+    margin-bottom: 2rem;
+    font-size: 1.125rem;
+  }
+  
+  .faq__item {
+    border: 1px solid var(--faq-border);
+    border-radius: 0.5rem;
+    margin-bottom: 1rem;
+    overflow: hidden;
+    transition: box-shadow 0.2s ease;
+  }
+  
+  .faq__item:hover {
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  }
+  
+  .faq__question {
+    width: 100%;
+    padding: 1.5rem;
+    text-align: left;
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    font-size: 1rem;
+    font-weight: 600;
+    color: inherit;
+    transition: background-color 0.2s ease;
+  }
+  
+  .faq__question:hover {
+    background: var(--color-background-hover);
+  }
+  
+  .faq__question[aria-expanded="true"] {
+    background: var(--color-background-secondary);
+    border-bottom: 1px solid var(--faq-border);
+  }
+  
+  .faq__question-text {
+    flex: 1;
+    line-height: 1.4;
+  }
+  
+  .faq__question-icon {
+    flex-shrink: 0;
+    transition: transform 0.2s ease;
+    color: var(--faq-accent);
+  }
+  
+  .faq__question[aria-expanded="true"] .faq__question-icon {
+    transform: rotate(180deg);
+  }
+  
+  .faq__question-icon svg {
+    width: 1.25rem;
+    height: 1.25rem;
+  }
+  
+  .faq__answer {
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 0.3s ease;
+  }
+  
+  .faq__answer-content {
+    padding: 0 1.5rem 1.5rem;
+    line-height: 1.6;
+    color: var(--color-foreground-75);
+  }
+  
+  .faq__contact {
+    margin-top: 3rem;
+    padding: 2rem;
+    background: var(--color-background-secondary);
+    border-radius: 0.5rem;
+    text-align: center;
+  }
+  
+  .faq__contact h3 {
+    margin-bottom: 1rem;
+    font-size: 1.25rem;
+  }
+  
+  .faq__contact p {
+    margin-bottom: 1.5rem;
+    color: var(--color-foreground-75);
+  }
+  
+  /* Layout Styles */
+  .faq--boxed .faq__item {
+    background: var(--color-background);
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  }
+  
+  .faq--minimal .faq__item {
+    border: none;
+    border-bottom: 1px solid var(--faq-border);
+    border-radius: 0;
+    margin-bottom: 0;
+  }
+  
+  .faq--minimal .faq__item:last-child {
+    border-bottom: none;
+  }
+  
+  .faq--cards .faq__item {
+    background: var(--color-background);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    border: none;
+  }
+  
+  .faq__placeholder {
+    text-align: center;
+    padding: 3rem;
+    border: 2px dashed var(--color-border);
+    border-radius: 0.5rem;
+    color: var(--color-foreground-75);
+  }
+  
+  @media screen and (max-width: 989px) {
+    .faq__columns {
+      grid-template-columns: 1fr !important;
+      gap: 1rem;
+    }
+  }
+  
+  @media screen and (max-width: 749px) {
+    .faq__question {
+      padding: 1rem;
+      font-size: 0.875rem;
+    }
+    
+    .faq__answer-content {
+      padding: 0 1rem 1rem;
+      font-size: 0.875rem;
+    }
+    
+    .faq__contact {
+      padding: 1.5rem;
+      margin-top: 2rem;
+    }
+  }
+</style>
+
+<script>
+  class FAQAccordion extends HTMLElement {
+    constructor() {
+      super();
+      this.triggers = this.querySelectorAll('[data-faq-trigger]');
+      this.init();
+    }
+
+    init() {
+      this.triggers.forEach(trigger => {
+        trigger.addEventListener('click', (e) => {
+          this.toggleAccordion(e.target.closest('[data-faq-trigger]'));
+        });
+      });
+    }
+
+    toggleAccordion(trigger) {
+      const answer = trigger.parentNode.querySelector('.faq__answer');
+      const isExpanded = trigger.getAttribute('aria-expanded') === 'true';
+
+      // Close all other accordions if single open mode
+      if (!isExpanded && this.dataset.multipleOpen !== 'true') {
+        this.triggers.forEach(otherTrigger => {
+          if (otherTrigger !== trigger) {
+            this.closeAccordion(otherTrigger);
+          }
+        });
+      }
+
+      if (isExpanded) {
+        this.closeAccordion(trigger);
+      } else {
+        this.openAccordion(trigger);
+      }
+    }
+
+    openAccordion(trigger) {
+      const answer = trigger.parentNode.querySelector('.faq__answer');
+      const content = answer.querySelector('.faq__answer-content');
+      
+      trigger.setAttribute('aria-expanded', 'true');
+      answer.setAttribute('aria-hidden', 'false');
+      
+      // Set max-height to content height for smooth animation
+      answer.style.maxHeight = content.scrollHeight + 'px';
+    }
+
+    closeAccordion(trigger) {
+      const answer = trigger.parentNode.querySelector('.faq__answer');
+      
+      trigger.setAttribute('aria-expanded', 'false');
+      answer.setAttribute('aria-hidden', 'true');
+      answer.style.maxHeight = '0';
+    }
+  }
+
+  customElements.define('faq-accordion', FAQAccordion);
+
+  // Initialize FAQ accordions
+  document.addEventListener('DOMContentLoaded', () => {
+    const faqSections = document.querySelectorAll('.faq');
+    faqSections.forEach(section => {
+      if (!section.querySelector('faq-accordion')) {
+        const accordion = document.createElement('faq-accordion');
+        accordion.dataset.multipleOpen = '{{ section.settings.allow_multiple_open }}';
+        
+        // Move FAQ items into the custom element
+        const faqItems = section.querySelectorAll('.faq__item');
+        faqItems.forEach(item => {
+          accordion.appendChild(item);
+        });
+        
+        const wrapper = section.querySelector('.faq__single-column') || section.querySelector('.faq__columns');
+        if (wrapper) {
+          wrapper.appendChild(accordion);
+        }
+      }
+    });
+  });
+</script>
+
+{% schema %}
+{
+  "name": "FAQ",
+  "class": "shopify-section-faq",
+  "tag": "section",
+  "settings": [
+    {
+      "type": "header",
+      "content": "Content"
+    },
+    {
+      "type": "text",
+      "id": "heading",
+      "label": "Heading",
+      "default": "Frequently Asked Questions"
+    },
+    {
+      "type": "text",
+      "id": "subheading",
+      "label": "Subheading"
+    },
+    {
+      "type": "richtext",
+      "id": "description",
+      "label": "Description"
+    },
+    {
+      "type": "header",
+      "content": "Layout"
+    },
+    {
+      "type": "select",
+      "id": "layout_style",
+      "label": "Layout style",
+      "options": [
+        {
+          "value": "standard",
+          "label": "Standard"
+        },
+        {
+          "value": "boxed",
+          "label": "Boxed"
+        },
+        {
+          "value": "minimal",
+          "label": "Minimal"
+        },
+        {
+          "value": "cards",
+          "label": "Cards"
+        }
+      ],
+      "default": "standard"
+    },
+    {
+      "type": "range",
+      "id": "columns",
+      "label": "Columns (desktop)",
+      "min": 1,
+      "max": 3,
+      "step": 1,
+      "default": 1
+    },
+    {
+      "type": "checkbox",
+      "id": "first_item_open",
+      "label": "Open first item by default",
+      "default": false
+    },
+    {
+      "type": "checkbox",
+      "id": "allow_multiple_open",
+      "label": "Allow multiple items open",
+      "default": false
+    },
+    {
+      "type": "header",
+      "content": "Contact section"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_contact_info",
+      "label": "Show contact section",
+      "default": true
+    },
+    {
+      "type": "text",
+      "id": "contact_heading",
+      "label": "Contact heading",
+      "default": "Still have questions?"
+    },
+    {
+      "type": "text",
+      "id": "contact_text",
+      "label": "Contact text",
+      "default": "Get in touch with our support team."
+    },
+    {
+      "type": "text",
+      "id": "contact_button_text",
+      "label": "Contact button text",
+      "default": "Contact us"
+    },
+    {
+      "type": "url",
+      "id": "contact_button_url",
+      "label": "Contact button URL",
+      "default": "/pages/contact"
+    },
+    {
+      "type": "select",
+      "id": "contact_button_style",
+      "label": "Contact button style",
+      "options": [
+        {
+          "value": "primary",
+          "label": "Primary"
+        },
+        {
+          "value": "secondary",
+          "label": "Secondary"
+        },
+        {
+          "value": "outline",
+          "label": "Outline"
+        }
+      ],
+      "default": "primary"
+    },
+    {
+      "type": "header",
+      "content": "Colors"
+    },
+    {
+      "type": "color",
+      "id": "background_color",
+      "label": "Background color"
+    },
+    {
+      "type": "color",
+      "id": "text_color",
+      "label": "Text color"
+    },
+    {
+      "type": "color",
+      "id": "border_color",
+      "label": "Border color"
+    },
+    {
+      "type": "color",
+      "id": "accent_color",
+      "label": "Accent color"
+    }
+  ],
+  "blocks": [
+    {
+      "type": "faq_item",
+      "name": "FAQ Item",
+      "settings": [
+        {
+          "type": "text",
+          "id": "question",
+          "label": "Question",
+          "default": "What is your return policy?"
+        },
+        {
+          "type": "richtext",
+          "id": "answer",
+          "label": "Answer",
+          "default": "<p>We offer a 30-day return policy on all items. Items must be returned in their original condition.</p>"
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "FAQ",
+      "blocks": [
+        {
+          "type": "faq_item",
+          "settings": {
+            "question": "What is your return policy?",
+            "answer": "<p>We offer a 30-day return policy on all items. Items must be returned in their original condition.</p>"
+          }
+        },
+        {
+          "type": "faq_item",
+          "settings": {
+            "question": "How long does shipping take?",
+            "answer": "<p>Standard shipping takes 3-7 business days. Express shipping options are available at checkout.</p>"
+          }
+        },
+        {
+          "type": "faq_item",
+          "settings": {
+            "question": "Do you ship internationally?",
+            "answer": "<p>Yes, we ship to most countries worldwide. International shipping rates vary by location.</p>"
+          }
+        },
+        {
+          "type": "faq_item",
+          "settings": {
+            "question": "How can I track my order?",
+            "answer": "<p>Once your order ships, you'll receive a tracking number via email. You can use this to track your package.</p>"
+          }
+        }
+      ]
+    }
+  ]
+}
+{% endschema %}

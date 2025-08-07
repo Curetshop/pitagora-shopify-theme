@@ -10,7 +10,7 @@
         "show_search_suggestions": true,
         "columns_desktop": 4,
         "columns_tablet": 3,
-        "columns_mobile": 2,
+        "columns_mobile": "2",
         "image_ratio": "square",
         "show_vendor": false,
         "show_rating": true,
@@ -35,7 +35,7 @@
         "subheading": "Browse our most popular collections",
         "collections_to_show": 6,
         "columns_desktop": 3,
-        "columns_mobile": 2,
+        "columns_mobile": "2",
         "show_only_when_no_results": true
       },
       "blocks": {

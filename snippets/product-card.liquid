@@ -19,13 +19,13 @@ Parámetros:
 
 {%- if product and product != empty -%}
   {%- liquid
-    comment 'Image configuration'
+    # Image configuration
     assign featured_image = product.featured_media
     assign image_aspect_ratio = image_aspect_ratio | default: 'natural'
     assign loading = loading | default: 'lazy'
     assign sizes = sizes | default: '(max-width: 767px) 50vw, (max-width: 1023px) 33vw, 25vw'
     
-    comment 'Aspect ratio calculation'
+    # Aspect ratio calculation
     assign ratio = 1
     case image_aspect_ratio
       when 'square'

@@ -27,7 +27,7 @@ Parámetros:
               assign should_open = true
             endif
             
-            comment 'Check if filter has active values'
+            # Check if filter has active values
             assign has_active_values = false
             if filter.type == 'list' and filter.active_values.size > 0
               assign has_active_values = true

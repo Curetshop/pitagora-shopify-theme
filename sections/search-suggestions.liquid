@@ -1,0 +1,1037 @@
+{%- comment -%}
+Search Suggestions Section - Pitagora Theme
+Display search suggestions, popular searches, and trending products
+{%- endcomment -%}
+
+<style>
+  #shopify-section-{{ section.id }} {
+    --search-suggestions-bg: {{ section.settings.background_color | default: 'transparent' }};
+    --search-suggestions-text: {{ section.settings.text_color | default: 'inherit' }};
+    --search-suggestions-accent: {{ section.settings.accent_color | default: 'var(--color-primary)' }};
+  }
+</style>
+
+<div 
+  class="search-suggestions section-padding"
+  style="background: var(--search-suggestions-bg); color: var(--search-suggestions-text);"
+  data-section-id="{{ section.id }}"
+>
+  <div class="page-width">
+    {%- if section.settings.heading != blank or section.settings.subheading != blank -%}
+      <div class="section-header text-center">
+        {%- if section.settings.subheading != blank -%}
+          <p class="section-header__subheading">{{ section.settings.subheading | escape }}</p>
+        {%- endif -%}
+        
+        {%- if section.settings.heading != blank -%}
+          <h2 class="section-header__heading h2">{{ section.settings.heading | escape }}</h2>
+        {%- endif -%}
+      </div>
+    {%- endif -%}
+
+    <div class="search-suggestions__wrapper">
+      {%- if section.settings.show_search_bar -%}
+        <div class="search-suggestions__search-bar">
+          <form action="{{ routes.search_url }}" method="get" class="search-suggestions__form">
+            <div class="search-suggestions__input-wrapper">
+              <input
+                type="search"
+                name="q"
+                id="search-suggestions-input-{{ section.id }}"
+                class="search-suggestions__input"
+                placeholder="{{ section.settings.search_placeholder | default: 'Search our store...' | escape }}"
+                autocomplete="off"
+                data-search-input
+              >
+              <button type="submit" class="search-suggestions__submit" aria-label="{{ 'general.search.submit' | t }}">
+                {% render 'icon-search' %}
+              </button>
+            </div>
+            
+            <div class="search-suggestions__dropdown" data-search-dropdown style="display: none;">
+              <div class="search-suggestions__dropdown-content">
+                <div class="search-suggestions__results" data-search-results></div>
+                <div class="search-suggestions__loading" data-search-loading style="display: none;">
+                  <div class="search-suggestions__loading-spinner">
+                    {% render 'icon-spinner' %}
+                  </div>
+                  <span>{{ 'general.search.loading' | t }}</span>
+                </div>
+              </div>
+            </div>
+          </form>
+        </div>
+      {%- endif -%}
+
+      <div class="search-suggestions__content">
+        {%- if section.blocks.size > 0 -%}
+          <div class="search-suggestions__blocks">
+            {%- for block in section.blocks -%}
+              {%- case block.type -%}
+                {%- when 'popular_searches' -%}
+                  <div class="search-suggestions__block search-suggestions__popular" {{ block.shopify_attributes }}>
+                    {%- if block.settings.title != blank -%}
+                      <h3 class="search-suggestions__block-title">{{ block.settings.title | escape }}</h3>
+                    {%- endif -%}
+                    
+                    {%- if block.settings.searches != blank -%}
+                      <div class="search-suggestions__tags">
+                        {%- assign searches = block.settings.searches | split: ',' -%}
+                        {%- for search in searches -%}
+                          <a 
+                            href="{{ routes.search_url }}?q={{ search | strip | url_encode }}" 
+                            class="search-suggestions__tag"
+                          >
+                            {{ search | strip | escape }}
+                          </a>
+                        {%- endfor -%}
+                      </div>
+                    {%- endif -%}
+                  </div>
+
+                {%- when 'trending_products' -%}
+                  <div class="search-suggestions__block search-suggestions__trending" {{ block.shopify_attributes }}>
+                    {%- if block.settings.title != blank -%}
+                      <h3 class="search-suggestions__block-title">{{ block.settings.title | escape }}</h3>
+                    {%- endif -%}
+                    
+                    {%- liquid
+                      assign collection_handle = block.settings.collection | default: 'all'
+                      assign collection = collections[collection_handle]
+                      assign products_count = block.settings.products_count | default: 4
+                    -%}
+                    
+                    {%- if collection.products.size > 0 -%}
+                      <div class="search-suggestions__products">
+                        {%- for product in collection.products limit: products_count -%}
+                          <a href="{{ product.url }}" class="search-suggestions__product">
+                            <div class="search-suggestions__product-image">
+                              {%- if product.featured_image -%}
+                                <img
+                                  src="{{ product.featured_image | image_url: width: 80 }}"
+                                  alt="{{ product.featured_image.alt | escape }}"
+                                  loading="lazy"
+                                  width="80"
+                                  height="80"
+                                >
+                              {%- else -%}
+                                <div class="search-suggestions__product-placeholder">
+                                  {% render 'icon-collection' %}
+                                </div>
+                              {%- endif -%}
+                            </div>
+                            <div class="search-suggestions__product-info">
+                              <div class="search-suggestions__product-title">{{ product.title | escape }}</div>
+                              <div class="search-suggestions__product-price">{{ product.price | money }}</div>
+                            </div>
+                          </a>
+                        {%- endfor -%}
+                      </div>
+                    {%- endif -%}
+                  </div>
+
+                {%- when 'collections' -%}
+                  <div class="search-suggestions__block search-suggestions__collections" {{ block.shopify_attributes }}>
+                    {%- if block.settings.title != blank -%}
+                      <h3 class="search-suggestions__block-title">{{ block.settings.title | escape }}</h3>
+                    {%- endif -%}
+                    
+                    {%- if block.settings.collection_list != blank -%}
+                      <div class="search-suggestions__collection-list">
+                        {%- assign collection_handles = block.settings.collection_list | split: ',' -%}
+                        {%- for handle in collection_handles -%}
+                          {%- assign collection = collections[handle | strip] -%}
+                          {%- if collection != blank -%}
+                            <a href="{{ collection.url }}" class="search-suggestions__collection">
+                              {%- if collection.featured_image -%}
+                                <div class="search-suggestions__collection-image">
+                                  <img
+                                    src="{{ collection.featured_image | image_url: width: 60 }}"
+                                    alt="{{ collection.featured_image.alt | escape }}"
+                                    loading="lazy"
+                                    width="60"
+                                    height="60"
+                                  >
+                                </div>
+                              {%- endif -%}
+                              <div class="search-suggestions__collection-info">
+                                <div class="search-suggestions__collection-title">{{ collection.title | escape }}</div>
+                                <div class="search-suggestions__collection-count">{{ collection.products_count }} {{ 'collections.general.items' | t }}</div>
+                              </div>
+                            </a>
+                          {%- endif -%}
+                        {%- endfor -%}
+                      </div>
+                    {%- endif -%}
+                  </div>
+
+                {%- when 'quick_links' -%}
+                  <div class="search-suggestions__block search-suggestions__quick-links" {{ block.shopify_attributes }}>
+                    {%- if block.settings.title != blank -%}
+                      <h3 class="search-suggestions__block-title">{{ block.settings.title | escape }}</h3>
+                    {%- endif -%}
+                    
+                    <div class="search-suggestions__links">
+                      {%- if block.settings.link_1_text != blank -%}
+                        <a href="{{ block.settings.link_1_url | default: '#' }}" class="search-suggestions__link">
+                          {{ block.settings.link_1_text | escape }}
+                        </a>
+                      {%- endif -%}
+                      
+                      {%- if block.settings.link_2_text != blank -%}
+                        <a href="{{ block.settings.link_2_url | default: '#' }}" class="search-suggestions__link">
+                          {{ block.settings.link_2_text | escape }}
+                        </a>
+                      {%- endif -%}
+                      
+                      {%- if block.settings.link_3_text != blank -%}
+                        <a href="{{ block.settings.link_3_url | default: '#' }}" class="search-suggestions__link">
+                          {{ block.settings.link_3_text | escape }}
+                        </a>
+                      {%- endif -%}
+                      
+                      {%- if block.settings.link_4_text != blank -%}
+                        <a href="{{ block.settings.link_4_url | default: '#' }}" class="search-suggestions__link">
+                          {{ block.settings.link_4_text | escape }}
+                        </a>
+                      {%- endif -%}
+                    </div>
+                  </div>
+
+              {%- endcase -%}
+            {%- endfor -%}
+          </div>
+        {%- endif -%}
+      </div>
+    </div>
+  </div>
+</div>
+
+<style>
+  .search-suggestions__wrapper {
+    margin-top: 2rem;
+  }
+  
+  .search-suggestions__search-bar {
+    max-width: 600px;
+    margin: 0 auto 3rem;
+    position: relative;
+  }
+  
+  .search-suggestions__form {
+    position: relative;
+  }
+  
+  .search-suggestions__input-wrapper {
+    position: relative;
+    display: flex;
+    align-items: center;
+  }
+  
+  .search-suggestions__input {
+    width: 100%;
+    padding: 1rem 3rem 1rem 1rem;
+    border: 2px solid var(--color-border);
+    border-radius: 50px;
+    font-size: 1rem;
+    background: var(--color-background);
+    transition: border-color 0.2s ease;
+  }
+  
+  .search-suggestions__input:focus {
+    outline: none;
+    border-color: var(--search-suggestions-accent);
+    box-shadow: 0 0 0 3px rgba(var(--color-primary-rgb), 0.1);
+  }
+  
+  .search-suggestions__submit {
+    position: absolute;
+    right: 0.5rem;
+    top: 50%;
+    transform: translateY(-50%);
+    background: var(--search-suggestions-accent);
+    color: white;
+    border: none;
+    border-radius: 50%;
+    width: 2.5rem;
+    height: 2.5rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+  }
+  
+  .search-suggestions__submit:hover {
+    background: var(--color-primary-hover);
+  }
+  
+  .search-suggestions__submit svg {
+    width: 1.25rem;
+    height: 1.25rem;
+  }
+  
+  .search-suggestions__dropdown {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    right: 0;
+    background: var(--color-background);
+    border: 1px solid var(--color-border);
+    border-radius: 0.5rem;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    z-index: 1000;
+    margin-top: 0.5rem;
+    max-height: 400px;
+    overflow-y: auto;
+  }
+  
+  .search-suggestions__dropdown-content {
+    padding: 1rem;
+  }
+  
+  .search-suggestions__loading {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    padding: 2rem;
+    color: var(--color-foreground-75);
+  }
+  
+  .search-suggestions__loading-spinner {
+    animation: spin 1s linear infinite;
+  }
+  
+  .search-suggestions__loading-spinner svg {
+    width: 1rem;
+    height: 1rem;
+  }
+  
+  .search-suggestions__blocks {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 2rem;
+  }
+  
+  .search-suggestions__block {
+    background: var(--color-background-secondary);
+    border-radius: 0.5rem;
+    padding: 1.5rem;
+  }
+  
+  .search-suggestions__block-title {
+    margin-bottom: 1rem;
+    font-size: 1.125rem;
+    font-weight: 600;
+    color: var(--search-suggestions-accent);
+  }
+  
+  .search-suggestions__tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+  }
+  
+  .search-suggestions__tag {
+    display: inline-block;
+    padding: 0.375rem 0.75rem;
+    background: var(--color-background);
+    border: 1px solid var(--color-border);
+    border-radius: 20px;
+    text-decoration: none;
+    color: inherit;
+    font-size: 0.875rem;
+    transition: all 0.2s ease;
+  }
+  
+  .search-suggestions__tag:hover {
+    background: var(--search-suggestions-accent);
+    color: white;
+    border-color: var(--search-suggestions-accent);
+  }
+  
+  .search-suggestions__products {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+  }
+  
+  .search-suggestions__product {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    padding: 0.75rem;
+    background: var(--color-background);
+    border-radius: 0.5rem;
+    text-decoration: none;
+    color: inherit;
+    transition: background-color 0.2s ease;
+  }
+  
+  .search-suggestions__product:hover {
+    background: var(--color-background-hover);
+  }
+  
+  .search-suggestions__product-image {
+    flex-shrink: 0;
+    width: 60px;
+    height: 60px;
+    border-radius: 0.375rem;
+    overflow: hidden;
+  }
+  
+  .search-suggestions__product-image img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+  
+  .search-suggestions__product-placeholder {
+    width: 100%;
+    height: 100%;
+    background: var(--color-background-secondary);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--color-foreground-25);
+  }
+  
+  .search-suggestions__product-placeholder svg {
+    width: 1.5rem;
+    height: 1.5rem;
+  }
+  
+  .search-suggestions__product-info {
+    flex: 1;
+  }
+  
+  .search-suggestions__product-title {
+    font-weight: 500;
+    margin-bottom: 0.25rem;
+    font-size: 0.875rem;
+    line-height: 1.4;
+  }
+  
+  .search-suggestions__product-price {
+    font-size: 0.875rem;
+    color: var(--color-price);
+    font-weight: 600;
+  }
+  
+  .search-suggestions__collection-list {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+  }
+  
+  .search-suggestions__collection {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    padding: 0.75rem;
+    background: var(--color-background);
+    border-radius: 0.5rem;
+    text-decoration: none;
+    color: inherit;
+    transition: background-color 0.2s ease;
+  }
+  
+  .search-suggestions__collection:hover {
+    background: var(--color-background-hover);
+  }
+  
+  .search-suggestions__collection-image {
+    flex-shrink: 0;
+    width: 50px;
+    height: 50px;
+    border-radius: 0.375rem;
+    overflow: hidden;
+  }
+  
+  .search-suggestions__collection-image img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+  
+  .search-suggestions__collection-title {
+    font-weight: 500;
+    margin-bottom: 0.25rem;
+    font-size: 0.875rem;
+  }
+  
+  .search-suggestions__collection-count {
+    font-size: 0.75rem;
+    color: var(--color-foreground-75);
+  }
+  
+  .search-suggestions__links {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+  
+  .search-suggestions__link {
+    display: block;
+    padding: 0.75rem 1rem;
+    background: var(--color-background);
+    border-radius: 0.375rem;
+    text-decoration: none;
+    color: inherit;
+    transition: background-color 0.2s ease;
+    font-size: 0.875rem;
+  }
+  
+  .search-suggestions__link:hover {
+    background: var(--color-background-hover);
+    color: var(--search-suggestions-accent);
+  }
+  
+  @keyframes spin {
+    from { transform: rotate(0deg); }
+    to { transform: rotate(360deg); }
+  }
+  
+  @media screen and (max-width: 989px) {
+    .search-suggestions__blocks {
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: 1.5rem;
+    }
+  }
+  
+  @media screen and (max-width: 749px) {
+    .search-suggestions__blocks {
+      grid-template-columns: 1fr;
+      gap: 1rem;
+    }
+    
+    .search-suggestions__block {
+      padding: 1rem;
+    }
+    
+    .search-suggestions__search-bar {
+      margin-bottom: 2rem;
+    }
+    
+    .search-suggestions__input {
+      padding: 0.875rem 2.75rem 0.875rem 1rem;
+      font-size: 0.875rem;
+    }
+    
+    .search-suggestions__submit {
+      width: 2.25rem;
+      height: 2.25rem;
+    }
+    
+    .search-suggestions__submit svg {
+      width: 1rem;
+      height: 1rem;
+    }
+  }
+</style>
+
+<script>
+  class SearchSuggestions extends HTMLElement {
+    constructor() {
+      super();
+      this.input = this.querySelector('[data-search-input]');
+      this.dropdown = this.querySelector('[data-search-dropdown]');
+      this.resultsContainer = this.querySelector('[data-search-results]');
+      this.loadingIndicator = this.querySelector('[data-search-loading]');
+      
+      this.searchTimeout = null;
+      this.isOpen = false;
+      
+      this.init();
+    }
+
+    init() {
+      if (!this.input) return;
+      
+      this.input.addEventListener('input', this.handleInput.bind(this));
+      this.input.addEventListener('focus', this.handleFocus.bind(this));
+      this.input.addEventListener('keydown', this.handleKeydown.bind(this));
+      
+      // Close dropdown when clicking outside
+      document.addEventListener('click', (e) => {
+        if (!this.contains(e.target)) {
+          this.closeDropdown();
+        }
+      });
+    }
+
+    handleInput(e) {
+      const query = e.target.value.trim();
+      
+      clearTimeout(this.searchTimeout);
+      
+      if (query.length < 2) {
+        this.closeDropdown();
+        return;
+      }
+      
+      this.searchTimeout = setTimeout(() => {
+        this.performSearch(query);
+      }, 300);
+    }
+
+    handleFocus(e) {
+      const query = e.target.value.trim();
+      if (query.length >= 2) {
+        this.openDropdown();
+      }
+    }
+
+    handleKeydown(e) {
+      if (e.key === 'Escape') {
+        this.closeDropdown();
+        this.input.blur();
+      }
+    }
+
+    async performSearch(query) {
+      this.showLoading();
+      this.openDropdown();
+      
+      try {
+        const response = await fetch(`${window.Shopify.routes.root}search/suggest.json?q=${encodeURIComponent(query)}&resources[type]=product,collection,article&resources[limit]=6`);
+        const data = await response.json();
+        
+        this.displayResults(data.resources.results, query);
+      } catch (error) {
+        console.error('Search suggestion error:', error);
+        this.hideLoading();
+        this.displayError();
+      }
+    }
+
+    displayResults(results, query) {
+      this.hideLoading();
+      
+      if (!results.products?.length && !results.collections?.length && !results.articles?.length) {
+        this.displayNoResults(query);
+        return;
+      }
+
+      let html = '';
+      
+      // Products
+      if (results.products?.length) {
+        html += '<div class="search-suggestions__result-section">';
+        html += '<h4 class="search-suggestions__result-title">Products</h4>';
+        
+        results.products.slice(0, 4).forEach(product => {
+          const image = product.image ? 
+            `<img src="${product.image}" alt="${product.title}" width="40" height="40">` :
+            '<div class="search-suggestions__result-placeholder">📦</div>';
+            
+          html += `
+            <a href="${product.url}" class="search-suggestions__result">
+              <div class="search-suggestions__result-image">${image}</div>
+              <div class="search-suggestions__result-info">
+                <div class="search-suggestions__result-title">${product.title}</div>
+                <div class="search-suggestions__result-price">${this.formatMoney(product.price)}</div>
+              </div>
+            </a>
+          `;
+        });
+        
+        html += '</div>';
+      }
+      
+      // Collections
+      if (results.collections?.length) {
+        html += '<div class="search-suggestions__result-section">';
+        html += '<h4 class="search-suggestions__result-title">Collections</h4>';
+        
+        results.collections.slice(0, 3).forEach(collection => {
+          const image = collection.image ? 
+            `<img src="${collection.image}" alt="${collection.title}" width="40" height="40">` :
+            '<div class="search-suggestions__result-placeholder">📁</div>';
+            
+          html += `
+            <a href="${collection.url}" class="search-suggestions__result">
+              <div class="search-suggestions__result-image">${image}</div>
+              <div class="search-suggestions__result-info">
+                <div class="search-suggestions__result-title">${collection.title}</div>
+              </div>
+            </a>
+          `;
+        });
+        
+        html += '</div>';
+      }
+      
+      this.resultsContainer.innerHTML = html;
+    }
+
+    displayNoResults(query) {
+      this.resultsContainer.innerHTML = `
+        <div class="search-suggestions__no-results">
+          <p>No results found for "${query}"</p>
+          <a href="${window.Shopify.routes.root}search?q=${encodeURIComponent(query)}" class="search-suggestions__view-all">
+            View all search results
+          </a>
+        </div>
+      `;
+    }
+
+    displayError() {
+      this.resultsContainer.innerHTML = `
+        <div class="search-suggestions__error">
+          <p>Something went wrong. Please try again.</p>
+        </div>
+      `;
+    }
+
+    formatMoney(cents) {
+      const format = window.Shopify?.theme?.moneyFormat || '${{amount}}';
+      const amount = (cents / 100).toFixed(2);
+      return format.replace('{{amount}}', amount);
+    }
+
+    showLoading() {
+      this.loadingIndicator.style.display = 'flex';
+      this.resultsContainer.style.display = 'none';
+    }
+
+    hideLoading() {
+      this.loadingIndicator.style.display = 'none';
+      this.resultsContainer.style.display = 'block';
+    }
+
+    openDropdown() {
+      this.dropdown.style.display = 'block';
+      this.isOpen = true;
+    }
+
+    closeDropdown() {
+      this.dropdown.style.display = 'none';
+      this.isOpen = false;
+    }
+  }
+
+  customElements.define('search-suggestions', SearchSuggestions);
+
+  // Initialize search suggestions
+  document.addEventListener('DOMContentLoaded', () => {
+    const searchSections = document.querySelectorAll('.search-suggestions');
+    searchSections.forEach(section => {
+      const searchElement = document.createElement('search-suggestions');
+      
+      // Move search form into custom element
+      const searchForm = section.querySelector('.search-suggestions__form');
+      if (searchForm) {
+        searchElement.appendChild(searchForm);
+        section.querySelector('.search-suggestions__search-bar').appendChild(searchElement);
+      }
+    });
+  });
+</script>
+
+<style>
+  .search-suggestions__result-section {
+    margin-bottom: 1rem;
+  }
+  
+  .search-suggestions__result-section:last-child {
+    margin-bottom: 0;
+  }
+  
+  .search-suggestions__result-title {
+    font-size: 0.875rem;
+    font-weight: 600;
+    color: var(--search-suggestions-accent);
+    margin-bottom: 0.5rem;
+    padding-bottom: 0.25rem;
+    border-bottom: 1px solid var(--color-border);
+  }
+  
+  .search-suggestions__result {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 0.5rem;
+    border-radius: 0.375rem;
+    text-decoration: none;
+    color: inherit;
+    transition: background-color 0.2s ease;
+  }
+  
+  .search-suggestions__result:hover {
+    background: var(--color-background-hover);
+  }
+  
+  .search-suggestions__result-image {
+    flex-shrink: 0;
+    width: 40px;
+    height: 40px;
+    border-radius: 0.25rem;
+    overflow: hidden;
+  }
+  
+  .search-suggestions__result-image img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+  
+  .search-suggestions__result-placeholder {
+    width: 100%;
+    height: 100%;
+    background: var(--color-background-secondary);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.25rem;
+  }
+  
+  .search-suggestions__result-info {
+    flex: 1;
+    min-width: 0;
+  }
+  
+  .search-suggestions__result-title {
+    font-size: 0.875rem;
+    margin-bottom: 0.25rem;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  
+  .search-suggestions__result-price {
+    font-size: 0.75rem;
+    color: var(--color-price);
+    font-weight: 600;
+  }
+  
+  .search-suggestions__no-results,
+  .search-suggestions__error {
+    text-align: center;
+    padding: 2rem 1rem;
+  }
+  
+  .search-suggestions__view-all {
+    display: inline-block;
+    margin-top: 1rem;
+    color: var(--search-suggestions-accent);
+    text-decoration: none;
+    font-weight: 500;
+  }
+  
+  .search-suggestions__view-all:hover {
+    text-decoration: underline;
+  }
+</style>
+
+{% schema %}
+{
+  "name": "Search suggestions",
+  "class": "shopify-section-search-suggestions",
+  "tag": "section",
+  "settings": [
+    {
+      "type": "header",
+      "content": "Content"
+    },
+    {
+      "type": "text",
+      "id": "heading",
+      "label": "Heading",
+      "default": "What are you looking for?"
+    },
+    {
+      "type": "text",
+      "id": "subheading",
+      "label": "Subheading"
+    },
+    {
+      "type": "header",
+      "content": "Search bar"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_search_bar",
+      "label": "Show search bar",
+      "default": true
+    },
+    {
+      "type": "text",
+      "id": "search_placeholder",
+      "label": "Search placeholder text",
+      "default": "Search our store..."
+    },
+    {
+      "type": "header",
+      "content": "Colors"
+    },
+    {
+      "type": "color",
+      "id": "background_color",
+      "label": "Background color"
+    },
+    {
+      "type": "color",
+      "id": "text_color",
+      "label": "Text color"
+    },
+    {
+      "type": "color",
+      "id": "accent_color",
+      "label": "Accent color"
+    }
+  ],
+  "blocks": [
+    {
+      "type": "popular_searches",
+      "name": "Popular searches",
+      "settings": [
+        {
+          "type": "text",
+          "id": "title",
+          "label": "Title",
+          "default": "Popular searches"
+        },
+        {
+          "type": "textarea",
+          "id": "searches",
+          "label": "Search terms",
+          "info": "Separate with commas (e.g., shoes, dresses, accessories)",
+          "default": "shoes, dresses, accessories, bags, jewelry"
+        }
+      ]
+    },
+    {
+      "type": "trending_products",
+      "name": "Trending products",
+      "settings": [
+        {
+          "type": "text",
+          "id": "title",
+          "label": "Title",
+          "default": "Trending now"
+        },
+        {
+          "type": "collection",
+          "id": "collection",
+          "label": "Collection"
+        },
+        {
+          "type": "range",
+          "id": "products_count",
+          "label": "Products to show",
+          "min": 2,
+          "max": 8,
+          "step": 1,
+          "default": 4
+        }
+      ]
+    },
+    {
+      "type": "collections",
+      "name": "Featured collections",
+      "settings": [
+        {
+          "type": "text",
+          "id": "title",
+          "label": "Title",
+          "default": "Shop by category"
+        },
+        {
+          "type": "textarea",
+          "id": "collection_list",
+          "label": "Collection handles",
+          "info": "Separate with commas (e.g., shoes, dresses, accessories)",
+          "placeholder": "shoes, dresses, accessories"
+        }
+      ]
+    },
+    {
+      "type": "quick_links",
+      "name": "Quick links",
+      "settings": [
+        {
+          "type": "text",
+          "id": "title",
+          "label": "Title",
+          "default": "Quick links"
+        },
+        {
+          "type": "text",
+          "id": "link_1_text",
+          "label": "Link 1 text",
+          "default": "New arrivals"
+        },
+        {
+          "type": "url",
+          "id": "link_1_url",
+          "label": "Link 1 URL"
+        },
+        {
+          "type": "text",
+          "id": "link_2_text",
+          "label": "Link 2 text",
+          "default": "Best sellers"
+        },
+        {
+          "type": "url",
+          "id": "link_2_url",
+          "label": "Link 2 URL"
+        },
+        {
+          "type": "text",
+          "id": "link_3_text",
+          "label": "Link 3 text",
+          "default": "Sale"
+        },
+        {
+          "type": "url",
+          "id": "link_3_url",
+          "label": "Link 3 URL"
+        },
+        {
+          "type": "text",
+          "id": "link_4_text",
+          "label": "Link 4 text"
+        },
+        {
+          "type": "url",
+          "id": "link_4_url",
+          "label": "Link 4 URL"
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "Search suggestions",
+      "blocks": [
+        {
+          "type": "popular_searches",
+          "settings": {
+            "title": "Popular searches",
+            "searches": "shoes, dresses, accessories, bags, jewelry"
+          }
+        },
+        {
+          "type": "trending_products",
+          "settings": {
+            "title": "Trending now",
+            "products_count": 4
+          }
+        },
+        {
+          "type": "quick_links",
+          "settings": {
+            "title": "Quick links",
+            "link_1_text": "New arrivals",
+            "link_2_text": "Best sellers",
+            "link_3_text": "Sale"
+          }
+        }
+      ]
+    }
+  ]
+}
+{% endschema %}

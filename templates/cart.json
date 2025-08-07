@@ -39,7 +39,7 @@
         "padding_top": 40,
         "padding_bottom": 40,
         "heading": "Why shop with us?",
-        "text": "<div class=\"benefits-grid\"><div class=\"benefit\"><h4>🚚 Free Shipping</h4><p>On orders over $75</p></div><div class=\"benefit\"><h4>🔒 Secure Checkout</h4><p>SSL encrypted payments</p></div><div class=\"benefit\"><h4>↩️ Easy Returns</h4><p>30-day return policy</p></div><div class=\"benefit\"><h4>💬 24/7 Support</h4><p>Customer service available</p></div></div>"
+        "text": "<ul><li><h4>🚚 Free Shipping</h4><p>On orders over $75</p></li><li><h4>🔒 Secure Checkout</h4><p>SSL encrypted payments</p></li><li><h4>↩️ Easy Returns</h4><p>30-day return policy</p></li><li><h4>💬 24/7 Support</h4><p>Customer service available</p></li></ul>"
       }
     },
     "cart_newsletter": {
@@ -65,7 +65,7 @@
         "products_to_show": 4,
         "columns_desktop": 4,
         "columns_tablet": 2,
-        "columns_mobile": 2,
+        "columns_mobile": "2",
         "show_quick_add": true,
         "show_quick_view": false,
         "show_vendor": false,

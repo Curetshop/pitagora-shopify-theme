@@ -196,7 +196,7 @@ Incluye faceted search, sorting, pagination y promociones
                 assign products_per_page = section.settings.products_per_page
                 assign products_to_show = collection.products.size | at_most: products_per_page
                 
-                comment 'Insert promotion blocks at specified positions'
+                # Insert promotion blocks at specified positions
                 assign promotion_after_product = section.settings.promotion_after_product | default: 6
               -%}
 

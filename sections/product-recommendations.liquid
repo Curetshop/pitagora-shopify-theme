@@ -1,0 +1,413 @@
+{%- comment -%}
+Product Recommendations Section - Pitagora Theme
+Display recommended products based on current product or collection
+{%- endcomment -%}
+
+<style>
+  #shopify-section-{{ section.id }} {
+    --recommendations-bg: {{ section.settings.background_color | default: 'transparent' }};
+    --recommendations-text: {{ section.settings.text_color | default: 'inherit' }};
+    --columns-desktop: {{ section.settings.columns_desktop | default: 4 }};
+    --columns-tablet: {{ section.settings.columns_tablet | default: 3 }};
+    --columns-mobile: {{ section.settings.columns_mobile | default: 2 }};
+  }
+</style>
+
+<div 
+  class="product-recommendations section-padding"
+  style="background: var(--recommendations-bg); color: var(--recommendations-text);"
+  data-section-id="{{ section.id }}"
+  data-product-id="{{ product.id | default: '' }}"
+>
+  <div class="page-width">
+    {%- if section.settings.heading != blank or section.settings.subheading != blank -%}
+      <div class="section-header text-center">
+        {%- if section.settings.subheading != blank -%}
+          <p class="section-header__subheading">{{ section.settings.subheading | escape }}</p>
+        {%- endif -%}
+        
+        {%- if section.settings.heading != blank -%}
+          <h2 class="section-header__heading h2">{{ section.settings.heading | escape }}</h2>
+        {%- endif -%}
+      </div>
+    {%- endif -%}
+
+    <div class="product-recommendations__wrapper" id="product-recommendations-{{ section.id }}">
+      {%- liquid
+        assign recommendations_count = section.settings.products_to_show | default: 4
+        assign intent = section.settings.intent | default: 'related'
+        
+        if template.name == 'product' and product.id != blank
+          assign recommendation_url = routes.product_recommendations_url 
+          assign recommendation_url = recommendation_url | append: '?section_id=' | append: section.id
+          assign recommendation_url = recommendation_url | append: '&product_id=' | append: product.id
+          assign recommendation_url = recommendation_url | append: '&limit=' | append: recommendations_count
+          assign recommendation_url = recommendation_url | append: '&intent=' | append: intent
+        endif
+      -%}
+
+      {%- if template.name == 'product' and product.id != blank -%}
+        <div class="product-recommendations__loading">
+          <div class="product-recommendations__loading-spinner">
+            {% render 'icon-spinner' %}
+          </div>
+          <p>{{ 'products.recommendations.loading' | t }}</p>
+        </div>
+      {%- else -%}
+        {%- comment -%} Fallback for non-product pages or development {%- endcomment -%}
+        {%- liquid
+          case section.settings.fallback_collection
+            when 'featured'
+              assign fallback_products = collections.featured.products
+            when 'best-selling'
+              assign fallback_products = collections.all.products | sort: 'best-selling'
+            when 'newest'
+              assign fallback_products = collections.all.products | sort: 'created-descending'
+            else
+              assign collection_handle = section.settings.fallback_collection | default: 'all'
+              assign fallback_products = collections[collection_handle].products
+          endcase
+        -%}
+
+        {%- if fallback_products.size > 0 -%}
+          <div class="product-recommendations__grid">
+            {%- for product in fallback_products limit: recommendations_count -%}
+              {% render 'product-card',
+                product: product,
+                show_quick_add: section.settings.show_quick_add,
+                show_quick_view: section.settings.show_quick_view,
+                show_vendor: section.settings.show_vendor,
+                show_rating: section.settings.show_rating,
+                show_price: section.settings.show_price,
+                image_ratio: section.settings.image_ratio,
+                card_style: 'standard',
+                loading: forloop.index
+              %}
+            {%- endfor -%}
+          </div>
+        {%- else -%}
+          <div class="product-recommendations__empty">
+            <div class="product-recommendations__empty-content">
+              <h3>{{ 'products.recommendations.no_products' | t }}</h3>
+              <p>{{ 'products.recommendations.no_products_html' | t }}</p>
+            </div>
+          </div>
+        {%- endif -%}
+      {%- endif -%}
+    </div>
+  </div>
+</div>
+
+<style>
+  .product-recommendations__wrapper {
+    margin-top: 2rem;
+  }
+  
+  .product-recommendations__grid {
+    display: grid;
+    grid-template-columns: repeat(var(--columns-desktop), 1fr);
+    gap: 2rem;
+  }
+  
+  .product-recommendations__loading {
+    text-align: center;
+    padding: 3rem 1rem;
+  }
+  
+  .product-recommendations__loading-spinner {
+    display: inline-block;
+    margin-bottom: 1rem;
+    animation: spin 1s linear infinite;
+  }
+  
+  .product-recommendations__loading-spinner svg {
+    width: 2rem;
+    height: 2rem;
+  }
+  
+  .product-recommendations__empty {
+    text-align: center;
+    padding: 3rem 1rem;
+  }
+  
+  .product-recommendations__empty-content h3 {
+    margin-bottom: 0.5rem;
+  }
+  
+  .product-recommendations__empty-content p {
+    color: var(--color-foreground-75);
+  }
+  
+  @keyframes spin {
+    from { transform: rotate(0deg); }
+    to { transform: rotate(360deg); }
+  }
+  
+  @media screen and (max-width: 989px) {
+    .product-recommendations__grid {
+      grid-template-columns: repeat(var(--columns-tablet), 1fr);
+      gap: 1.5rem;
+    }
+  }
+  
+  @media screen and (max-width: 749px) {
+    .product-recommendations__grid {
+      grid-template-columns: repeat(var(--columns-mobile), 1fr);
+      gap: 1rem;
+    }
+  }
+</style>
+
+<script>
+  class ProductRecommendations extends HTMLElement {
+    constructor() {
+      super();
+      this.init();
+    }
+
+    init() {
+      const productId = this.dataset.productId;
+      const sectionId = this.dataset.sectionId;
+      
+      if (!productId || productId === '') {
+        return;
+      }
+
+      const url = window.Shopify.routes.root + `recommendations/products?section_id=${sectionId}&product_id=${productId}&limit={{ section.settings.products_to_show | default: 4 }}&intent={{ section.settings.intent | default: 'related' }}`;
+      
+      fetch(url)
+        .then(response => response.text())
+        .then(text => {
+          const html = document.createElement('div');
+          html.innerHTML = text;
+          const recommendations = html.querySelector('#product-recommendations-' + sectionId);
+          
+          if (recommendations && recommendations.innerHTML.trim().length) {
+            this.querySelector('#product-recommendations-' + sectionId).innerHTML = recommendations.innerHTML;
+          } else {
+            this.innerHTML = `
+              <div class="product-recommendations__empty">
+                <div class="product-recommendations__empty-content">
+                  <h3>No recommendations available</h3>
+                  <p>Check back later for product suggestions.</p>
+                </div>
+              </div>
+            `;
+          }
+        })
+        .catch(error => {
+          console.error('Error fetching product recommendations:', error);
+          this.innerHTML = `
+            <div class="product-recommendations__empty">
+              <div class="product-recommendations__empty-content">
+                <h3>Unable to load recommendations</h3>
+                <p>Please try refreshing the page.</p>
+              </div>
+            </div>
+          `;
+        });
+    }
+  }
+
+  customElements.define('product-recommendations', ProductRecommendations);
+</script>
+
+{%- if template.name == 'product' and product.id != blank -%}
+  <product-recommendations 
+    data-section-id="{{ section.id }}"
+    data-product-id="{{ product.id }}"
+  >
+    {%- render 'product-recommendations-content' -%}
+  </product-recommendations>
+{%- endif -%}
+
+{% schema %}
+{
+  "name": "Product recommendations",
+  "class": "shopify-section-product-recommendations",
+  "tag": "section",
+  "settings": [
+    {
+      "type": "header",
+      "content": "Content"
+    },
+    {
+      "type": "text",
+      "id": "heading",
+      "label": "Heading",
+      "default": "You may also like"
+    },
+    {
+      "type": "text",
+      "id": "subheading",
+      "label": "Subheading"
+    },
+    {
+      "type": "header",
+      "content": "Recommendations"
+    },
+    {
+      "type": "select",
+      "id": "intent",
+      "label": "Recommendation intent",
+      "options": [
+        {
+          "value": "related",
+          "label": "Related products"
+        },
+        {
+          "value": "complementary",
+          "label": "Complementary products"
+        }
+      ],
+      "default": "related",
+      "info": "Related shows similar products. Complementary shows products often bought together."
+    },
+    {
+      "type": "range",
+      "id": "products_to_show",
+      "label": "Products to show",
+      "min": 2,
+      "max": 12,
+      "step": 1,
+      "default": 4
+    },
+    {
+      "type": "header",
+      "content": "Fallback collection"
+    },
+    {
+      "type": "paragraph",
+      "content": "When on pages without products, or when recommendations aren't available, products from this collection will be shown instead."
+    },
+    {
+      "type": "collection",
+      "id": "fallback_collection",
+      "label": "Collection"
+    },
+    {
+      "type": "header",
+      "content": "Layout"
+    },
+    {
+      "type": "range",
+      "id": "columns_desktop",
+      "label": "Desktop columns",
+      "min": 1,
+      "max": 6,
+      "step": 1,
+      "default": 4
+    },
+    {
+      "type": "range",
+      "id": "columns_tablet",
+      "label": "Tablet columns",
+      "min": 1,
+      "max": 4,
+      "step": 1,
+      "default": 3
+    },
+    {
+      "type": "select",
+      "id": "columns_mobile",
+      "label": "Mobile columns",
+      "options": [
+        {
+          "value": "1",
+          "label": "1 column"
+        },
+        {
+          "value": "2",
+          "label": "2 columns"
+        }
+      ],
+      "default": "2"
+    },
+    {
+      "type": "header",
+      "content": "Product cards"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_quick_add",
+      "label": "Enable quick add",
+      "default": true
+    },
+    {
+      "type": "checkbox",
+      "id": "show_quick_view",
+      "label": "Enable quick view",
+      "default": true
+    },
+    {
+      "type": "checkbox",
+      "id": "show_vendor",
+      "label": "Show vendor",
+      "default": false
+    },
+    {
+      "type": "checkbox",
+      "id": "show_rating",
+      "label": "Show product rating",
+      "default": true,
+      "info": "To display a rating, add a product rating app. Learn more"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_price",
+      "label": "Show price",
+      "default": true
+    },
+    {
+      "type": "select",
+      "id": "image_ratio",
+      "label": "Image ratio",
+      "options": [
+        {
+          "value": "square",
+          "label": "Square"
+        },
+        {
+          "value": "portrait",
+          "label": "Portrait"
+        },
+        {
+          "value": "landscape",
+          "label": "Landscape"
+        },
+        {
+          "value": "auto",
+          "label": "Natural"
+        }
+      ],
+      "default": "square"
+    },
+    {
+      "type": "header",
+      "content": "Colors"
+    },
+    {
+      "type": "color",
+      "id": "background_color",
+      "label": "Background color"
+    },
+    {
+      "type": "color",
+      "id": "text_color",
+      "label": "Text color"
+    }
+  ],
+  "presets": [
+    {
+      "name": "Product recommendations",
+      "settings": {
+        "heading": "You may also like",
+        "products_to_show": 4,
+        "intent": "related",
+        "show_quick_add": true,
+        "show_rating": true
+      }
+    }
+  ]
+}
+{% endschema %}

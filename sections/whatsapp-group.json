@@ -1,6 +1,6 @@
 {
   "name": "WhatsApp Global",
-  "type": "static",
+  "type": "footer",
   "sections": {
     "whatsapp-button": {
       "type": "whatsapp-button",

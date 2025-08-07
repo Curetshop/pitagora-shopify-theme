@@ -1,0 +1,414 @@
+{%- comment -%}
+Related Articles Section - Pitagora Theme
+Display related blog articles with customizable layout and filtering
+{%- endcomment -%}
+
+<style>
+  #shopify-section-{{ section.id }} {
+    --related-articles-bg: {{ section.settings.background_color | default: 'transparent' }};
+    --related-articles-text: {{ section.settings.text_color | default: 'inherit' }};
+    --columns-desktop: {{ section.settings.columns_desktop | default: 3 }};
+    --columns-tablet: 2;
+    --columns-mobile: 1;
+  }
+</style>
+
+<div 
+  class="related-articles section-padding"
+  style="background: var(--related-articles-bg); color: var(--related-articles-text);"
+>
+  <div class="page-width">
+    {%- if section.settings.heading != blank or section.settings.subheading != blank -%}
+      <div class="section-header text-center">
+        {%- if section.settings.subheading != blank -%}
+          <p class="section-header__subheading">{{ section.settings.subheading | escape }}</p>
+        {%- endif -%}
+        
+        {%- if section.settings.heading != blank -%}
+          <h2 class="section-header__heading h2">{{ section.settings.heading | escape }}</h2>
+        {%- endif -%}
+      </div>
+    {%- endif -%}
+
+    {%- liquid
+      assign blog_handle = section.settings.blog | default: 'news'
+      assign blog = blogs[blog_handle]
+      assign articles_to_show = section.settings.articles_to_show | default: 3
+      
+      if template.name == 'article' and article.tags.size > 0
+        assign related_articles = blog.articles | where: 'tags', article.tags.first
+        assign related_articles = related_articles | where_not: 'id', article.id
+      else
+        assign related_articles = blog.articles
+      endif
+    -%}
+
+    {%- if related_articles.size > 0 -%}
+      <div class="related-articles__grid" style="display: grid; grid-template-columns: repeat(var(--columns-desktop), 1fr); gap: 2rem;">
+        {%- for article in related_articles limit: articles_to_show -%}
+          <article class="related-articles__item">
+            {%- if article.image and section.settings.show_image -%}
+              <div class="related-articles__image">
+                <a href="{{ article.url }}" class="related-articles__image-link">
+                  <img
+                    src="{{ article.image | image_url: width: 400 }}"
+                    alt="{{ article.image.alt | escape }}"
+                    loading="lazy"
+                    width="{{ article.image.width }}"
+                    height="{{ article.image.height }}"
+                    sizes="(min-width: 990px) {{ 100 | divided_by: section.settings.columns_desktop }}vw, (min-width: 750px) 50vw, 100vw"
+                    srcset="
+                      {{ article.image | image_url: width: 200 }} 200w,
+                      {{ article.image | image_url: width: 300 }} 300w,
+                      {{ article.image | image_url: width: 400 }} 400w,
+                      {{ article.image | image_url: width: 500 }} 500w
+                    "
+                  >
+                </a>
+              </div>
+            {%- endif -%}
+
+            <div class="related-articles__content">
+              {%- if section.settings.show_date -%}
+                <time class="related-articles__date" datetime="{{ article.published_at | date: '%Y-%m-%d' }}">
+                  {{ article.published_at | date: format: 'abbreviated_date' }}
+                </time>
+              {%- endif -%}
+
+              <h3 class="related-articles__title h4">
+                <a href="{{ article.url }}" class="related-articles__title-link">
+                  {{ article.title | escape }}
+                </a>
+              </h3>
+
+              {%- if section.settings.show_excerpt and article.excerpt != blank -%}
+                <div class="related-articles__excerpt">
+                  {{ article.excerpt | strip_html | truncatewords: section.settings.excerpt_length }}
+                </div>
+              {%- endif -%}
+
+              {%- if section.settings.show_author and article.author != blank -%}
+                <div class="related-articles__author">
+                  {{ 'blogs.article.by_author' | t: author: article.author }}
+                </div>
+              {%- endif -%}
+
+              {%- if section.settings.show_tags and article.tags.size > 0 -%}
+                <div class="related-articles__tags">
+                  {%- for tag in article.tags limit: 3 -%}
+                    <span class="related-articles__tag">{{ tag }}</span>
+                  {%- endfor -%}
+                </div>
+              {%- endif -%}
+
+              {%- if section.settings.show_read_more -%}
+                <div class="related-articles__read-more">
+                  <a href="{{ article.url }}" class="button button--{{ section.settings.button_style }}">
+                    {{ section.settings.read_more_text | default: 'Read more' | escape }}
+                  </a>
+                </div>
+              {%- endif -%}
+            </div>
+          </article>
+        {%- endfor -%}
+      </div>
+
+      {%- if section.settings.show_view_all and blog.articles.size > articles_to_show -%}
+        <div class="related-articles__view-all">
+          <a href="{{ blog.url }}" class="button button--outline button--large">
+            {{ section.settings.view_all_text | default: 'View all articles' | escape }}
+          </a>
+        </div>
+      {%- endif -%}
+    {%- else -%}
+      <div class="related-articles__empty">
+        <div class="related-articles__empty-content">
+          <h3>{{ 'blogs.general.no_articles' | t }}</h3>
+          <p>{{ 'blogs.general.no_articles_html' | t }}</p>
+        </div>
+      </div>
+    {%- endif -%}
+  </div>
+</div>
+
+<style>
+  .related-articles__grid {
+    margin-top: 2rem;
+  }
+  
+  .related-articles__item {
+    border: 1px solid var(--color-border);
+    border-radius: 0.5rem;
+    overflow: hidden;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+  }
+  
+  .related-articles__item:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  }
+  
+  .related-articles__image {
+    aspect-ratio: 16/9;
+    overflow: hidden;
+  }
+  
+  .related-articles__image img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.3s ease;
+  }
+  
+  .related-articles__image:hover img {
+    transform: scale(1.05);
+  }
+  
+  .related-articles__content {
+    padding: 1.5rem;
+  }
+  
+  .related-articles__date {
+    display: block;
+    font-size: 0.875rem;
+    color: var(--color-foreground-75);
+    margin-bottom: 0.5rem;
+  }
+  
+  .related-articles__title {
+    margin-bottom: 1rem;
+  }
+  
+  .related-articles__title-link {
+    text-decoration: none;
+    color: inherit;
+  }
+  
+  .related-articles__title-link:hover {
+    color: var(--color-link);
+  }
+  
+  .related-articles__excerpt {
+    margin-bottom: 1rem;
+    line-height: 1.6;
+  }
+  
+  .related-articles__author {
+    font-size: 0.875rem;
+    color: var(--color-foreground-75);
+    margin-bottom: 1rem;
+  }
+  
+  .related-articles__tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    margin-bottom: 1.5rem;
+  }
+  
+  .related-articles__tag {
+    background: var(--color-background-secondary);
+    padding: 0.25rem 0.5rem;
+    border-radius: 1rem;
+    font-size: 0.75rem;
+    color: var(--color-foreground-75);
+  }
+  
+  .related-articles__view-all {
+    text-align: center;
+    margin-top: 2rem;
+  }
+  
+  .related-articles__empty {
+    text-align: center;
+    padding: 3rem 1rem;
+  }
+  
+  @media screen and (max-width: 989px) {
+    .related-articles__grid {
+      grid-template-columns: repeat(var(--columns-tablet), 1fr);
+      gap: 1.5rem;
+    }
+  }
+  
+  @media screen and (max-width: 749px) {
+    .related-articles__grid {
+      grid-template-columns: repeat(var(--columns-mobile), 1fr);
+      gap: 1rem;
+    }
+    
+    .related-articles__content {
+      padding: 1rem;
+    }
+  }
+</style>
+
+{% schema %}
+{
+  "name": "Related articles",
+  "class": "shopify-section-related-articles",
+  "tag": "section",
+  "settings": [
+    {
+      "type": "header",
+      "content": "Content"
+    },
+    {
+      "type": "text",
+      "id": "heading",
+      "label": "Heading",
+      "default": "Related articles"
+    },
+    {
+      "type": "text",
+      "id": "subheading",
+      "label": "Subheading"
+    },
+    {
+      "type": "blog",
+      "id": "blog",
+      "label": "Blog"
+    },
+    {
+      "type": "header",
+      "content": "Layout"
+    },
+    {
+      "type": "range",
+      "id": "articles_to_show",
+      "label": "Articles to show",
+      "min": 2,
+      "max": 12,
+      "step": 1,
+      "default": 3
+    },
+    {
+      "type": "range",
+      "id": "columns_desktop",
+      "label": "Desktop columns",
+      "min": 1,
+      "max": 4,
+      "step": 1,
+      "default": 3
+    },
+    {
+      "type": "header",
+      "content": "Article display"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_image",
+      "label": "Show featured image",
+      "default": true
+    },
+    {
+      "type": "checkbox",
+      "id": "show_date",
+      "label": "Show publish date",
+      "default": true
+    },
+    {
+      "type": "checkbox",
+      "id": "show_author",
+      "label": "Show author",
+      "default": false
+    },
+    {
+      "type": "checkbox",
+      "id": "show_excerpt",
+      "label": "Show excerpt",
+      "default": true
+    },
+    {
+      "type": "range",
+      "id": "excerpt_length",
+      "label": "Excerpt length (words)",
+      "min": 10,
+      "max": 50,
+      "step": 5,
+      "default": 20
+    },
+    {
+      "type": "checkbox",
+      "id": "show_tags",
+      "label": "Show tags",
+      "default": false
+    },
+    {
+      "type": "checkbox",
+      "id": "show_read_more",
+      "label": "Show read more button",
+      "default": true
+    },
+    {
+      "type": "select",
+      "id": "button_style",
+      "label": "Button style",
+      "options": [
+        {
+          "value": "primary",
+          "label": "Primary"
+        },
+        {
+          "value": "secondary",
+          "label": "Secondary"
+        },
+        {
+          "value": "outline",
+          "label": "Outline"
+        }
+      ],
+      "default": "outline"
+    },
+    {
+      "type": "text",
+      "id": "read_more_text",
+      "label": "Read more text",
+      "default": "Read more"
+    },
+    {
+      "type": "header",
+      "content": "View all"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_view_all",
+      "label": "Show 'View all' button",
+      "default": true
+    },
+    {
+      "type": "text",
+      "id": "view_all_text",
+      "label": "View all text",
+      "default": "View all articles"
+    },
+    {
+      "type": "header",
+      "content": "Colors"
+    },
+    {
+      "type": "color",
+      "id": "background_color",
+      "label": "Background color"
+    },
+    {
+      "type": "color",
+      "id": "text_color",
+      "label": "Text color"
+    }
+  ],
+  "presets": [
+    {
+      "name": "Related articles",
+      "settings": {
+        "heading": "Related articles",
+        "articles_to_show": 3,
+        "show_image": true,
+        "show_date": true,
+        "show_excerpt": true,
+        "show_read_more": true
+      }
+    }
+  ]
+}
+{% endschema %}

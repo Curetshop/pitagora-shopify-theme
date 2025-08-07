@@ -1,0 +1,651 @@
+{%- comment -%}
+Related Collections Section - Pitagora Theme
+Display collections related to the current product or page context
+{%- endcomment -%}
+
+<style>
+  #shopify-section-{{ section.id }} {
+    --related-collections-bg: {{ section.settings.background_color | default: 'transparent' }};
+    --related-collections-text: {{ section.settings.text_color | default: 'inherit' }};
+    --columns-desktop: {{ section.settings.columns_desktop | default: 3 }};
+    --columns-tablet: {{ section.settings.columns_tablet | default: 2 }};
+    --columns-mobile: {{ section.settings.columns_mobile | default: 1 }};
+  }
+</style>
+
+<div 
+  class="related-collections section-padding related-collections--{{ section.settings.layout_style }}"
+  style="background: var(--related-collections-bg); color: var(--related-collections-text);"
+>
+  <div class="page-width">
+    {%- if section.settings.heading != blank or section.settings.subheading != blank -%}
+      <div class="section-header text-center">
+        {%- if section.settings.subheading != blank -%}
+          <p class="section-header__subheading">{{ section.settings.subheading | escape }}</p>
+        {%- endif -%}
+        
+        {%- if section.settings.heading != blank -%}
+          <h2 class="section-header__heading h2">{{ section.settings.heading | escape }}</h2>
+        {%- endif -%}
+      </div>
+    {%- endif -%}
+
+    {%- liquid
+      assign collections_to_show = section.settings.collections_to_show | default: 3
+      assign related_collections = collections | where: 'id', '!=' | limit: collections_to_show
+      
+      case section.settings.collection_source
+        when 'manual'
+          assign related_collections = section.blocks
+        when 'automatic'
+          if template.name == 'product' and product.collections.size > 0
+            assign related_collections = product.collections
+          elsif template.name == 'collection' and collection.id
+            assign product_tags = collection.all_products_tags
+            assign related_collections = collections | where: 'id', '!=', collection.id
+          else
+            assign related_collections = collections.all | limit: collections_to_show
+          endif
+        when 'featured'
+          assign related_collections = collections | where: 'featured', true
+        when 'newest'
+          assign related_collections = collections | sort: 'published_at' | reverse
+        else
+          assign related_collections = collections.all
+      endcase
+    -%}
+
+    {%- if section.settings.collection_source == 'manual' and section.blocks.size > 0 -%}
+      <div class="related-collections__grid">
+        {%- for block in section.blocks limit: collections_to_show -%}
+          {%- assign collection = collections[block.settings.collection] -%}
+          {%- if collection != blank -%}
+            <div class="related-collections__item" {{ block.shopify_attributes }}>
+              <a href="{{ collection.url }}" class="related-collections__link">
+                <div class="related-collections__image">
+                  {%- if collection.featured_image -%}
+                    <img
+                      src="{{ collection.featured_image | image_url: width: 600 }}"
+                      alt="{{ collection.featured_image.alt | default: collection.title | escape }}"
+                      loading="lazy"
+                      width="{{ collection.featured_image.width }}"
+                      height="{{ collection.featured_image.height }}"
+                      sizes="(min-width: 990px) {{ 100 | divided_by: section.settings.columns_desktop }}vw, (min-width: 750px) 50vw, 100vw"
+                      srcset="
+                        {{ collection.featured_image | image_url: width: 300 }} 300w,
+                        {{ collection.featured_image | image_url: width: 400 }} 400w,
+                        {{ collection.featured_image | image_url: width: 500 }} 500w,
+                        {{ collection.featured_image | image_url: width: 600 }} 600w
+                      "
+                    >
+                  {%- else -%}
+                    <div class="related-collections__placeholder">
+                      {% render 'icon-collection' %}
+                    </div>
+                  {%- endif -%}
+                  
+                  {%- if section.settings.show_overlay -%}
+                    <div class="related-collections__overlay"></div>
+                  {%- endif -%}
+                </div>
+
+                <div class="related-collections__content">
+                  <h3 class="related-collections__title">{{ collection.title | escape }}</h3>
+                  
+                  {%- if section.settings.show_product_count -%}
+                    <div class="related-collections__count">
+                      {{ collection.products_count }} 
+                      {%- if collection.products_count == 1 -%}
+                        {{ 'collections.general.item' | t }}
+                      {%- else -%}
+                        {{ 'collections.general.items' | t }}
+                      {%- endif -%}
+                    </div>
+                  {%- endif -%}
+                  
+                  {%- if section.settings.show_description and collection.description != blank -%}
+                    <div class="related-collections__description">
+                      {{ collection.description | strip_html | truncatewords: section.settings.description_length }}
+                    </div>
+                  {%- endif -%}
+                  
+                  {%- if section.settings.show_button -%}
+                    <div class="related-collections__button">
+                      <span class="button button--{{ section.settings.button_style }}">
+                        {{ section.settings.button_text | default: 'View collection' | escape }}
+                      </span>
+                    </div>
+                  {%- endif -%}
+                </div>
+              </a>
+            </div>
+          {%- endif -%}
+        {%- endfor -%}
+      </div>
+    {%- elsif related_collections.size > 0 -%}
+      <div class="related-collections__grid">
+        {%- for collection in related_collections limit: collections_to_show -%}
+          <div class="related-collections__item">
+            <a href="{{ collection.url }}" class="related-collections__link">
+              <div class="related-collections__image">
+                {%- if collection.featured_image -%}
+                  <img
+                    src="{{ collection.featured_image | image_url: width: 600 }}"
+                    alt="{{ collection.featured_image.alt | default: collection.title | escape }}"
+                    loading="lazy"
+                    width="{{ collection.featured_image.width }}"
+                    height="{{ collection.featured_image.height }}"
+                    sizes="(min-width: 990px) {{ 100 | divided_by: section.settings.columns_desktop }}vw, (min-width: 750px) 50vw, 100vw"
+                    srcset="
+                      {{ collection.featured_image | image_url: width: 300 }} 300w,
+                      {{ collection.featured_image | image_url: width: 400 }} 400w,
+                      {{ collection.featured_image | image_url: width: 500 }} 500w,
+                      {{ collection.featured_image | image_url: width: 600 }} 600w
+                    "
+                  >
+                {%- elsif collection.products.first.featured_image -%}
+                  <img
+                    src="{{ collection.products.first.featured_image | image_url: width: 600 }}"
+                    alt="{{ collection.products.first.featured_image.alt | default: collection.title | escape }}"
+                    loading="lazy"
+                    width="{{ collection.products.first.featured_image.width }}"
+                    height="{{ collection.products.first.featured_image.height }}"
+                    sizes="(min-width: 990px) {{ 100 | divided_by: section.settings.columns_desktop }}vw, (min-width: 750px) 50vw, 100vw"
+                    srcset="
+                      {{ collection.products.first.featured_image | image_url: width: 300 }} 300w,
+                      {{ collection.products.first.featured_image | image_url: width: 400 }} 400w,
+                      {{ collection.products.first.featured_image | image_url: width: 500 }} 500w,
+                      {{ collection.products.first.featured_image | image_url: width: 600 }} 600w
+                    "
+                  >
+                {%- else -%}
+                  <div class="related-collections__placeholder">
+                    {% render 'icon-collection' %}
+                  </div>
+                {%- endif -%}
+                
+                {%- if section.settings.show_overlay -%}
+                  <div class="related-collections__overlay"></div>
+                {%- endif -%}
+              </div>
+
+              <div class="related-collections__content">
+                <h3 class="related-collections__title">{{ collection.title | escape }}</h3>
+                
+                {%- if section.settings.show_product_count -%}
+                  <div class="related-collections__count">
+                    {{ collection.products_count }} 
+                    {%- if collection.products_count == 1 -%}
+                      {{ 'collections.general.item' | t }}
+                    {%- else -%}
+                      {{ 'collections.general.items' | t }}
+                    {%- endif -%}
+                  </div>
+                {%- endif -%}
+                
+                {%- if section.settings.show_description and collection.description != blank -%}
+                  <div class="related-collections__description">
+                    {{ collection.description | strip_html | truncatewords: section.settings.description_length }}
+                  </div>
+                {%- endif -%}
+                
+                {%- if section.settings.show_button -%}
+                  <div class="related-collections__button">
+                    <span class="button button--{{ section.settings.button_style }}">
+                      {{ section.settings.button_text | default: 'View collection' | escape }}
+                    </span>
+                  </div>
+                {%- endif -%}
+              </div>
+            </a>
+          </div>
+        {%- endfor -%}
+      </div>
+    {%- else -%}
+      <div class="related-collections__empty">
+        <div class="related-collections__empty-content">
+          <h3>{{ 'collections.general.no_collections' | t }}</h3>
+          <p>{{ 'collections.general.no_collections_html' | t }}</p>
+        </div>
+      </div>
+    {%- endif -%}
+  </div>
+</div>
+
+<style>
+  .related-collections__grid {
+    display: grid;
+    grid-template-columns: repeat(var(--columns-desktop), 1fr);
+    gap: 2rem;
+    margin-top: 2rem;
+  }
+  
+  .related-collections__item {
+    position: relative;
+    border-radius: 0.5rem;
+    overflow: hidden;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+  }
+  
+  .related-collections__item:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+  }
+  
+  .related-collections__link {
+    display: block;
+    text-decoration: none;
+    color: inherit;
+    height: 100%;
+  }
+  
+  .related-collections__image {
+    position: relative;
+    aspect-ratio: 4/3;
+    overflow: hidden;
+  }
+  
+  .related-collections__image img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.3s ease;
+  }
+  
+  .related-collections__item:hover .related-collections__image img {
+    transform: scale(1.05);
+  }
+  
+  .related-collections__placeholder {
+    width: 100%;
+    height: 100%;
+    background: var(--color-background-secondary);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--color-foreground-25);
+  }
+  
+  .related-collections__placeholder svg {
+    width: 3rem;
+    height: 3rem;
+  }
+  
+  .related-collections__overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: linear-gradient(to bottom, rgba(0, 0, 0, 0) 0%, rgba(0, 0, 0, 0.4) 100%);
+    opacity: 0;
+    transition: opacity 0.3s ease;
+  }
+  
+  .related-collections__item:hover .related-collections__overlay {
+    opacity: 1;
+  }
+  
+  .related-collections__content {
+    padding: 1.5rem;
+    background: var(--color-background);
+    border: 1px solid var(--color-border);
+    border-top: none;
+  }
+  
+  .related-collections__title {
+    font-size: 1.125rem;
+    font-weight: 600;
+    margin-bottom: 0.5rem;
+    line-height: 1.4;
+  }
+  
+  .related-collections__count {
+    font-size: 0.875rem;
+    color: var(--color-foreground-75);
+    margin-bottom: 0.75rem;
+  }
+  
+  .related-collections__description {
+    font-size: 0.875rem;
+    color: var(--color-foreground-75);
+    line-height: 1.5;
+    margin-bottom: 1rem;
+  }
+  
+  .related-collections__button {
+    margin-top: auto;
+  }
+  
+  .related-collections__empty {
+    text-align: center;
+    padding: 3rem 1rem;
+    margin-top: 2rem;
+  }
+  
+  .related-collections__empty-content h3 {
+    margin-bottom: 0.5rem;
+  }
+  
+  .related-collections__empty-content p {
+    color: var(--color-foreground-75);
+  }
+  
+  /* Card Layout */
+  .related-collections--cards .related-collections__item {
+    background: var(--color-background);
+    border: 1px solid var(--color-border);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  }
+  
+  .related-collections--cards .related-collections__content {
+    border: none;
+  }
+  
+  /* Minimal Layout */
+  .related-collections--minimal .related-collections__item {
+    background: transparent;
+    border: none;
+    box-shadow: none;
+  }
+  
+  .related-collections--minimal .related-collections__item:hover {
+    transform: none;
+    box-shadow: none;
+  }
+  
+  .related-collections--minimal .related-collections__content {
+    background: transparent;
+    border: none;
+    padding: 1rem 0;
+  }
+  
+  .related-collections--minimal .related-collections__image {
+    border-radius: 0.5rem;
+    overflow: hidden;
+  }
+  
+  /* Overlay Content Layout */
+  .related-collections--overlay .related-collections__content {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background: linear-gradient(to top, rgba(0, 0, 0, 0.8) 0%, rgba(0, 0, 0, 0.4) 50%, transparent 100%);
+    color: white;
+    border: none;
+    padding: 2rem 1.5rem 1.5rem;
+  }
+  
+  .related-collections--overlay .related-collections__title {
+    color: white;
+  }
+  
+  .related-collections--overlay .related-collections__count,
+  .related-collections--overlay .related-collections__description {
+    color: rgba(255, 255, 255, 0.9);
+  }
+  
+  @media screen and (max-width: 989px) {
+    .related-collections__grid {
+      grid-template-columns: repeat(var(--columns-tablet), 1fr);
+      gap: 1.5rem;
+    }
+  }
+  
+  @media screen and (max-width: 749px) {
+    .related-collections__grid {
+      grid-template-columns: repeat(var(--columns-mobile), 1fr);
+      gap: 1rem;
+    }
+    
+    .related-collections__content {
+      padding: 1rem;
+    }
+    
+    .related-collections__title {
+      font-size: 1rem;
+    }
+    
+    .related-collections--overlay .related-collections__content {
+      padding: 1.5rem 1rem 1rem;
+    }
+  }
+</style>
+
+{% schema %}
+{
+  "name": "Related collections",
+  "class": "shopify-section-related-collections",
+  "tag": "section",
+  "settings": [
+    {
+      "type": "header",
+      "content": "Content"
+    },
+    {
+      "type": "text",
+      "id": "heading",
+      "label": "Heading",
+      "default": "Related collections"
+    },
+    {
+      "type": "text",
+      "id": "subheading",
+      "label": "Subheading"
+    },
+    {
+      "type": "header",
+      "content": "Collection source"
+    },
+    {
+      "type": "select",
+      "id": "collection_source",
+      "label": "Collection source",
+      "options": [
+        {
+          "value": "manual",
+          "label": "Manual selection"
+        },
+        {
+          "value": "automatic",
+          "label": "Automatic (based on current page)"
+        },
+        {
+          "value": "featured",
+          "label": "Featured collections"
+        },
+        {
+          "value": "newest",
+          "label": "Newest collections"
+        }
+      ],
+      "default": "manual"
+    },
+    {
+      "type": "range",
+      "id": "collections_to_show",
+      "label": "Collections to show",
+      "min": 2,
+      "max": 12,
+      "step": 1,
+      "default": 3
+    },
+    {
+      "type": "header",
+      "content": "Layout"
+    },
+    {
+      "type": "select",
+      "id": "layout_style",
+      "label": "Layout style",
+      "options": [
+        {
+          "value": "standard",
+          "label": "Standard"
+        },
+        {
+          "value": "cards",
+          "label": "Cards"
+        },
+        {
+          "value": "minimal",
+          "label": "Minimal"
+        },
+        {
+          "value": "overlay",
+          "label": "Overlay content"
+        }
+      ],
+      "default": "standard"
+    },
+    {
+      "type": "range",
+      "id": "columns_desktop",
+      "label": "Desktop columns",
+      "min": 1,
+      "max": 4,
+      "step": 1,
+      "default": 3
+    },
+    {
+      "type": "range",
+      "id": "columns_tablet",
+      "label": "Tablet columns",
+      "min": 1,
+      "max": 3,
+      "step": 1,
+      "default": 2
+    },
+    {
+      "type": "select",
+      "id": "columns_mobile",
+      "label": "Mobile columns",
+      "options": [
+        {
+          "value": "1",
+          "label": "1 column"
+        },
+        {
+          "value": "2",
+          "label": "2 columns"
+        }
+      ],
+      "default": "1"
+    },
+    {
+      "type": "header",
+      "content": "Collection display"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_overlay",
+      "label": "Show image overlay on hover",
+      "default": true
+    },
+    {
+      "type": "checkbox",
+      "id": "show_product_count",
+      "label": "Show product count",
+      "default": true
+    },
+    {
+      "type": "checkbox",
+      "id": "show_description",
+      "label": "Show description",
+      "default": true
+    },
+    {
+      "type": "range",
+      "id": "description_length",
+      "label": "Description length (words)",
+      "min": 5,
+      "max": 30,
+      "step": 5,
+      "default": 15
+    },
+    {
+      "type": "checkbox",
+      "id": "show_button",
+      "label": "Show button",
+      "default": false
+    },
+    {
+      "type": "text",
+      "id": "button_text",
+      "label": "Button text",
+      "default": "View collection"
+    },
+    {
+      "type": "select",
+      "id": "button_style",
+      "label": "Button style",
+      "options": [
+        {
+          "value": "primary",
+          "label": "Primary"
+        },
+        {
+          "value": "secondary",
+          "label": "Secondary"
+        },
+        {
+          "value": "outline",
+          "label": "Outline"
+        }
+      ],
+      "default": "outline"
+    },
+    {
+      "type": "header",
+      "content": "Colors"
+    },
+    {
+      "type": "color",
+      "id": "background_color",
+      "label": "Background color"
+    },
+    {
+      "type": "color",
+      "id": "text_color",
+      "label": "Text color"
+    }
+  ],
+  "blocks": [
+    {
+      "type": "collection",
+      "name": "Collection",
+      "settings": [
+        {
+          "type": "collection",
+          "id": "collection",
+          "label": "Collection"
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "Related collections",
+      "blocks": [
+        {
+          "type": "collection"
+        },
+        {
+          "type": "collection"
+        },
+        {
+          "type": "collection"
+        }
+      ],
+      "settings": {
+        "heading": "Related collections",
+        "collection_source": "manual",
+        "collections_to_show": 3,
+        "show_product_count": true,
+        "show_description": true
+      }
+    }
+  ]
+}
+{% endschema %}

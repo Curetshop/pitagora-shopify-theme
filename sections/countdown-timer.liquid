@@ -1,0 +1,681 @@
+{%- comment -%}
+Countdown Timer Section - Pitagora Theme
+Display customizable countdown timer for sales, launches, or events
+{%- endcomment -%}
+
+<style>
+  #shopify-section-{{ section.id }} {
+    --countdown-bg: {{ section.settings.background_color | default: 'transparent' }};
+    --countdown-text: {{ section.settings.text_color | default: 'inherit' }};
+    --countdown-accent: {{ section.settings.accent_color | default: '#ff6b6b' }};
+    --countdown-box-bg: {{ section.settings.box_background | default: '#ffffff' }};
+  }
+</style>
+
+<div 
+  class="countdown-timer section-padding countdown-timer--{{ section.settings.layout_style }}"
+  style="background: var(--countdown-bg); color: var(--countdown-text);"
+  data-section-id="{{ section.id }}"
+>
+  <div class="page-width">
+    {%- if section.settings.heading != blank or section.settings.subheading != blank -%}
+      <div class="section-header text-center">
+        {%- if section.settings.subheading != blank -%}
+          <p class="section-header__subheading">{{ section.settings.subheading | escape }}</p>
+        {%- endif -%}
+        
+        {%- if section.settings.heading != blank -%}
+          <h2 class="section-header__heading h2">{{ section.settings.heading | escape }}</h2>
+        {%- endif -%}
+      </div>
+    {%- endif -%}
+
+    <div class="countdown-timer__wrapper">
+      {%- if section.settings.message != blank -%}
+        <div class="countdown-timer__message rte">
+          {{ section.settings.message }}
+        </div>
+      {%- endif -%}
+
+      <div class="countdown-timer__display" 
+           data-end-date="{{ section.settings.end_date }}" 
+           data-end-time="{{ section.settings.end_time | default: '23:59' }}"
+           data-timezone="{{ section.settings.timezone | default: 'America/New_York' }}"
+           data-expired-message="{{ section.settings.expired_message | default: 'This offer has expired' | escape }}"
+      >
+        <div class="countdown-timer__boxes">
+          {%- if section.settings.show_days -%}
+            <div class="countdown-timer__box countdown-timer__days">
+              <div class="countdown-timer__number" data-days>00</div>
+              <div class="countdown-timer__label">{{ section.settings.days_label | default: 'Days' | escape }}</div>
+            </div>
+          {%- endif -%}
+
+          {%- if section.settings.show_hours -%}
+            <div class="countdown-timer__box countdown-timer__hours">
+              <div class="countdown-timer__number" data-hours>00</div>
+              <div class="countdown-timer__label">{{ section.settings.hours_label | default: 'Hours' | escape }}</div>
+            </div>
+          {%- endif -%}
+
+          {%- if section.settings.show_minutes -%}
+            <div class="countdown-timer__box countdown-timer__minutes">
+              <div class="countdown-timer__number" data-minutes>00</div>
+              <div class="countdown-timer__label">{{ section.settings.minutes_label | default: 'Minutes' | escape }}</div>
+            </div>
+          {%- endif -%}
+
+          {%- if section.settings.show_seconds -%}
+            <div class="countdown-timer__box countdown-timer__seconds">
+              <div class="countdown-timer__number" data-seconds>00</div>
+              <div class="countdown-timer__label">{{ section.settings.seconds_label | default: 'Seconds' | escape }}</div>
+            </div>
+          {%- endif -%}
+        </div>
+
+        <div class="countdown-timer__expired" style="display: none;">
+          <div class="countdown-timer__expired-content">
+            <h3>{{ section.settings.expired_message | default: 'This offer has expired' | escape }}</h3>
+            {%- if section.settings.expired_description != blank -%}
+              <p>{{ section.settings.expired_description | escape }}</p>
+            {%- endif -%}
+          </div>
+        </div>
+      </div>
+
+      {%- if section.settings.button_text != blank -%}
+        <div class="countdown-timer__action">
+          <a 
+            href="{{ section.settings.button_url | default: '#' }}" 
+            class="countdown-timer__button button button--{{ section.settings.button_style }} button--{{ section.settings.button_size }}"
+          >
+            {{ section.settings.button_text | escape }}
+          </a>
+        </div>
+      {%- endif -%}
+    </div>
+  </div>
+</div>
+
+<style>
+  .countdown-timer__wrapper {
+    text-align: center;
+    margin-top: 2rem;
+  }
+  
+  .countdown-timer__message {
+    margin-bottom: 2rem;
+    font-size: 1.125rem;
+    line-height: 1.6;
+  }
+  
+  .countdown-timer__boxes {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 1rem;
+    margin-bottom: 2rem;
+  }
+  
+  .countdown-timer__box {
+    background: var(--countdown-box-bg);
+    border: 2px solid var(--countdown-accent);
+    border-radius: 0.5rem;
+    padding: 1.5rem 1rem;
+    min-width: 80px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    transition: transform 0.2s ease;
+  }
+  
+  .countdown-timer__box:hover {
+    transform: translateY(-2px);
+  }
+  
+  .countdown-timer__number {
+    font-size: 2rem;
+    font-weight: 700;
+    line-height: 1;
+    color: var(--countdown-accent);
+    margin-bottom: 0.5rem;
+  }
+  
+  .countdown-timer__label {
+    font-size: 0.875rem;
+    font-weight: 500;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: var(--color-foreground-75);
+  }
+  
+  .countdown-timer__expired {
+    background: var(--color-error-background);
+    border: 1px solid var(--color-error);
+    border-radius: 0.5rem;
+    padding: 2rem;
+    color: var(--color-error);
+  }
+  
+  .countdown-timer__expired h3 {
+    margin-bottom: 0.5rem;
+    font-size: 1.25rem;
+  }
+  
+  .countdown-timer__action {
+    margin-top: 2rem;
+  }
+  
+  /* Layout Styles */
+  .countdown-timer--compact .countdown-timer__box {
+    padding: 1rem 0.75rem;
+    min-width: 60px;
+  }
+  
+  .countdown-timer--compact .countdown-timer__number {
+    font-size: 1.5rem;
+  }
+  
+  .countdown-timer--compact .countdown-timer__label {
+    font-size: 0.75rem;
+  }
+  
+  .countdown-timer--large .countdown-timer__box {
+    padding: 2rem 1.5rem;
+    min-width: 100px;
+  }
+  
+  .countdown-timer--large .countdown-timer__number {
+    font-size: 2.5rem;
+  }
+  
+  .countdown-timer--large .countdown-timer__label {
+    font-size: 1rem;
+  }
+  
+  .countdown-timer--circular .countdown-timer__box {
+    border-radius: 50%;
+    width: 100px;
+    height: 100px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    padding: 0;
+  }
+  
+  .countdown-timer--minimal .countdown-timer__box {
+    background: transparent;
+    border: none;
+    box-shadow: none;
+    padding: 1rem 0.5rem;
+  }
+  
+  .countdown-timer--minimal .countdown-timer__box:hover {
+    transform: none;
+  }
+  
+  .countdown-timer--minimal .countdown-timer__number {
+    border-bottom: 2px solid var(--countdown-accent);
+    padding-bottom: 0.5rem;
+  }
+  
+  /* Separators for minimal style */
+  .countdown-timer--minimal .countdown-timer__boxes {
+    gap: 0;
+  }
+  
+  .countdown-timer--minimal .countdown-timer__box:not(:last-child)::after {
+    content: ':';
+    position: absolute;
+    right: -0.5rem;
+    top: 50%;
+    transform: translateY(-50%);
+    font-size: 2rem;
+    font-weight: 700;
+    color: var(--countdown-accent);
+  }
+  
+  .countdown-timer--minimal .countdown-timer__box {
+    position: relative;
+    margin-right: 1rem;
+  }
+  
+  .countdown-timer--minimal .countdown-timer__box:last-child {
+    margin-right: 0;
+  }
+  
+  /* Responsive */
+  @media screen and (max-width: 749px) {
+    .countdown-timer__boxes {
+      flex-wrap: wrap;
+      gap: 0.75rem;
+    }
+    
+    .countdown-timer__box {
+      min-width: 70px;
+      padding: 1rem 0.75rem;
+    }
+    
+    .countdown-timer__number {
+      font-size: 1.5rem;
+    }
+    
+    .countdown-timer__label {
+      font-size: 0.75rem;
+    }
+    
+    .countdown-timer--large .countdown-timer__box {
+      min-width: 80px;
+      padding: 1.5rem 1rem;
+    }
+    
+    .countdown-timer--large .countdown-timer__number {
+      font-size: 2rem;
+    }
+    
+    .countdown-timer--circular .countdown-timer__box {
+      width: 80px;
+      height: 80px;
+    }
+    
+    .countdown-timer--minimal .countdown-timer__box:not(:last-child)::after {
+      font-size: 1.5rem;
+    }
+  }
+</style>
+
+<script>
+  class CountdownTimer extends HTMLElement {
+    constructor() {
+      super();
+      this.display = this.querySelector('.countdown-timer__display');
+      this.expiredElement = this.querySelector('.countdown-timer__expired');
+      this.boxesElement = this.querySelector('.countdown-timer__boxes');
+      
+      this.endDate = this.display.dataset.endDate;
+      this.endTime = this.display.dataset.endTime || '23:59';
+      this.timezone = this.display.dataset.timezone || 'America/New_York';
+      this.expiredMessage = this.display.dataset.expiredMessage;
+      
+      this.elements = {
+        days: this.querySelector('[data-days]'),
+        hours: this.querySelector('[data-hours]'),
+        minutes: this.querySelector('[data-minutes]'),
+        seconds: this.querySelector('[data-seconds]')
+      };
+      
+      this.init();
+    }
+
+    init() {
+      if (!this.endDate) {
+        console.warn('Countdown timer: No end date provided');
+        return;
+      }
+
+      this.targetDate = this.parseTargetDate();
+      
+      if (isNaN(this.targetDate)) {
+        console.warn('Countdown timer: Invalid end date format');
+        return;
+      }
+
+      this.startTimer();
+    }
+
+    parseTargetDate() {
+      // Combine date and time
+      const dateTimeString = `${this.endDate}T${this.endTime}:00`;
+      
+      // Create date object
+      // Note: In a real implementation, you might want to handle timezone conversion properly
+      return new Date(dateTimeString);
+    }
+
+    startTimer() {
+      // Update immediately
+      this.updateTimer();
+      
+      // Update every second
+      this.interval = setInterval(() => {
+        this.updateTimer();
+      }, 1000);
+    }
+
+    updateTimer() {
+      const now = new Date().getTime();
+      const distance = this.targetDate.getTime() - now;
+
+      if (distance < 0) {
+        this.showExpired();
+        return;
+      }
+
+      const timeLeft = this.calculateTimeLeft(distance);
+      this.displayTime(timeLeft);
+    }
+
+    calculateTimeLeft(distance) {
+      return {
+        days: Math.floor(distance / (1000 * 60 * 60 * 24)),
+        hours: Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60)),
+        minutes: Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60)),
+        seconds: Math.floor((distance % (1000 * 60)) / 1000)
+      };
+    }
+
+    displayTime(timeLeft) {
+      if (this.elements.days) {
+        this.elements.days.textContent = this.padNumber(timeLeft.days);
+      }
+      if (this.elements.hours) {
+        this.elements.hours.textContent = this.padNumber(timeLeft.hours);
+      }
+      if (this.elements.minutes) {
+        this.elements.minutes.textContent = this.padNumber(timeLeft.minutes);
+      }
+      if (this.elements.seconds) {
+        this.elements.seconds.textContent = this.padNumber(timeLeft.seconds);
+      }
+    }
+
+    padNumber(num) {
+      return num.toString().padStart(2, '0');
+    }
+
+    showExpired() {
+      clearInterval(this.interval);
+      
+      if (this.boxesElement) {
+        this.boxesElement.style.display = 'none';
+      }
+      
+      if (this.expiredElement) {
+        this.expiredElement.style.display = 'block';
+      }
+    }
+  }
+
+  customElements.define('countdown-timer', CountdownTimer);
+
+  // Initialize countdown timers
+  document.querySelectorAll('.countdown-timer__display').forEach(timer => {
+    const countdownTimer = document.createElement('countdown-timer');
+    timer.parentNode.replaceChild(countdownTimer, timer);
+    countdownTimer.appendChild(timer);
+  });
+</script>
+
+{% schema %}
+{
+  "name": "Countdown timer",
+  "class": "shopify-section-countdown-timer",
+  "tag": "section",
+  "settings": [
+    {
+      "type": "header",
+      "content": "Content"
+    },
+    {
+      "type": "text",
+      "id": "heading",
+      "label": "Heading",
+      "default": "Limited time offer"
+    },
+    {
+      "type": "text",
+      "id": "subheading",
+      "label": "Subheading"
+    },
+    {
+      "type": "richtext",
+      "id": "message",
+      "label": "Message",
+      "default": "<p>Don't miss out on this amazing deal!</p>"
+    },
+    {
+      "type": "header",
+      "content": "Timer settings"
+    },
+    {
+      "type": "text",
+      "id": "end_date",
+      "label": "End date",
+      "info": "Format: YYYY-MM-DD (e.g., 2024-12-25)",
+      "placeholder": "2024-12-25"
+    },
+    {
+      "type": "text",
+      "id": "end_time",
+      "label": "End time",
+      "info": "Format: HH:MM (24-hour format, e.g., 23:59)",
+      "default": "23:59",
+      "placeholder": "23:59"
+    },
+    {
+      "type": "select",
+      "id": "timezone",
+      "label": "Timezone",
+      "options": [
+        {
+          "value": "America/New_York",
+          "label": "Eastern Time (ET)"
+        },
+        {
+          "value": "America/Chicago",
+          "label": "Central Time (CT)"
+        },
+        {
+          "value": "America/Denver",
+          "label": "Mountain Time (MT)"
+        },
+        {
+          "value": "America/Los_Angeles",
+          "label": "Pacific Time (PT)"
+        },
+        {
+          "value": "UTC",
+          "label": "UTC"
+        }
+      ],
+      "default": "America/New_York"
+    },
+    {
+      "type": "header",
+      "content": "Display options"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_days",
+      "label": "Show days",
+      "default": true
+    },
+    {
+      "type": "checkbox",
+      "id": "show_hours",
+      "label": "Show hours",
+      "default": true
+    },
+    {
+      "type": "checkbox",
+      "id": "show_minutes",
+      "label": "Show minutes",
+      "default": true
+    },
+    {
+      "type": "checkbox",
+      "id": "show_seconds",
+      "label": "Show seconds",
+      "default": true
+    },
+    {
+      "type": "header",
+      "content": "Labels"
+    },
+    {
+      "type": "text",
+      "id": "days_label",
+      "label": "Days label",
+      "default": "Days"
+    },
+    {
+      "type": "text",
+      "id": "hours_label",
+      "label": "Hours label",
+      "default": "Hours"
+    },
+    {
+      "type": "text",
+      "id": "minutes_label",
+      "label": "Minutes label",
+      "default": "Minutes"
+    },
+    {
+      "type": "text",
+      "id": "seconds_label",
+      "label": "Seconds label",
+      "default": "Seconds"
+    },
+    {
+      "type": "header",
+      "content": "Layout"
+    },
+    {
+      "type": "select",
+      "id": "layout_style",
+      "label": "Layout style",
+      "options": [
+        {
+          "value": "standard",
+          "label": "Standard"
+        },
+        {
+          "value": "compact",
+          "label": "Compact"
+        },
+        {
+          "value": "large",
+          "label": "Large"
+        },
+        {
+          "value": "circular",
+          "label": "Circular"
+        },
+        {
+          "value": "minimal",
+          "label": "Minimal"
+        }
+      ],
+      "default": "standard"
+    },
+    {
+      "type": "header",
+      "content": "Button"
+    },
+    {
+      "type": "text",
+      "id": "button_text",
+      "label": "Button text"
+    },
+    {
+      "type": "url",
+      "id": "button_url",
+      "label": "Button URL"
+    },
+    {
+      "type": "select",
+      "id": "button_style",
+      "label": "Button style",
+      "options": [
+        {
+          "value": "primary",
+          "label": "Primary"
+        },
+        {
+          "value": "secondary",
+          "label": "Secondary"
+        },
+        {
+          "value": "outline",
+          "label": "Outline"
+        }
+      ],
+      "default": "primary"
+    },
+    {
+      "type": "select",
+      "id": "button_size",
+      "label": "Button size",
+      "options": [
+        {
+          "value": "small",
+          "label": "Small"
+        },
+        {
+          "value": "medium",
+          "label": "Medium"
+        },
+        {
+          "value": "large",
+          "label": "Large"
+        }
+      ],
+      "default": "large"
+    },
+    {
+      "type": "header",
+      "content": "Expired state"
+    },
+    {
+      "type": "text",
+      "id": "expired_message",
+      "label": "Expired message",
+      "default": "This offer has expired"
+    },
+    {
+      "type": "text",
+      "id": "expired_description",
+      "label": "Expired description"
+    },
+    {
+      "type": "header",
+      "content": "Colors"
+    },
+    {
+      "type": "color",
+      "id": "background_color",
+      "label": "Background color"
+    },
+    {
+      "type": "color",
+      "id": "text_color",
+      "label": "Text color"
+    },
+    {
+      "type": "color",
+      "id": "accent_color",
+      "label": "Accent color",
+      "default": "#ff6b6b"
+    },
+    {
+      "type": "color",
+      "id": "box_background",
+      "label": "Timer box background",
+      "default": "#ffffff"
+    }
+  ],
+  "presets": [
+    {
+      "name": "Countdown timer",
+      "settings": {
+        "heading": "Limited time offer",
+        "message": "<p>Don't miss out on this amazing deal!</p>",
+        "show_days": true,
+        "show_hours": true,
+        "show_minutes": true,
+        "show_seconds": true,
+        "layout_style": "standard"
+      }
+    }
+  ]
+}
+{% endschema %}

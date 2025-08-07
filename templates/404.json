@@ -15,7 +15,7 @@
         "products_to_show": 4,
         "columns_desktop": 4,
         "columns_tablet": 2,
-        "columns_mobile": 2,
+        "columns_mobile": "2",
         "show_quick_add": true,
         "show_quick_view": false,
         "show_vendor": false,
