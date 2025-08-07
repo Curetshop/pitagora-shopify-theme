@@ -1,0 +1,433 @@
+{{ 'mega-menu.css' | asset_url | stylesheet_tag }}
+
+{%- liquid
+  assign mega_menu_trigger = section.settings.mega_menu_trigger | default: 'hover'
+  assign mega_menu_style = section.settings.mega_menu_style | default: 'full-width'
+  assign color_scheme = section.settings.color_scheme
+-%}
+
+<div class="mega-menu-container color-{{ color_scheme }}" 
+     data-mega-menu-style="{{ mega_menu_style }}" 
+     data-mega-menu-trigger="{{ mega_menu_trigger }}">
+  
+  <nav class="mega-menu" role="navigation" aria-label="{{ 'sections.header.menu' | t }}">
+    <ul class="mega-menu__list" role="list">
+      
+      {%- for block in section.blocks -%}
+        {%- case block.type -%}
+          {%- when 'mega_menu_item' -%}
+            {%- liquid
+              assign menu_item = block.settings.menu_item
+              assign has_mega_panel = block.settings.enable_mega_panel
+              assign panel_layout = block.settings.panel_layout | default: 'columns'
+            -%}
+            
+            <li class="mega-menu__item {% if has_mega_panel %}has-mega-panel{% endif %}" 
+                data-block-id="{{ block.id }}"
+                {{ block.shopify_attributes }}>
+              
+              <a href="{{ menu_item.url | default: '#' }}" 
+                 class="mega-menu__link"
+                 {% if has_mega_panel %}
+                   aria-expanded="false" 
+                   aria-haspopup="true"
+                 {% endif %}>
+                
+                <span class="mega-menu__text">{{ block.settings.menu_text | default: menu_item.title }}</span>
+                
+                {%- if has_mega_panel -%}
+                  <svg class="mega-menu__icon" aria-hidden="true" focusable="false" viewBox="0 0 20 20">
+                    <path fill="currentColor" d="M10 16L4 10h12l-6 6z"/>
+                  </svg>
+                {%- endif -%}
+              </a>
+              
+              {%- if has_mega_panel -%}
+                <div class="mega-menu__panel mega-menu__panel--{{ panel_layout }}" 
+                     data-panel-layout="{{ panel_layout }}">
+                  
+                  <div class="mega-menu__panel-content">
+                    
+                    {%- case panel_layout -%}
+                      {%- when 'columns' -%}
+                        <div class="mega-menu__columns">
+                          
+                          {%- for i in (1..4) -%}
+                            {%- liquid
+                              assign column_title = 'column_' | append: i | append: '_title'
+                              assign column_links = 'column_' | append: i | append: '_links'
+                              assign title_value = block.settings[column_title]
+                              assign links_value = block.settings[column_links]
+                            -%}
+                            
+                            {%- if title_value != blank or links_value != blank -%}
+                              <div class="mega-menu__column">
+                                {%- if title_value != blank -%}
+                                  <h3 class="mega-menu__column-title">{{ title_value }}</h3>
+                                {%- endif -%}
+                                
+                                {%- if links_value != blank -%}
+                                  <ul class="mega-menu__column-links">
+                                    {%- for link in linklists[links_value].links -%}
+                                      <li class="mega-menu__column-link-item">
+                                        <a href="{{ link.url }}" class="mega-menu__column-link">
+                                          {{ link.title }}
+                                        </a>
+                                      </li>
+                                    {%- endfor -%}
+                                  </ul>
+                                {%- endif -%}
+                              </div>
+                            {%- endif -%}
+                          {%- endfor -%}
+                          
+                        </div>
+                        
+                      {%- when 'featured' -%}
+                        <div class="mega-menu__featured">
+                          
+                          <div class="mega-menu__featured-content">
+                            {%- if block.settings.featured_title != blank -%}
+                              <h3 class="mega-menu__featured-title">{{ block.settings.featured_title }}</h3>
+                            {%- endif -%}
+                            
+                            {%- if block.settings.featured_text != blank -%}
+                              <div class="mega-menu__featured-text">{{ block.settings.featured_text }}</div>
+                            {%- endif -%}
+                            
+                            {%- if block.settings.featured_button_text != blank and block.settings.featured_button_url != blank -%}
+                              <a href="{{ block.settings.featured_button_url }}" class="mega-menu__featured-button button button--primary">
+                                {{ block.settings.featured_button_text }}
+                              </a>
+                            {%- endif -%}
+                          </div>
+                          
+                          {%- if block.settings.featured_image != blank -%}
+                            <div class="mega-menu__featured-image">
+                              {%- assign image_sizes = '300x300' -%}
+                              {{ block.settings.featured_image | image_url: width: 300 | image_tag: 
+                                loading: 'lazy',
+                                sizes: image_sizes,
+                                widths: '150, 300, 450, 600'
+                              }}
+                            </div>
+                          {%- endif -%}
+                          
+                        </div>
+                        
+                      {%- when 'products' -%}
+                        <div class="mega-menu__products">
+                          
+                          {%- liquid
+                            assign featured_collection = collections[block.settings.featured_collection]
+                            assign products_count = block.settings.products_count | default: 4
+                          -%}
+                          
+                          {%- if featured_collection != blank -%}
+                            <div class="mega-menu__products-grid">
+                              {%- for product in featured_collection.products limit: products_count -%}
+                                <div class="mega-menu__product-card">
+                                  <a href="{{ product.url }}" class="mega-menu__product-link">
+                                    
+                                    {%- if product.featured_image != blank -%}
+                                      <div class="mega-menu__product-image">
+                                        {{ product.featured_image | image_url: width: 200 | image_tag: 
+                                          loading: 'lazy',
+                                          sizes: '200px',
+                                          widths: '100, 200, 300'
+                                        }}
+                                      </div>
+                                    {%- endif -%}
+                                    
+                                    <div class="mega-menu__product-info">
+                                      <h4 class="mega-menu__product-title">{{ product.title }}</h4>
+                                      <div class="mega-menu__product-price">
+                                        {{ product.price | money }}
+                                      </div>
+                                    </div>
+                                    
+                                  </a>
+                                </div>
+                              {%- endfor -%}
+                            </div>
+                          {%- endif -%}
+                          
+                        </div>
+                    {%- endcase -%}
+                    
+                  </div>
+                  
+                  {%- comment -%} Panel Background Image {%- endcomment -%}
+                  {%- if block.settings.panel_background_image != blank -%}
+                    <div class="mega-menu__panel-bg">
+                      {{ block.settings.panel_background_image | image_url: width: 1200 | image_tag: 
+                        loading: 'lazy',
+                        sizes: '1200px',
+                        class: 'mega-menu__panel-bg-image'
+                      }}
+                    </div>
+                  {%- endif -%}
+                  
+                </div>
+              {%- endif -%}
+              
+            </li>
+            
+        {%- endcase -%}
+      {%- endfor -%}
+      
+    </ul>
+  </nav>
+  
+</div>
+
+<script src="{{ 'mega-menu.js' | asset_url }}" defer></script>
+
+{% schema %}
+{
+  "name": "Mega Menu",
+  "tag": "section",
+  "class": "section-mega-menu",
+  "settings": [
+    {
+      "type": "select",
+      "id": "mega_menu_style",
+      "label": "Menu style",
+      "options": [
+        {
+          "value": "full-width",
+          "label": "Full width"
+        },
+        {
+          "value": "contained",
+          "label": "Contained"
+        }
+      ],
+      "default": "full-width"
+    },
+    {
+      "type": "select",
+      "id": "mega_menu_trigger",
+      "label": "Menu trigger",
+      "options": [
+        {
+          "value": "hover",
+          "label": "Hover"
+        },
+        {
+          "value": "click",
+          "label": "Click"
+        }
+      ],
+      "default": "hover"
+    },
+    {
+      "type": "color_scheme",
+      "id": "color_scheme",
+      "label": "Color scheme",
+      "default": "background-1"
+    },
+    {
+      "type": "header",
+      "content": "Spacing"
+    },
+    {
+      "type": "range",
+      "id": "padding_top",
+      "min": 0,
+      "max": 100,
+      "step": 4,
+      "unit": "px",
+      "label": "Top padding",
+      "default": 0
+    },
+    {
+      "type": "range",
+      "id": "padding_bottom",
+      "min": 0,
+      "max": 100,
+      "step": 4,
+      "unit": "px",
+      "label": "Bottom padding",
+      "default": 0
+    }
+  ],
+  "blocks": [
+    {
+      "type": "mega_menu_item",
+      "name": "Mega menu item",
+      "settings": [
+        {
+          "type": "text",
+          "id": "menu_text",
+          "label": "Menu text"
+        },
+        {
+          "type": "url",
+          "id": "menu_url",
+          "label": "Menu URL"
+        },
+        {
+          "type": "checkbox",
+          "id": "enable_mega_panel",
+          "label": "Enable mega panel",
+          "default": false
+        },
+        {
+          "type": "select",
+          "id": "panel_layout",
+          "label": "Panel layout",
+          "options": [
+            {
+              "value": "columns",
+              "label": "Columns"
+            },
+            {
+              "value": "featured",
+              "label": "Featured content"
+            },
+            {
+              "value": "products",
+              "label": "Featured products"
+            }
+          ],
+          "default": "columns"
+        },
+        {
+          "type": "header",
+          "content": "Column Layout Settings"
+        },
+        {
+          "type": "text",
+          "id": "column_1_title",
+          "label": "Column 1 title"
+        },
+        {
+          "type": "link_list",
+          "id": "column_1_links",
+          "label": "Column 1 menu"
+        },
+        {
+          "type": "text",
+          "id": "column_2_title",
+          "label": "Column 2 title"
+        },
+        {
+          "type": "link_list",
+          "id": "column_2_links",
+          "label": "Column 2 menu"
+        },
+        {
+          "type": "text",
+          "id": "column_3_title",
+          "label": "Column 3 title"
+        },
+        {
+          "type": "link_list",
+          "id": "column_3_links",
+          "label": "Column 3 menu"
+        },
+        {
+          "type": "text",
+          "id": "column_4_title",
+          "label": "Column 4 title"
+        },
+        {
+          "type": "link_list",
+          "id": "column_4_links",
+          "label": "Column 4 menu"
+        },
+        {
+          "type": "header",
+          "content": "Featured Content Settings"
+        },
+        {
+          "type": "text",
+          "id": "featured_title",
+          "label": "Featured title"
+        },
+        {
+          "type": "richtext",
+          "id": "featured_text",
+          "label": "Featured text"
+        },
+        {
+          "type": "image_picker",
+          "id": "featured_image",
+          "label": "Featured image"
+        },
+        {
+          "type": "text",
+          "id": "featured_button_text",
+          "label": "Featured button text"
+        },
+        {
+          "type": "url",
+          "id": "featured_button_url",
+          "label": "Featured button URL"
+        },
+        {
+          "type": "header",
+          "content": "Products Layout Settings"
+        },
+        {
+          "type": "collection",
+          "id": "featured_collection",
+          "label": "Featured collection"
+        },
+        {
+          "type": "range",
+          "id": "products_count",
+          "min": 2,
+          "max": 8,
+          "step": 1,
+          "label": "Products to show",
+          "default": 4
+        },
+        {
+          "type": "header",
+          "content": "Panel Styling"
+        },
+        {
+          "type": "image_picker",
+          "id": "panel_background_image",
+          "label": "Panel background image"
+        }
+      ]
+    }
+  ],
+  "max_blocks": 8,
+  "presets": [
+    {
+      "name": "Mega Menu",
+      "blocks": [
+        {
+          "type": "mega_menu_item",
+          "settings": {
+            "menu_text": "Shop",
+            "enable_mega_panel": true,
+            "panel_layout": "columns",
+            "column_1_title": "Categories",
+            "column_2_title": "Brands",
+            "column_3_title": "New Arrivals"
+          }
+        },
+        {
+          "type": "mega_menu_item",
+          "settings": {
+            "menu_text": "About",
+            "menu_url": "/pages/about"
+          }
+        },
+        {
+          "type": "mega_menu_item",
+          "settings": {
+            "menu_text": "Contact",
+            "menu_url": "/pages/contact"
+          }
+        }
+      ]
+    }
+  ]
+}
+{% endschema %}

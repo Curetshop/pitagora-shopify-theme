@@ -1,0 +1,552 @@
+{{ 'video-hero.css' | asset_url | stylesheet_tag }}
+
+{%- liquid
+  assign desktop_height = section.settings.desktop_height | default: '100vh'
+  assign mobile_height = section.settings.mobile_height | default: '75vh'
+  assign video_url = section.settings.video_url
+  assign poster_image = section.settings.poster_image
+  assign autoplay = section.settings.autoplay
+  assign muted = section.settings.muted
+  assign loop = section.settings.loop
+  assign color_scheme = section.settings.color_scheme
+-%}
+
+<div class="video-hero color-{{ color_scheme }}" 
+     style="--video-hero-height-desktop: {{ desktop_height }}; --video-hero-height-mobile: {{ mobile_height }};"
+     data-section-id="{{ section.id }}">
+  
+  {%- comment -%} Video Background {%- endcomment -%}
+  <div class="video-hero__media" 
+       data-video-autoplay="{{ autoplay }}"
+       data-video-muted="{{ muted }}"
+       data-video-loop="{{ loop }}">
+    
+    {%- if video_url != blank -%}
+      
+      {%- comment -%} YouTube/Vimeo Video {%- endcomment -%}
+      {%- if video_url contains 'youtube.com' or video_url contains 'youtu.be' or video_url contains 'vimeo.com' -%}
+        
+        <div class="video-hero__iframe-container" id="video-{{ section.id }}">
+          <div class="video-hero__poster-overlay" 
+               {% if poster_image %}style="background-image: url('{{ poster_image | image_url: width: 1920 }}');"{% endif %}>
+            
+            <button class="video-hero__play-button" 
+                    aria-label="{{ 'sections.video.play' | t }}"
+                    data-video-play>
+              <svg class="video-hero__play-icon" viewBox="0 0 24 24" aria-hidden="true">
+                <path fill="currentColor" d="M8 5v14l11-7z"/>
+              </svg>
+            </button>
+            
+          </div>
+        </div>
+        
+      {%- else -%}
+        
+        {%- comment -%} Direct Video File {%- endcomment -%}
+        <video class="video-hero__video"
+               {% if poster_image %}poster="{{ poster_image | image_url: width: 1920 }}"{% endif %}
+               {% if autoplay %}autoplay{% endif %}
+               {% if muted %}muted{% endif %}
+               {% if loop %}loop{% endif %}
+               playsinline
+               preload="metadata">
+          <source src="{{ video_url }}" type="video/mp4">
+          <p>{{ 'sections.video.video_not_supported' | t }}</p>
+        </video>
+        
+        {%- if not autoplay -%}
+          <button class="video-hero__play-button" 
+                  aria-label="{{ 'sections.video.play' | t }}"
+                  data-video-play>
+            <svg class="video-hero__play-icon" viewBox="0 0 24 24" aria-hidden="true">
+              <path fill="currentColor" d="M8 5v14l11-7z"/>
+            </svg>
+          </button>
+        {%- endif -%}
+        
+      {%- endif -%}
+      
+    {%- elsif poster_image != blank -%}
+      
+      {%- comment -%} Fallback Image {%- endcomment -%}
+      <div class="video-hero__fallback-image">
+        {{ poster_image | image_url: width: 1920 | image_tag: 
+          loading: 'eager',
+          sizes: '100vw',
+          widths: '375, 550, 750, 1100, 1500, 1780, 2000, 3000, 3840'
+        }}
+      </div>
+      
+    {%- endif -%}
+    
+    {%- comment -%} Overlay {%- endcomment -%}
+    <div class="video-hero__overlay" style="opacity: {{ section.settings.overlay_opacity | default: 50 | divided_by: 100.0 }}; background: {{ section.settings.overlay_color | default: '#000000' }};"></div>
+    
+  </div>
+  
+  {%- comment -%} Content {%- endcomment -%}
+  <div class="video-hero__content-wrapper">
+    <div class="video-hero__content" 
+         data-content-position="{{ section.settings.content_position | default: 'center' }}"
+         data-content-alignment="{{ section.settings.content_alignment | default: 'center' }}">
+      
+      {%- for block in section.blocks -%}
+        <div class="video-hero__block video-hero__block--{{ block.type }}" 
+             data-block-id="{{ block.id }}"
+             {{ block.shopify_attributes }}>
+          
+          {%- case block.type -%}
+            
+            {%- when 'heading' -%}
+              {%- if block.settings.heading != blank -%}
+                <h{{ block.settings.heading_size | default: 1 }} class="video-hero__heading">
+                  {{ block.settings.heading }}
+                </h{{ block.settings.heading_size | default: 1 }}>
+              {%- endif -%}
+              
+            {%- when 'subheading' -%}
+              {%- if block.settings.subheading != blank -%}
+                <p class="video-hero__subheading">
+                  {{ block.settings.subheading }}
+                </p>
+              {%- endif -%}
+              
+            {%- when 'text' -%}
+              {%- if block.settings.text != blank -%}
+                <div class="video-hero__text rte">
+                  {{ block.settings.text }}
+                </div>
+              {%- endif -%}
+              
+            {%- when 'button' -%}
+              {%- if block.settings.button_text != blank -%}
+                <div class="video-hero__button-wrapper">
+                  
+                  {%- if block.settings.button_link != blank -%}
+                    <a href="{{ block.settings.button_link }}" 
+                       class="video-hero__button button {% if block.settings.button_style_secondary %}button--secondary{% else %}button--primary{% endif %}">
+                  {%- else -%}
+                    <button class="video-hero__button button {% if block.settings.button_style_secondary %}button--secondary{% else %}button--primary{% endif %}" 
+                            disabled>
+                  {%- endif -%}
+                  
+                  {{ block.settings.button_text }}
+                  
+                  {%- if block.settings.button_link != blank -%}
+                    </a>
+                  {%- else -%}
+                    </button>
+                  {%- endif -%}
+                  
+                </div>
+              {%- endif -%}
+              
+            {%- when 'countdown' -%}
+              {%- if block.settings.countdown_end_date != blank -%}
+                <div class="video-hero__countdown">
+                  <countdown-timer 
+                    class="countdown-timer"
+                    data-end-date="{{ block.settings.countdown_end_date | date: '%Y-%m-%dT%H:%M:%S' }}"
+                    data-hide-on-complete="{{ block.settings.hide_on_complete }}">
+                    
+                    <div class="countdown-timer__container">
+                      <div class="countdown-timer__item">
+                        <span class="countdown-timer__number" data-days>00</span>
+                        <span class="countdown-timer__label">{{ 'sections.countdown.days' | t }}</span>
+                      </div>
+                      <div class="countdown-timer__item">
+                        <span class="countdown-timer__number" data-hours>00</span>
+                        <span class="countdown-timer__label">{{ 'sections.countdown.hours' | t }}</span>
+                      </div>
+                      <div class="countdown-timer__item">
+                        <span class="countdown-timer__number" data-minutes>00</span>
+                        <span class="countdown-timer__label">{{ 'sections.countdown.minutes' | t }}</span>
+                      </div>
+                      <div class="countdown-timer__item">
+                        <span class="countdown-timer__number" data-seconds>00</span>
+                        <span class="countdown-timer__label">{{ 'sections.countdown.seconds' | t }}</span>
+                      </div>
+                    </div>
+                    
+                  </countdown-timer>
+                </div>
+              {%- endif -%}
+              
+          {%- endcase -%}
+          
+        </div>
+      {%- endfor -%}
+      
+    </div>
+  </div>
+  
+  {%- comment -%} Controls {%- endcomment -%}
+  {%- if video_url != blank and section.settings.show_controls -%}
+    <div class="video-hero__controls">
+      
+      <button class="video-hero__control video-hero__control--play-pause" 
+              aria-label="{{ 'sections.video.play_pause' | t }}"
+              data-video-toggle>
+        <svg class="video-hero__control-icon video-hero__control-icon--play" viewBox="0 0 24 24" aria-hidden="true">
+          <path fill="currentColor" d="M8 5v14l11-7z"/>
+        </svg>
+        <svg class="video-hero__control-icon video-hero__control-icon--pause" viewBox="0 0 24 24" aria-hidden="true">
+          <path fill="currentColor" d="M6 19h4V5H6v14zm8-14v14h4V5h-4z"/>
+        </svg>
+      </button>
+      
+      <button class="video-hero__control video-hero__control--mute" 
+              aria-label="{{ 'sections.video.mute_unmute' | t }}"
+              data-video-mute>
+        <svg class="video-hero__control-icon video-hero__control-icon--sound-on" viewBox="0 0 24 24" aria-hidden="true">
+          <path fill="currentColor" d="M3 9v6h4l5 5V4L7 9H3zm13.5 3A4.5 4.5 0 0 0 14 7.97v8.05c1.48-.73 2.5-2.25 2.5-4.02z"/>
+        </svg>
+        <svg class="video-hero__control-icon video-hero__control-icon--sound-off" viewBox="0 0 24 24" aria-hidden="true">
+          <path fill="currentColor" d="M16.5 12A4.5 4.5 0 0 0 14 7.97v2.21l2.45 2.45c.03-.2.05-.41.05-.63zm2.5 0c0 .94-.2 1.82-.54 2.64l1.51 1.51A8.796 8.796 0 0 0 21 12c0-4.28-2.99-7.86-7-8.77v2.06c2.89.86 5 3.54 5 6.71zM4.27 3L3 4.27 7.73 9H3v6h4l5 5v-6.73l4.25 4.25c-.67.52-1.42.93-2.25 1.18v2.06a8.99 8.99 0 0 0 3.69-1.81L19.73 21 21 19.73l-9-9L4.27 3zM12 4L9.91 6.09 12 8.18V4z"/>
+        </svg>
+      </button>
+      
+    </div>
+  {%- endif -%}
+  
+  {%- comment -%} Scroll Indicator {%- endcomment -%}
+  {%- if section.settings.show_scroll_indicator -%}
+    <div class="video-hero__scroll-indicator">
+      <div class="video-hero__scroll-text">{{ 'sections.video_hero.scroll_down' | t }}</div>
+      <div class="video-hero__scroll-arrow">
+        <svg viewBox="0 0 24 24" aria-hidden="true">
+          <path fill="currentColor" d="M7.41 8.59L12 13.17l4.59-4.58L18 10l-6 6-6-6 1.41-1.41z"/>
+        </svg>
+      </div>
+    </div>
+  {%- endif -%}
+  
+</div>
+
+<script src="{{ 'video-hero.js' | asset_url }}" defer></script>
+
+{% schema %}
+{
+  "name": "Video Hero",
+  "tag": "section",
+  "class": "section-video-hero",
+  "settings": [
+    {
+      "type": "header",
+      "content": "Video Settings"
+    },
+    {
+      "type": "url",
+      "id": "video_url",
+      "label": "Video URL",
+      "info": "Supports YouTube, Vimeo, or direct video file URLs (.mp4, .mov, .avi)"
+    },
+    {
+      "type": "image_picker",
+      "id": "poster_image",
+      "label": "Poster image",
+      "info": "Used as video thumbnail and fallback image"
+    },
+    {
+      "type": "checkbox",
+      "id": "autoplay",
+      "label": "Autoplay video",
+      "default": true,
+      "info": "Video will be muted if autoplay is enabled"
+    },
+    {
+      "type": "checkbox",
+      "id": "muted",
+      "label": "Mute video",
+      "default": true
+    },
+    {
+      "type": "checkbox",
+      "id": "loop",
+      "label": "Loop video",
+      "default": true
+    },
+    {
+      "type": "checkbox",
+      "id": "show_controls",
+      "label": "Show video controls",
+      "default": true
+    },
+    {
+      "type": "header",
+      "content": "Layout"
+    },
+    {
+      "type": "select",
+      "id": "desktop_height",
+      "label": "Desktop height",
+      "options": [
+        {
+          "value": "50vh",
+          "label": "50% of screen"
+        },
+        {
+          "value": "75vh",
+          "label": "75% of screen"
+        },
+        {
+          "value": "100vh",
+          "label": "Full screen"
+        },
+        {
+          "value": "120vh",
+          "label": "120% of screen"
+        }
+      ],
+      "default": "100vh"
+    },
+    {
+      "type": "select",
+      "id": "mobile_height",
+      "label": "Mobile height",
+      "options": [
+        {
+          "value": "50vh",
+          "label": "50% of screen"
+        },
+        {
+          "value": "75vh",
+          "label": "75% of screen"
+        },
+        {
+          "value": "100vh",
+          "label": "Full screen"
+        }
+      ],
+      "default": "75vh"
+    },
+    {
+      "type": "select",
+      "id": "content_position",
+      "label": "Content position",
+      "options": [
+        {
+          "value": "top-left",
+          "label": "Top left"
+        },
+        {
+          "value": "top-center",
+          "label": "Top center"
+        },
+        {
+          "value": "top-right",
+          "label": "Top right"
+        },
+        {
+          "value": "center-left",
+          "label": "Middle left"
+        },
+        {
+          "value": "center",
+          "label": "Middle center"
+        },
+        {
+          "value": "center-right",
+          "label": "Middle right"
+        },
+        {
+          "value": "bottom-left",
+          "label": "Bottom left"
+        },
+        {
+          "value": "bottom-center",
+          "label": "Bottom center"
+        },
+        {
+          "value": "bottom-right",
+          "label": "Bottom right"
+        }
+      ],
+      "default": "center"
+    },
+    {
+      "type": "select",
+      "id": "content_alignment",
+      "label": "Content alignment",
+      "options": [
+        {
+          "value": "left",
+          "label": "Left"
+        },
+        {
+          "value": "center",
+          "label": "Center"
+        },
+        {
+          "value": "right",
+          "label": "Right"
+        }
+      ],
+      "default": "center"
+    },
+    {
+      "type": "header",
+      "content": "Overlay"
+    },
+    {
+      "type": "color",
+      "id": "overlay_color",
+      "label": "Overlay color",
+      "default": "#000000"
+    },
+    {
+      "type": "range",
+      "id": "overlay_opacity",
+      "min": 0,
+      "max": 100,
+      "step": 5,
+      "unit": "%",
+      "label": "Overlay opacity",
+      "default": 30
+    },
+    {
+      "type": "color_scheme",
+      "id": "color_scheme",
+      "label": "Color scheme",
+      "default": "background-1"
+    },
+    {
+      "type": "header",
+      "content": "Additional Features"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_scroll_indicator",
+      "label": "Show scroll indicator",
+      "default": true
+    }
+  ],
+  "blocks": [
+    {
+      "type": "heading",
+      "name": "Heading",
+      "settings": [
+        {
+          "type": "text",
+          "id": "heading",
+          "label": "Heading",
+          "default": "Video Hero Heading"
+        },
+        {
+          "type": "select",
+          "id": "heading_size",
+          "label": "Heading size",
+          "options": [
+            {
+              "value": "1",
+              "label": "Large"
+            },
+            {
+              "value": "2",
+              "label": "Medium"
+            },
+            {
+              "value": "3",
+              "label": "Small"
+            }
+          ],
+          "default": "1"
+        }
+      ]
+    },
+    {
+      "type": "subheading",
+      "name": "Subheading",
+      "settings": [
+        {
+          "type": "text",
+          "id": "subheading",
+          "label": "Subheading",
+          "default": "Captivating video content that tells your story"
+        }
+      ]
+    },
+    {
+      "type": "text",
+      "name": "Text",
+      "settings": [
+        {
+          "type": "richtext",
+          "id": "text",
+          "label": "Text",
+          "default": "<p>Add compelling text to complement your video content.</p>"
+        }
+      ]
+    },
+    {
+      "type": "button",
+      "name": "Button",
+      "settings": [
+        {
+          "type": "text",
+          "id": "button_text",
+          "label": "Button text",
+          "default": "Shop Now"
+        },
+        {
+          "type": "url",
+          "id": "button_link",
+          "label": "Button link"
+        },
+        {
+          "type": "checkbox",
+          "id": "button_style_secondary",
+          "label": "Use secondary button style",
+          "default": false
+        }
+      ]
+    },
+    {
+      "type": "countdown",
+      "name": "Countdown Timer",
+      "settings": [
+        {
+          "type": "text",
+          "id": "countdown_end_date",
+          "label": "End date",
+          "info": "Format: YYYY-MM-DD HH:MM (e.g., 2024-12-31 23:59)"
+        },
+        {
+          "type": "checkbox",
+          "id": "hide_on_complete",
+          "label": "Hide when countdown completes",
+          "default": false
+        }
+      ]
+    }
+  ],
+  "max_blocks": 10,
+  "presets": [
+    {
+      "name": "Video Hero",
+      "blocks": [
+        {
+          "type": "heading",
+          "settings": {
+            "heading": "Experience Our Story"
+          }
+        },
+        {
+          "type": "subheading",
+          "settings": {
+            "subheading": "Discover what makes us unique"
+          }
+        },
+        {
+          "type": "button",
+          "settings": {
+            "button_text": "Watch Now",
+            "button_style_secondary": false
+          }
+        }
+      ]
+    }
+  ]
+}
+{% endschema %}
