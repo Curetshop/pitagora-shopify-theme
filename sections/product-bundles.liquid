@@ -1,0 +1,353 @@
+{{ 'product-bundles.css' | asset_url | stylesheet_tag }}
+
+{%- liquid
+  assign bundle_title = section.settings.bundle_title
+  assign bundle_description = section.settings.bundle_description
+  assign bundle_discount_type = section.settings.bundle_discount_type
+  assign bundle_discount_value = section.settings.bundle_discount_value
+  assign show_individual_prices = section.settings.show_individual_prices
+  assign color_scheme = section.settings.color_scheme
+-%}
+
+<div class="product-bundles color-{{ color_scheme }}" 
+     data-section-id="{{ section.id }}"
+     data-bundle-discount-type="{{ bundle_discount_type }}"
+     data-bundle-discount-value="{{ bundle_discount_value }}">
+  
+  {%- comment -%} Bundle Header {%- endcomment -%}
+  <div class="product-bundles__header">
+    <div class="page-width">
+      <h2 class="product-bundles__title">
+        {{ bundle_title | default: 'Frequently Bought Together' }}
+      </h2>
+      {%- if bundle_description != blank -%}
+        <p class="product-bundles__description">{{ bundle_description }}</p>
+      {%- endif -%}
+    </div>
+  </div>
+
+  {%- comment -%} Bundle Container {%- endcomment -%}
+  <div class="product-bundles__container page-width">
+    
+    {%- if section.blocks.size > 0 -%}
+      <div class="product-bundles__content" data-bundle-container>
+        
+        {%- comment -%} Products List {%- endcomment -%}
+        <div class="product-bundles__products" data-bundle-products>
+          {%- assign total_original_price = 0 -%}
+          {%- assign total_products = 0 -%}
+          
+          {%- for block in section.blocks -%}
+            {%- case block.type -%}
+              {%- when 'product' -%}
+                {%- assign product = all_products[block.settings.product] -%}
+                {%- if product != blank -%}
+                  {%- assign total_original_price = total_original_price | plus: product.price -%}
+                  {%- assign total_products = total_products | plus: 1 -%}
+                  
+                  {%- render 'product-bundle-item', 
+                      product: product, 
+                      block: block,
+                      bundle_index: forloop.index -%}
+                  
+                  {%- unless forloop.last -%}
+                    <div class="product-bundles__plus">
+                      <svg class="product-bundles__plus-icon" viewBox="0 0 24 24" aria-hidden="true">
+                        <path fill="currentColor" d="M19,13H13V19H11V13H5V11H11V5H13V11H19V13Z"/>
+                      </svg>
+                    </div>
+                  {%- endunless -%}
+                {%- endif -%}
+            {%- endcase -%}
+          {%- endfor -%}
+        </div>
+
+        {%- comment -%} Bundle Summary {%- endcomment -%}
+        {%- if total_products > 1 -%}
+          <div class="product-bundles__summary" data-bundle-summary>
+            
+            {%- comment -%} Price Breakdown {%- endcomment -%}
+            <div class="product-bundles__pricing">
+              
+              {%- if show_individual_prices -%}
+                <div class="product-bundles__individual-total">
+                  <span class="product-bundles__label">{{ 'bundles.individual_total' | t }}:</span>
+                  <span class="product-bundles__original-price" data-original-price>
+                    {{ total_original_price | money }}
+                  </span>
+                </div>
+              {%- endif -%}
+              
+              <div class="product-bundles__bundle-total">
+                <span class="product-bundles__label">{{ 'bundles.bundle_price' | t }}:</span>
+                <div class="product-bundles__total-wrapper">
+                  <span class="product-bundles__bundle-price" data-bundle-price>
+                    {%- liquid
+                      if bundle_discount_type == 'percentage'
+                        assign bundle_price = total_original_price | times: 100 | minus: bundle_discount_value | divided_by: 100.0 | floor
+                      elsif bundle_discount_type == 'fixed'
+                        assign bundle_price = total_original_price | minus: bundle_discount_value
+                      else
+                        assign bundle_price = total_original_price
+                      endif
+                      
+                      if bundle_price < 0
+                        assign bundle_price = 0
+                      endif
+                    -%}
+                    {{ bundle_price | money }}
+                  </span>
+                  
+                  {%- if bundle_discount_value > 0 -%}
+                    <div class="product-bundles__savings">
+                      {%- liquid
+                        assign savings = total_original_price | minus: bundle_price
+                        assign savings_percentage = savings | times: 100.0 | divided_by: total_original_price | round
+                      -%}
+                      <span class="product-bundles__savings-text">
+                        {{ 'bundles.save' | t }} {{ savings | money }}
+                        ({{ savings_percentage }}%)
+                      </span>
+                    </div>
+                  {%- endif -%}
+                </div>
+              </div>
+            </div>
+
+            {%- comment -%} Bundle Actions {%- endcomment -%}
+            <div class="product-bundles__actions">
+              
+              {%- comment -%} Select All Checkbox {%- endcomment -%}
+              <div class="product-bundles__select-all">
+                <label class="product-bundles__checkbox-wrapper">
+                  <input type="checkbox" 
+                         class="product-bundles__checkbox" 
+                         data-select-all
+                         checked>
+                  <span class="product-bundles__checkmark"></span>
+                  <span class="product-bundles__checkbox-label">
+                    {{ 'bundles.select_all' | t }} ({{ total_products }} {{ 'bundles.items' | t }})
+                  </span>
+                </label>
+              </div>
+              
+              {%- comment -%} Add Bundle to Cart {%- endcomment -%}
+              <form class="product-bundles__form" data-bundle-form>
+                <button type="submit" 
+                        class="product-bundles__add-button button button--primary"
+                        data-add-bundle>
+                  <span class="product-bundles__add-text">
+                    {{ 'bundles.add_selected_to_cart' | t }}
+                  </span>
+                  <div class="product-bundles__add-loading" style="display: none;">
+                    <div class="product-bundles__spinner"></div>
+                  </div>
+                </button>
+              </form>
+              
+            </div>
+          </div>
+        {%- endif -%}
+        
+      </div>
+    {%- else -%}
+      
+      {%- comment -%} Empty State {%- endcomment -%}
+      <div class="product-bundles__empty">
+        <div class="product-bundles__empty-icon">
+          <svg viewBox="0 0 24 24" aria-hidden="true">
+            <path fill="currentColor" d="M7,4V2C7,1.45 7.45,1 8,1H16C16.55,1 17,1.45 17,2V4H20V6H19V19C19,20.1 18.1,21 17,21H7C5.9,21 5,20.1 5,19V6H4V4H7M9,3V4H15V3H9M7,6V19H17V6H7Z"/>
+          </svg>
+        </div>
+        <h3 class="product-bundles__empty-title">{{ 'bundles.no_products' | t }}</h3>
+        <p class="product-bundles__empty-text">{{ 'bundles.add_products_message' | t }}</p>
+      </div>
+      
+    {%- endif -%}
+  </div>
+
+  {%- comment -%} Bundle Recommendation Modal {%- endcomment -%}
+  <bundle-modal class="product-bundles__modal" data-bundle-modal style="display: none;">
+    <div class="product-bundles__modal-overlay" data-modal-overlay>
+      <div class="product-bundles__modal-content" data-modal-content>
+        
+        <button class="product-bundles__modal-close" 
+                data-modal-close
+                aria-label="{{ 'accessibility.close' | t }}">
+          <svg class="icon icon--close" viewBox="0 0 24 24" aria-hidden="true">
+            <path fill="currentColor" d="M19,6.41L17.59,5L12,10.59L6.41,5L5,6.41L10.59,12L5,17.59L6.41,19L12,13.41L17.59,19L19,17.59L13.41,12L19,6.41Z"/>
+          </svg>
+        </button>
+
+        <div class="product-bundles__modal-header">
+          <h3 class="product-bundles__modal-title">{{ 'bundles.recommended_bundles' | t }}</h3>
+          <p class="product-bundles__modal-subtitle">{{ 'bundles.recommended_description' | t }}</p>
+        </div>
+
+        <div class="product-bundles__modal-body" data-modal-body>
+          {%- comment -%} Dynamic bundle recommendations will be loaded here {%- endcomment -%}
+        </div>
+      </div>
+    </div>
+  </bundle-modal>
+
+</div>
+
+{%- comment -%} Bundle Recommendation Template {%- endcomment -%}
+<template data-bundle-recommendation-template>
+  <div class="product-bundles__recommendation" data-bundle-id="">
+    <div class="product-bundles__rec-products">
+      {%- comment -%} Product images will be inserted here {%- endcomment -%}
+    </div>
+    <div class="product-bundles__rec-info">
+      <h4 class="product-bundles__rec-title"></h4>
+      <div class="product-bundles__rec-pricing">
+        <span class="product-bundles__rec-price"></span>
+        <span class="product-bundles__rec-savings"></span>
+      </div>
+      <button class="product-bundles__rec-button button button--secondary">
+        {{ 'bundles.add_this_bundle' | t }}
+      </button>
+    </div>
+  </div>
+</template>
+
+<script src="{{ 'product-bundles.js' | asset_url }}" defer></script>
+
+{% schema %}
+{
+  "name": "Product Bundles",
+  "tag": "section",
+  "class": "section-product-bundles",
+  "settings": [
+    {
+      "type": "header",
+      "content": "Bundle Settings"
+    },
+    {
+      "type": "text",
+      "id": "bundle_title",
+      "label": "Bundle title",
+      "default": "Frequently Bought Together"
+    },
+    {
+      "type": "textarea",
+      "id": "bundle_description",
+      "label": "Bundle description",
+      "info": "Optional description for the bundle"
+    },
+    {
+      "type": "select",
+      "id": "bundle_discount_type",
+      "label": "Discount type",
+      "options": [
+        {
+          "value": "none",
+          "label": "No discount"
+        },
+        {
+          "value": "percentage",
+          "label": "Percentage discount"
+        },
+        {
+          "value": "fixed",
+          "label": "Fixed amount discount"
+        }
+      ],
+      "default": "percentage"
+    },
+    {
+      "type": "number",
+      "id": "bundle_discount_value",
+      "label": "Discount value",
+      "info": "Enter percentage (e.g., 10) or fixed amount in cents (e.g., 500 for $5.00)",
+      "default": 10
+    },
+    {
+      "type": "checkbox",
+      "id": "show_individual_prices",
+      "label": "Show individual prices",
+      "default": true
+    },
+    {
+      "type": "checkbox",
+      "id": "enable_recommendations",
+      "label": "Enable smart bundle recommendations",
+      "default": true,
+      "info": "Show recommended bundles based on current product"
+    },
+    {
+      "type": "color_scheme",
+      "id": "color_scheme",
+      "label": "Color scheme",
+      "default": "background-1"
+    }
+  ],
+  "blocks": [
+    {
+      "type": "product",
+      "name": "Bundle Product",
+      "settings": [
+        {
+          "type": "product",
+          "id": "product",
+          "label": "Product"
+        },
+        {
+          "type": "checkbox",
+          "id": "required",
+          "label": "Required product",
+          "default": false,
+          "info": "Required products cannot be deselected"
+        },
+        {
+          "type": "number",
+          "id": "quantity",
+          "label": "Quantity",
+          "default": 1,
+          "min": 1
+        },
+        {
+          "type": "text",
+          "id": "custom_title",
+          "label": "Custom title",
+          "info": "Override product title (optional)"
+        },
+        {
+          "type": "select",
+          "id": "discount_type",
+          "label": "Individual discount type",
+          "options": [
+            {
+              "value": "none",
+              "label": "No discount"
+            },
+            {
+              "value": "percentage",
+              "label": "Percentage discount"
+            },
+            {
+              "value": "fixed",
+              "label": "Fixed amount discount"
+            }
+          ],
+          "default": "none",
+          "info": "Override bundle discount for this product"
+        },
+        {
+          "type": "number",
+          "id": "discount_value",
+          "label": "Individual discount value",
+          "default": 0
+        }
+      ]
+    }
+  ],
+  "max_blocks": 8,
+  "presets": [
+    {
+      "name": "Product Bundles"
+    }
+  ]
+}
+{% endschema %}

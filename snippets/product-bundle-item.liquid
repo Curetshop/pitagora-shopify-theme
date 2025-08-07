@@ -1,0 +1,208 @@
+{%- liquid
+  assign bundle_index = bundle_index | default: 1
+  assign product_title = block.settings.custom_title | default: product.title
+  assign quantity = block.settings.quantity | default: 1
+  assign is_required = block.settings.required | default: false
+  assign individual_discount_type = block.settings.discount_type | default: 'none'
+  assign individual_discount_value = block.settings.discount_value | default: 0
+  
+  assign product_form_id = 'bundle-product-' | append: product.id | append: '-' | append: section.id
+  
+  # Calculate individual product price with discount
+  assign discounted_price = product.price
+  if individual_discount_type == 'percentage' and individual_discount_value > 0
+    assign discount_amount = product.price | times: individual_discount_value | divided_by: 100.0
+    assign discounted_price = product.price | minus: discount_amount | floor
+  elsif individual_discount_type == 'fixed' and individual_discount_value > 0
+    assign discounted_price = product.price | minus: individual_discount_value
+  endif
+  
+  if discounted_price < 0
+    assign discounted_price = 0
+  endif
+-%}
+
+<div class="product-bundles__item" 
+     data-product-id="{{ product.id }}"
+     data-product-price="{{ discounted_price }}"
+     data-product-quantity="{{ quantity }}"
+     data-product-required="{{ is_required }}"
+     {{ block.shopify_attributes }}>
+  
+  {%- comment -%} Product Checkbox {%- endcomment -%}
+  <div class="product-bundles__checkbox-container">
+    <label class="product-bundles__checkbox-wrapper">
+      <input type="checkbox" 
+             class="product-bundles__checkbox product-bundles__product-checkbox" 
+             data-product-checkbox
+             data-product-id="{{ product.id }}"
+             {% if is_required %}disabled{% endif %}
+             checked>
+      <span class="product-bundles__checkmark"></span>
+    </label>
+  </div>
+
+  {%- comment -%} Product Image {%- endcomment -%}
+  <div class="product-bundles__image-wrapper">
+    <a href="{{ product.url }}" class="product-bundles__image-link">
+      {%- if product.featured_media -%}
+        {{ product.featured_media | image_url: width: 300 | image_tag: 
+          class: 'product-bundles__image',
+          loading: 'lazy',
+          sizes: '150px',
+          widths: '150, 200, 300'
+        }}
+      {%- else -%}
+        {{ 'product-1' | placeholder_svg_tag: 'product-bundles__image product-bundles__image--placeholder' }}
+      {%- endif -%}
+      
+      {%- comment -%} Individual Discount Badge {%- endcomment -%}
+      {%- if individual_discount_type != 'none' and individual_discount_value > 0 -%}
+        <div class="product-bundles__discount-badge">
+          {%- if individual_discount_type == 'percentage' -%}
+            -{{ individual_discount_value }}%
+          {%- else -%}
+            -{{ individual_discount_value | money }}
+          {%- endif -%}
+        </div>
+      {%- endif -%}
+    </a>
+  </div>
+
+  {%- comment -%} Product Info {%- endcomment -%}
+  <div class="product-bundles__info">
+    
+    {%- comment -%} Product Title {%- endcomment -%}
+    <h4 class="product-bundles__product-title">
+      <a href="{{ product.url }}" class="product-bundles__title-link">{{ product_title }}</a>
+    </h4>
+    
+    {%- comment -%} Vendor {%- endcomment -%}
+    {%- if product.vendor != blank -%}
+      <div class="product-bundles__vendor">{{ product.vendor }}</div>
+    {%- endif -%}
+    
+    {%- comment -%} Variant Selection {%- endcomment -%}
+    {%- unless product.has_only_default_variant -%}
+      <div class="product-bundles__variants" data-bundle-variants>
+        {%- for option in product.options_with_values limit: 2 -%}
+          <div class="product-bundles__variant-option" data-option-index="{{ forloop.index0 }}">
+            <label class="product-bundles__variant-label">{{ option.name }}:</label>
+            <select class="product-bundles__variant-select" 
+                    name="option{{ forloop.index }}"
+                    data-variant-option>
+              {%- for value in option.values -%}
+                <option value="{{ value }}" 
+                        {% if forloop.first %}selected{% endif %}>
+                  {{ value }}
+                </option>
+              {%- endfor -%}
+            </select>
+          </div>
+        {%- endfor -%}
+      </div>
+    {%- endunless -%}
+    
+    {%- comment -%} Quantity Selector {%- endcomment -%}
+    <div class="product-bundles__quantity-wrapper">
+      <label class="product-bundles__quantity-label">{{ 'bundles.quantity' | t }}:</label>
+      <div class="product-bundles__quantity-selector">
+        <button type="button" 
+                class="product-bundles__quantity-btn product-bundles__quantity-decrease"
+                data-quantity-decrease
+                aria-label="{{ 'bundles.decrease_quantity' | t }}">
+          <svg viewBox="0 0 24 24" aria-hidden="true">
+            <path fill="currentColor" d="M19,13H5V11H19V13Z"/>
+          </svg>
+        </button>
+        <input type="number" 
+               class="product-bundles__quantity-input" 
+               data-quantity-input
+               value="{{ quantity }}"
+               min="1"
+               max="10"
+               readonly>
+        <button type="button" 
+                class="product-bundles__quantity-btn product-bundles__quantity-increase"
+                data-quantity-increase
+                aria-label="{{ 'bundles.increase_quantity' | t }}">
+          <svg viewBox="0 0 24 24" aria-hidden="true">
+            <path fill="currentColor" d="M19,13H13V19H11V13H5V11H11V5H13V11H19V13Z"/>
+          </svg>
+        </button>
+      </div>
+    </div>
+    
+    {%- comment -%} Price Display {%- endcomment -%}
+    <div class="product-bundles__price-wrapper">
+      <div class="product-bundles__price" data-product-display-price>
+        {%- if discounted_price != product.price -%}
+          <span class="product-bundles__discounted-price">{{ discounted_price | money }}</span>
+          <span class="product-bundles__original-price">{{ product.price | money }}</span>
+        {%- else -%}
+          {{ product.price | money }}
+        {%- endif -%}
+      </div>
+      
+      {%- comment -%} Quantity Price (shown when quantity > 1) {%- endcomment -%}
+      {%- if quantity > 1 -%}
+        <div class="product-bundles__quantity-price" data-quantity-price>
+          {{ quantity }} × {{ discounted_price | money }} = 
+          <strong>{{ discounted_price | times: quantity | money }}</strong>
+        </div>
+      {%- endif -%}
+    </div>
+    
+    {%- comment -%} Stock Status {%- endcomment -%}
+    <div class="product-bundles__stock">
+      {%- if product.available -%}
+        <span class="product-bundles__stock-status product-bundles__stock-status--available">
+          <svg class="product-bundles__stock-icon" viewBox="0 0 24 24" aria-hidden="true">
+            <path fill="currentColor" d="M21,7L9,19L3.5,13.5L4.91,12.09L9,16.17L19.59,5.59L21,7Z"/>
+          </svg>
+          {{ 'bundles.in_stock' | t }}
+        </span>
+      {%- else -%}
+        <span class="product-bundles__stock-status product-bundles__stock-status--unavailable">
+          <svg class="product-bundles__stock-icon" viewBox="0 0 24 24" aria-hidden="true">
+            <path fill="currentColor" d="M19,6.41L17.59,5L12,10.59L6.41,5L5,6.41L10.59,12L5,17.59L6.41,19L12,13.41L17.59,19L19,17.59L13.41,12L19,6.41Z"/>
+          </svg>
+          {{ 'bundles.out_of_stock' | t }}
+        </span>
+      {%- endif -%}
+    </div>
+    
+    {%- comment -%} Required Badge {%- endcomment -%}
+    {%- if is_required -%}
+      <div class="product-bundles__required-badge">
+        <svg class="product-bundles__required-icon" viewBox="0 0 24 24" aria-hidden="true">
+          <path fill="currentColor" d="M12,2A10,10 0 0,1 22,12A10,10 0 0,1 12,22A10,10 0 0,1 2,12A10,10 0 0,1 12,2M12,4A8,8 0 0,0 4,12A8,8 0 0,0 12,20A8,8 0 0,0 20,12A8,8 0 0,0 12,4M11,16.5L6.5,12L7.91,10.59L11,13.67L16.59,8.09L18,9.5L11,16.5Z"/>
+        </svg>
+        {{ 'bundles.required' | t }}
+      </div>
+    {%- endif -%}
+  </div>
+
+  {%- comment -%} Hidden Form Data {%- endcomment -%}
+  <div class="product-bundles__form-data" data-form-data style="display: none;">
+    <input type="hidden" 
+           name="items[{{ bundle_index }}][id]" 
+           value="{{ product.selected_or_first_available_variant.id }}"
+           data-variant-id-input>
+    <input type="hidden" 
+           name="items[{{ bundle_index }}][quantity]" 
+           value="{{ quantity }}"
+           data-quantity-hidden-input>
+    
+    {%- comment -%} Custom properties {%- endcomment -%}
+    <input type="hidden" 
+           name="items[{{ bundle_index }}][properties][_bundle_id]" 
+           value="{{ section.id }}">
+    <input type="hidden" 
+           name="items[{{ bundle_index }}][properties][_bundle_item]" 
+           value="true">
+    <input type="hidden" 
+           name="items[{{ bundle_index }}][properties][_bundle_title]" 
+           value="{{ section.settings.bundle_title | escape }}">
+  </div>
+</div>
