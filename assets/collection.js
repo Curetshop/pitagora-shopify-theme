@@ -274,10 +274,17 @@ if (!customElements.get('collection-provider')) {
       // Show error message to user
       const errorDiv = document.createElement('div');
       errorDiv.className = 'collection-error';
-      errorDiv.innerHTML = `
-        <p>Sorry, there was an error loading the products. Please try again.</p>
-        <button class="button button--secondary" onclick="location.reload()">Retry</button>
-      `;
+      // Create error content securely
+      const errorMsg = document.createElement('p');
+      errorMsg.textContent = 'Sorry, there was an error loading the products. Please try again.';
+      
+      const retryButton = document.createElement('button');
+      retryButton.className = 'button button--secondary';
+      retryButton.textContent = 'Retry';
+      retryButton.addEventListener('click', () => location.reload());
+      
+      errorDiv.appendChild(errorMsg);
+      errorDiv.appendChild(retryButton);
       
       const main = this.querySelector('.collection-main');
       if (main) {

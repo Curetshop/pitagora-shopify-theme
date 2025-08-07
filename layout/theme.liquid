@@ -68,21 +68,8 @@
     .loading-overlay { display: none; }
   </style>
 
-  {%- comment -%} Main stylesheets - Individual loading for Shopify compatibility {%- endcomment -%}
+  {%- comment -%} Main stylesheet {%- endcomment -%}
   {{ 'app.css' | asset_url | stylesheet_tag }}
-  {{ 'header.css' | asset_url | stylesheet_tag }}
-  {{ 'product-card.css' | asset_url | stylesheet_tag }}
-  {{ 'collection.css' | asset_url | stylesheet_tag }}
-  {{ 'cart-drawer.css' | asset_url | stylesheet_tag }}
-  {{ 'announcement-bar.css' | asset_url | stylesheet_tag }}
-  {{ 'newsletter.css' | asset_url | stylesheet_tag }}
-  {{ 'testimonials.css' | asset_url | stylesheet_tag }}
-  {{ 'featured-collections.css' | asset_url | stylesheet_tag }}
-  {{ 'featured-products.css' | asset_url | stylesheet_tag }}
-  {{ 'rich-text.css' | asset_url | stylesheet_tag }}
-  {{ 'image-with-text.css' | asset_url | stylesheet_tag }}
-  {{ 'blog-posts.css' | asset_url | stylesheet_tag }}
-  {{ 'instagram-feed.css' | asset_url | stylesheet_tag }}
 
   {%- comment -%} CSS Variables - Focal v4 system {%- endcomment -%}
   {%- render 'css-variables' -%}
@@ -194,6 +181,10 @@
   <div id="drawer-container"></div>
   <div id="modal-container"></div>
 
+  {%- comment -%} Security utilities - Load first {%- endcomment -%}
+  {{ 'security-utils.js' | asset_url | script_tag }}
+  {{ 'error-handler.js' | asset_url | script_tag }}
+  
   {%- comment -%} Main JavaScript - Deferred for performance {%- endcomment -%}
   {{ 'app.js' | asset_url | script_tag: defer: 'defer' }}
 

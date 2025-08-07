@@ -151,7 +151,11 @@ if (!customElements.get('variant-selects')) {
       const policy = this.currentVariant.inventory_policy;
       
       if (inventory <= 10 && inventory > 0 && policy === 'deny') {
-        inventoryNotice.innerHTML = `<span class="inventory-low">¡Solo quedan ${inventory} disponibles!</span>`;
+        // Secure creation of inventory notice
+        const span = document.createElement('span');
+        span.className = 'inventory-low';
+        span.textContent = `¡Solo quedan ${inventory} disponibles!`;
+        inventoryNotice.replaceChildren(span);
         inventoryNotice.style.display = 'block';
       } else {
         inventoryNotice.style.display = 'none';

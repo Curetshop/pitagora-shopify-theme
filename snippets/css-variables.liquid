@@ -52,23 +52,25 @@
 
   {%- comment -%} CSS Custom Properties - Dynamic theme variables {%- endcomment -%}
   :root {
-    /* Colors */
-    --color-primary: {{ settings.color_primary | default: '#000000' }};
-    --color-primary-rgb: {{ settings.color_primary | default: '#000000' | color_to_rgb | remove: 'rgb(' | remove: ')' }};
-    --color-secondary: {{ settings.color_secondary | default: '#666666' }};
-    --color-secondary-rgb: {{ settings.color_secondary | default: '#666666' | color_to_rgb | remove: 'rgb(' | remove: ')' }};
-    --color-background: {{ settings.color_background | default: '#ffffff' }};
-    --color-background-rgb: {{ settings.color_background | default: '#ffffff' | color_to_rgb | remove: 'rgb(' | remove: ')' }};
-    --color-text: {{ settings.color_text | default: '#000000' }};
-    --color-text-rgb: {{ settings.color_text | default: '#000000' | color_to_rgb | remove: 'rgb(' | remove: ')' }};
-    --color-accent: {{ settings.color_accent | default: '#ff6b35' }};
-    --color-accent-rgb: {{ settings.color_accent | default: '#ff6b35' | color_to_rgb | remove: 'rgb(' | remove: ')' }};
+    /* Colors - RGB format for compatibility */
+    --color-primary: {{ settings.color_primary | default: '#000000' | color_to_rgb | remove: 'rgb(' | remove: ')' }};
+    --color-secondary: {{ settings.color_secondary | default: '#666666' | color_to_rgb | remove: 'rgb(' | remove: ')' }};
+    --color-accent: {{ settings.color_accent | default: '#ff6b35' | color_to_rgb | remove: 'rgb(' | remove: ')' }};
+    --color-foreground: {{ settings.color_text | default: '#000000' | color_to_rgb | remove: 'rgb(' | remove: ')' }};
+    --color-background: {{ settings.color_background | default: '#ffffff' | color_to_rgb | remove: 'rgb(' | remove: ')' }};
+    
+    /* Hex format for backward compatibility */
+    --color-primary-hex: {{ settings.color_primary | default: '#000000' }};
+    --color-secondary-hex: {{ settings.color_secondary | default: '#666666' }};
+    --color-accent-hex: {{ settings.color_accent | default: '#ff6b35' }};
+    --color-text-hex: {{ settings.color_text | default: '#000000' }};
+    --color-background-hex: {{ settings.color_background | default: '#ffffff' }};
     
     /* Color variations */
-    --color-primary-light: rgba(var(--color-primary-rgb), 0.1);
-    --color-primary-dark: rgba(var(--color-primary-rgb), 0.8);
-    --color-text-light: rgba(var(--color-text-rgb), 0.7);
-    --color-text-lighter: rgba(var(--color-text-rgb), 0.5);
+    --color-primary-light: rgba(var(--color-primary), 0.1);
+    --color-primary-dark: rgba(var(--color-primary), 0.8);
+    --color-text-light: rgba(var(--color-foreground), 0.7);
+    --color-text-lighter: rgba(var(--color-foreground), 0.5);
     
     /* Typography */
     --font-heading: {{ settings.heading_font.family | default: 'Arial, sans-serif' }}, {{ settings.heading_font.fallback_families }};
@@ -104,7 +106,15 @@
     --spacing-2xl: 3rem;
     --spacing-3xl: 4rem;
     
-    /* Grid & Breakpoints */
+    /* Standardized Breakpoint System */
+    --breakpoint-xs: 480px;    /* Extra small devices */
+    --breakpoint-sm: 640px;    /* Small devices */
+    --breakpoint-md: 768px;    /* Medium devices (tablets) */
+    --breakpoint-lg: 1024px;   /* Large devices (laptops) */
+    --breakpoint-xl: 1200px;   /* Extra large devices (desktops) */
+    --breakpoint-2xl: 1400px;  /* 2X Extra large devices */
+    
+    /* Grid & Layout */
     --grid-gutter: var(--spacing-md);
     --grid-columns: {{ settings.collection_layout | default: 3 }};
     
@@ -131,8 +141,22 @@
     --logo-width-mobile: calc(var(--logo-width) * 0.8);
   }
   
-  {%- comment -%} Mobile-specific variables {%- endcomment -%}
-  @media (max-width: 767px) {
+  {%- comment -%} Responsive Design System - Standardized Breakpoints {%- endcomment -%}
+  
+  /* Mobile First - Extra Small (up to 480px) */
+  @media (max-width: calc(var(--breakpoint-xs) - 1px)) {
+    :root {
+      --font-heading-scale: {{ settings.heading_font_scale | default: 120 | divided_by: 100.0 | times: 0.8 }};
+      --container-width: 100%;
+      --grid-columns: 1;
+      --spacing-md: 0.5rem;
+      --spacing-lg: 0.75rem;
+      --spacing-xl: 1rem;
+    }
+  }
+  
+  /* Small devices (480px to 767px) */
+  @media (min-width: var(--breakpoint-xs)) and (max-width: calc(var(--breakpoint-md) - 1px)) {
     :root {
       --font-heading-scale: {{ settings.heading_font_scale | default: 120 | divided_by: 100.0 | times: 0.9 }};
       --container-width: 100%;
@@ -173,6 +197,62 @@
       animation-duration: 0.01ms !important;
       animation-iteration-count: 1 !important;
       transition-duration: 0.01ms !important;
+    }
+  }
+  
+  {%- comment -%} Standardized Responsive Breakpoints {%- endcomment -%}
+  
+  /* Extra Small - xs: 480px+ */
+  @media (min-width: var(--breakpoint-xs)) {
+    :root {
+      --container-padding: 1.5rem;
+      --grid-gutter: 1rem;
+    }
+  }
+  
+  /* Small - sm: 640px+ */
+  @media (min-width: var(--breakpoint-sm)) {
+    :root {
+      --container-padding: 2rem;
+      --grid-gutter: 1.5rem;
+    }
+  }
+  
+  /* Medium - md: 768px+ (Tablets) */
+  @media (min-width: var(--breakpoint-md)) {
+    :root {
+      --container-padding: 2.5rem;
+      --grid-gutter: 2rem;
+      --font-heading-scale: {{ settings.heading_font_scale | default: 120 | divided_by: 100.0 }};
+      --grid-columns: {{ settings.collection_layout | default: 3 }};
+    }
+  }
+  
+  /* Large - lg: 1024px+ (Laptops) */
+  @media (min-width: var(--breakpoint-lg)) {
+    :root {
+      --container-padding: 3rem;
+      --grid-gutter: 2.5rem;
+      --font-heading-scale: {{ settings.heading_font_scale | default: 120 | divided_by: 100.0 }};
+      --grid-columns: {{ settings.collection_layout | default: 4 }};
+    }
+  }
+  
+  /* Extra Large - xl: 1200px+ (Desktops) */
+  @media (min-width: var(--breakpoint-xl)) {
+    :root {
+      --container-padding: 4rem;
+      --grid-gutter: 3rem;
+      --grid-columns: {{ settings.collection_layout | default: 5 }};
+    }
+  }
+  
+  /* 2X Extra Large - 2xl: 1400px+ (Large Desktops) */
+  @media (min-width: var(--breakpoint-2xl)) {
+    :root {
+      --container-padding: 5rem;
+      --grid-gutter: 3.5rem;
+      --grid-columns: {{ settings.collection_layout | default: 6 }};
     }
   }
 </style>

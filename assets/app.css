@@ -1,8 +1,39 @@
 /* Pitagora Theme - Main CSS */
-/* Modular stylesheets loaded individually via theme.liquid for Shopify compatibility */
+
+/* Import all modular stylesheets */
+@import url('header.css');
+@import url('product-card.css');
+@import url('collection.css');
+@import url('cart-drawer.css');
+@import url('announcement-bar.css');
+@import url('newsletter.css');
+@import url('testimonials.css');
+@import url('featured-collections.css');
+@import url('featured-products.css');
+@import url('rich-text.css');
+@import url('image-with-text.css');
+@import url('blog-posts.css');
+@import url('instagram-feed.css');
+@import url('ai-recommendations.css');
+@import url('voice-search.css');
+@import url('search.css');
+@import url('cart.css');
+@import url('product.css');
+@import url('product-siblings.css');
+@import url('404.css');
+@import url('blog.css');
+@import url('article.css');
+@import url('page.css');
 
 /* Global styles */
 :root {
+  /* Colors - Fallback values for compatibility */
+  --color-primary: 59, 130, 246;
+  --color-secondary: 156, 163, 175;
+  --color-accent: 239, 68, 68;
+  --color-foreground: 31, 41, 55;
+  --color-background: 255, 255, 255;
+  
   /* Typography */
   --font-family-base: 'Inter', system-ui, -apple-system, sans-serif;
   --font-family-heading: 'Inter', system-ui, -apple-system, sans-serif;
@@ -32,8 +63,8 @@ body {
   font-family: var(--font-family-base);
   font-size: 1.6rem;
   line-height: 1.6;
-  color: rgb(var(--color-foreground, 31, 41, 55));
-  background-color: rgb(var(--color-background, 255, 255, 255));
+  color: rgb(var(--color-foreground));
+  background-color: rgb(var(--color-background));
   margin: 0;
 }
 
@@ -52,7 +83,7 @@ body {
 
 /* Focus styles */
 *:focus-visible {
-  outline: 2px solid rgb(var(--color-primary, 59, 130, 246));
+  outline: 2px solid rgb(var(--color-primary));
   outline-offset: 2px;
 }
 
@@ -75,7 +106,7 @@ body {
   padding: 1.2rem 2.4rem;
   border: none;
   border-radius: var(--border-radius);
-  background-color: rgb(var(--color-primary, 59, 130, 246));
+  background-color: rgb(var(--color-primary));
   color: white;
   text-decoration: none;
   font-weight: 600;
@@ -92,12 +123,12 @@ body {
 
 .button--secondary {
   background-color: transparent;
-  border: 2px solid rgb(var(--color-primary, 59, 130, 246));
-  color: rgb(var(--color-primary, 59, 130, 246));
+  border: 2px solid rgb(var(--color-primary));
+  color: rgb(var(--color-primary));
 }
 
 .button--secondary:hover {
-  background-color: rgb(var(--color-primary, 59, 130, 246));
+  background-color: rgb(var(--color-primary));
   color: white;
 }
 
@@ -134,7 +165,7 @@ h1, h2, h3, h4, h5, h6 {
   font-weight: 700;
   line-height: 1.2;
   margin: 0 0 1rem 0;
-  color: rgb(var(--color-foreground, 31, 41, 55));
+  color: rgb(var(--color-foreground));
 }
 
 .h1, h1 { font-size: 4.8rem; }
@@ -153,7 +184,7 @@ h1, h2, h3, h4, h5, h6 {
 
 /* Link styles */
 a {
-  color: rgb(var(--color-primary, 59, 130, 246));
+  color: rgb(var(--color-primary));
   text-decoration: none;
   transition: color 0.2s ease;
 }
@@ -205,7 +236,7 @@ img {
   width: 20px;
   height: 20px;
   margin: -10px 0 0 -10px;
-  border: 2px solid rgb(var(--color-primary, 59, 130, 246));
+  border: 2px solid rgb(var(--color-primary));
   border-top-color: transparent;
   border-radius: 50%;
   animation: spin 0.8s linear infinite;

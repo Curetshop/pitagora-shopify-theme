@@ -1,0 +1,392 @@
+/* Hero Banner Styles - Pitagora Theme */
+
+.hero-banner {
+  position: relative;
+  width: 100%;
+  height: var(--hero-height-mobile);
+  overflow: hidden;
+}
+
+@media screen and (min-width: 768px) {
+  .hero-banner {
+    height: var(--hero-height-desktop);
+  }
+}
+
+/* Slides Container */
+.hero-banner__slides {
+  position: relative;
+  width: 100%;
+  height: 100%;
+}
+
+/* Individual Slide */
+.hero-slide {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  opacity: 0;
+  transition: opacity 0.8s ease-in-out;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.hero-slide--active {
+  opacity: 1;
+}
+
+/* Media Container */
+.hero-slide__media {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 1;
+}
+
+/* Image Styles */
+.hero-slide__image {
+  width: 100%;
+  height: 100%;
+  position: relative;
+}
+
+.hero-slide__image img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center;
+}
+
+.hero-slide__image--mobile-fallback {
+  display: block;
+}
+
+@media screen and (min-width: 768px) {
+  .hero-slide__image--mobile-fallback {
+    display: none;
+  }
+}
+
+/* Video Styles */
+.hero-slide__video {
+  width: 100%;
+  height: 100%;
+  position: relative;
+}
+
+.hero-slide__video iframe {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+/* Overlay */
+.hero-slide__overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: var(--overlay-color, rgba(0, 0, 0, 0.3));
+  opacity: var(--overlay-opacity, 0.3);
+  z-index: 2;
+}
+
+/* Content Container */
+.hero-slide__content {
+  position: relative;
+  z-index: 3;
+  max-width: 120rem;
+  margin: 0 auto;
+  padding: 0 2rem;
+  text-align: center;
+  color: var(--text-color, white);
+}
+
+/* Text Positioning */
+.hero-slide--top-left .hero-slide__content {
+  align-self: flex-start;
+  justify-self: flex-start;
+  text-align: left;
+}
+
+.hero-slide--top-center .hero-slide__content {
+  align-self: flex-start;
+  justify-self: center;
+  text-align: center;
+}
+
+.hero-slide--top-right .hero-slide__content {
+  align-self: flex-start;
+  justify-self: flex-end;
+  text-align: right;
+}
+
+.hero-slide--center-left .hero-slide__content {
+  align-self: center;
+  justify-self: flex-start;
+  text-align: left;
+}
+
+.hero-slide--center-center .hero-slide__content {
+  align-self: center;
+  justify-self: center;
+  text-align: center;
+}
+
+.hero-slide--center-right .hero-slide__content {
+  align-self: center;
+  justify-self: flex-end;
+  text-align: right;
+}
+
+.hero-slide--bottom-left .hero-slide__content {
+  align-self: flex-end;
+  justify-self: flex-start;
+  text-align: left;
+}
+
+.hero-slide--bottom-center .hero-slide__content {
+  align-self: flex-end;
+  justify-self: center;
+  text-align: center;
+}
+
+.hero-slide--bottom-right .hero-slide__content {
+  align-self: flex-end;
+  justify-self: flex-end;
+  text-align: right;
+}
+
+/* Content Elements */
+.hero-slide__heading {
+  font-size: 3.2rem;
+  font-weight: 700;
+  line-height: 1.2;
+  margin: 0 0 1.5rem 0;
+  color: inherit;
+}
+
+@media screen and (min-width: 768px) {
+  .hero-slide__heading {
+    font-size: 4.8rem;
+  }
+}
+
+@media screen and (min-width: 1024px) {
+  .hero-slide__heading {
+    font-size: 6.4rem;
+  }
+}
+
+.hero-slide__subheading {
+  font-size: 1.8rem;
+  line-height: 1.5;
+  margin: 0 0 2rem 0;
+  color: inherit;
+  opacity: 0.9;
+}
+
+@media screen and (min-width: 768px) {
+  .hero-slide__subheading {
+    font-size: 2.4rem;
+  }
+}
+
+.hero-slide__description {
+  font-size: 1.6rem;
+  line-height: 1.6;
+  margin: 0 0 3rem 0;
+  color: inherit;
+  opacity: 0.8;
+  max-width: 60rem;
+}
+
+@media screen and (min-width: 768px) {
+  .hero-slide__description {
+    font-size: 1.8rem;
+  }
+}
+
+.hero-slide__buttons {
+  display: flex;
+  gap: 1.5rem;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
+.hero-slide--align-left .hero-slide__buttons {
+  justify-content: flex-start;
+}
+
+.hero-slide--align-right .hero-slide__buttons {
+  justify-content: flex-end;
+}
+
+.hero-slide__button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1.2rem 2.4rem;
+  border: 2px solid transparent;
+  border-radius: var(--border-radius);
+  font-size: 1.4rem;
+  font-weight: 600;
+  text-decoration: none;
+  transition: all 0.3s ease;
+  cursor: pointer;
+}
+
+.hero-slide__button--primary {
+  background-color: rgb(var(--color-primary));
+  color: white;
+  border-color: rgb(var(--color-primary));
+}
+
+.hero-slide__button--primary:hover {
+  background-color: transparent;
+  color: rgb(var(--color-primary));
+}
+
+.hero-slide__button--secondary {
+  background-color: transparent;
+  color: inherit;
+  border-color: currentColor;
+}
+
+.hero-slide__button--secondary:hover {
+  background-color: currentColor;
+  color: var(--overlay-color, rgba(0, 0, 0, 0.3));
+}
+
+/* Navigation */
+.hero-banner__navigation {
+  position: absolute;
+  bottom: 2rem;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 4;
+  display: flex;
+  gap: 1rem;
+}
+
+.hero-banner__nav-dot {
+  width: 1.2rem;
+  height: 1.2rem;
+  border-radius: 50%;
+  background-color: rgba(255, 255, 255, 0.5);
+  border: none;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.hero-banner__nav-dot--active {
+  background-color: white;
+  transform: scale(1.2);
+}
+
+/* Arrows */
+.hero-banner__arrow {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  z-index: 4;
+  width: 4rem;
+  height: 4rem;
+  background-color: rgba(255, 255, 255, 0.2);
+  border: none;
+  border-radius: 50%;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.3s ease;
+}
+
+.hero-banner__arrow:hover {
+  background-color: rgba(255, 255, 255, 0.4);
+}
+
+.hero-banner__arrow--prev {
+  left: 2rem;
+}
+
+.hero-banner__arrow--next {
+  right: 2rem;
+}
+
+.hero-banner__arrow-icon {
+  width: 1.6rem;
+  height: 1.6rem;
+  fill: white;
+}
+
+/* Mobile Responsive */
+@media screen and (max-width: 767px) {
+  .hero-slide__content {
+    padding: 0 1.5rem;
+  }
+  
+  .hero-slide__heading {
+    font-size: 2.8rem;
+  }
+  
+  .hero-slide__subheading {
+    font-size: 1.6rem;
+  }
+  
+  .hero-slide__description {
+    font-size: 1.4rem;
+  }
+  
+  .hero-slide__buttons {
+    flex-direction: column;
+    align-items: center;
+  }
+  
+  .hero-slide__button {
+    width: 100%;
+    max-width: 25rem;
+  }
+  
+  .hero-banner__arrow {
+    width: 3rem;
+    height: 3rem;
+  }
+  
+  .hero-banner__arrow--prev {
+    left: 1rem;
+  }
+  
+  .hero-banner__arrow--next {
+    right: 1rem;
+  }
+}
+
+/* Loading State */
+.hero-banner--loading {
+  background-color: rgb(var(--color-background));
+}
+
+.hero-banner--loading::after {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 4rem;
+  height: 4rem;
+  margin: -2rem 0 0 -2rem;
+  border: 3px solid rgb(var(--color-primary));
+  border-top-color: transparent;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+} 

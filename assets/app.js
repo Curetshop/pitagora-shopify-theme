@@ -110,6 +110,181 @@ window.PitagoraTheme = window.PitagoraTheme || {
     }
   },
 
+  // Error handling system
+  errors: {
+    // Error types
+    types: {
+      NETWORK: 'NETWORK_ERROR',
+      VALIDATION: 'VALIDATION_ERROR',
+      PERMISSION: 'PERMISSION_ERROR',
+      NOT_FOUND: 'NOT_FOUND_ERROR',
+      SERVER: 'SERVER_ERROR',
+      UNKNOWN: 'UNKNOWN_ERROR'
+    },
+
+    // Error handler
+    handle(error, context = '') {
+      const errorInfo = {
+        message: error.message || 'An error occurred',
+        type: this.getErrorType(error),
+        context: context,
+        timestamp: new Date().toISOString(),
+        url: window.location.href,
+        userAgent: navigator.userAgent
+      };
+
+      // Log error
+      this.utils.log(`Error in ${context}: ${errorInfo.message}`, 'error');
+
+      // Track error in analytics
+      if (this.analytics) {
+        this.analytics.trackEvent('error', errorInfo);
+      }
+
+      // Show user-friendly message
+      this.showErrorMessage(errorInfo);
+
+      return errorInfo;
+    },
+
+    // Determine error type
+    getErrorType(error) {
+      if (error.name === 'NetworkError' || error.message.includes('fetch')) {
+        return this.errors.types.NETWORK;
+      }
+      if (error.name === 'ValidationError') {
+        return this.errors.types.VALIDATION;
+      }
+      if (error.status === 403) {
+        return this.errors.types.PERMISSION;
+      }
+      if (error.status === 404) {
+        return this.errors.types.NOT_FOUND;
+      }
+      if (error.status >= 500) {
+        return this.errors.types.SERVER;
+      }
+      return this.errors.types.UNKNOWN;
+    },
+
+    // Show user-friendly error message
+    showErrorMessage(errorInfo) {
+      const messages = {
+        [this.errors.types.NETWORK]: 'Connection error. Please check your internet connection.',
+        [this.errors.types.VALIDATION]: 'Invalid data provided. Please check your input.',
+        [this.errors.types.PERMISSION]: 'You don\'t have permission to perform this action.',
+        [this.errors.types.NOT_FOUND]: 'The requested resource was not found.',
+        [this.errors.types.SERVER]: 'Server error. Please try again later.',
+        [this.errors.types.UNKNOWN]: 'An unexpected error occurred. Please try again.'
+      };
+
+      const message = messages[errorInfo.type] || messages[this.errors.types.UNKNOWN];
+      
+      // Create toast notification
+      this.showToast(message, 'error');
+    },
+
+    // Toast notification system
+    showToast(message, type = 'info', duration = 5000) {
+      const toast = document.createElement('div');
+      toast.className = `toast toast--${type}`;
+      // Create toast content securely
+      const toastContent = document.createElement('div');
+      toastContent.className = 'toast__content';
+      
+      const messageSpan = document.createElement('span');
+      messageSpan.className = 'toast__message';
+      messageSpan.textContent = message;
+      
+      const closeButton = document.createElement('button');
+      closeButton.className = 'toast__close';
+      closeButton.setAttribute('aria-label', 'Close notification');
+      closeButton.textContent = '×';
+      
+      toastContent.appendChild(messageSpan);
+      toastContent.appendChild(closeButton);
+      toast.appendChild(toastContent);
+
+      // Add to page
+      document.body.appendChild(toast);
+
+      // Auto remove
+      setTimeout(() => {
+        if (toast.parentNode) {
+          toast.parentNode.removeChild(toast);
+        }
+      }, duration);
+
+      // Close button
+      toast.querySelector('.toast__close').addEventListener('click', () => {
+        if (toast.parentNode) {
+          toast.parentNode.removeChild(toast);
+        }
+      });
+    }
+  },
+
+  // Component system
+  components: {
+    // Component registry
+    registry: new Map(),
+
+    // Register a component
+    register(name, componentClass) {
+      if (this.registry.has(name)) {
+        this.utils.log(`Component ${name} already registered`, 'warn');
+        return;
+      }
+      
+      this.registry.set(name, componentClass);
+      
+      // Auto-register custom element if it's a class
+      if (componentClass.prototype && componentClass.prototype.constructor) {
+        if (!customElements.get(name)) {
+          customElements.define(name, componentClass);
+        }
+      }
+    },
+
+    // Get a component
+    get(name) {
+      return this.registry.get(name);
+    },
+
+    // Initialize all components on page
+    init() {
+      this.registry.forEach((componentClass, name) => {
+        const elements = document.querySelectorAll(name);
+        elements.forEach(element => {
+          if (!element.componentInstance) {
+            element.componentInstance = new componentClass(element);
+          }
+        });
+      });
+    },
+
+    // Base component class
+    BaseComponent: class {
+      constructor(element, options = {}) {
+        this.element = element;
+        this.options = { ...this.defaultOptions, ...options };
+        this.init();
+      }
+
+      get defaultOptions() {
+        return {};
+      }
+
+      init() {
+        // Override in subclasses
+      }
+
+      destroy() {
+        // Override in subclasses
+      }
+    }
+  },
+
   // Initialize theme
   init() {
     this.initAccessibility();

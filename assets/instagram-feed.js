@@ -151,7 +151,10 @@ if (!customElements.get('instagram-feed-component')) {
       if (this.showCaptions && post.caption) {
         const caption = document.createElement('div');
         caption.className = 'instagram-post__caption';
-        caption.innerHTML = `<p>${this.truncateCaption(post.caption)}</p>`;
+        // Secure caption creation
+        const p = document.createElement('p');
+        p.textContent = this.truncateCaption(post.caption);
+        caption.appendChild(p);
         overlay.appendChild(caption);
       }
       

@@ -821,19 +821,27 @@ class AIRecommendationWidget {
   }
   
   showEmpty() {
-    this.container.innerHTML = `
-      <div class="ai-recommendations ai-recommendations--empty">
-        <p>Explorando productos para personalizar tus recomendaciones...</p>
-      </div>
-    `;
+    // Use secure template creation instead of innerHTML
+    const emptyDiv = document.createElement('div');
+    emptyDiv.className = 'ai-recommendations ai-recommendations--empty';
+    
+    const message = document.createElement('p');
+    message.textContent = 'Explorando productos para personalizar tus recomendaciones...';
+    emptyDiv.appendChild(message);
+    
+    this.container.replaceChildren(emptyDiv);
   }
   
   showError() {
-    this.container.innerHTML = `
-      <div class="ai-recommendations ai-recommendations--error">
-        <p>No pudimos cargar las recomendaciones en este momento.</p>
-      </div>
-    `;
+    // Use secure template creation instead of innerHTML
+    const errorDiv = document.createElement('div');
+    errorDiv.className = 'ai-recommendations ai-recommendations--error';
+    
+    const message = document.createElement('p');
+    message.textContent = 'No pudimos cargar las recomendaciones en este momento.';
+    errorDiv.appendChild(message);
+    
+    this.container.replaceChildren(errorDiv);
   }
 }
 
