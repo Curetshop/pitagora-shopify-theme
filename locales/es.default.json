@@ -61,6 +61,10 @@
       "subtext": "La página que estás buscando no existe.",
       "link": "Continuar comprando"
     },
+    "instagram": {
+      "setup_required": "Se requiere configuración de Instagram",
+      "setup_instructions": "Para mostrar publicaciones de Instagram, configura tu cuenta en las opciones del tema."
+    },
     "pagination": {
       "previous": "Anterior",
       "next": "Siguiente",
