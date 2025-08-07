@@ -133,34 +133,30 @@
       },
       {
         "type": "range",
-        "id": "button_border_radius",
+        "id": "buttons_radius",
         "min": 0,
-        "max": 30,
+        "max": 20,
         "step": 2,
         "unit": "px",
-        "label": "Button border radius",
-        "default": 4
+        "label": "Button corner radius",
+        "default": 8
       },
       {
         "type": "select",
-        "id": "container_width",
-        "label": "Container width",
+        "id": "page_width",
+        "label": "Page width",
         "options": [
           {
             "value": "1200",
-            "label": "1200px"
+            "label": "Narrow (1200px)"
           },
           {
             "value": "1400", 
-            "label": "1400px"
+            "label": "Standard (1400px)"
           },
           {
             "value": "1600",
-            "label": "1600px"
-          },
-          {
-            "value": "fullwidth",
-            "label": "Full width"
+            "label": "Wide (1600px)"
           }
         ],
         "default": "1400"
@@ -173,11 +169,25 @@
         "info": "Smooth transitions and hover effects"
       },
       {
-        "type": "checkbox",
-        "id": "rounded_corners",
-        "label": "Rounded corners",
-        "default": true,
-        "info": "Apply rounded corners to cards and buttons"
+        "type": "range",
+        "id": "card_corner_radius",
+        "min": 0,
+        "max": 20,
+        "step": 2,
+        "unit": "px",
+        "label": "Card corner radius",
+        "default": 12
+      },
+      {
+        "type": "range",
+        "id": "spacing_sections",
+        "min": 0,
+        "max": 100,
+        "step": 4,
+        "unit": "px",
+        "label": "Section spacing",
+        "default": 60,
+        "info": "Vertical space between sections"
       }
     ]
   },
@@ -193,17 +203,18 @@
         "type": "range",
         "id": "logo_width",
         "min": 80,
-        "max": 300,
+        "max": 250,
         "step": 10,
         "unit": "px",
         "label": "Logo width",
-        "default": 160
+        "default": 150
       },
       {
         "type": "text",
         "id": "logo_text",
-        "label": "Logo text",
-        "info": "Used when no logo image is uploaded"
+        "label": "Store name (fallback)",
+        "info": "Displayed when no logo image is uploaded",
+        "default": "{{ shop.name }}"
       },
       {
         "type": "checkbox",
@@ -367,10 +378,10 @@
         "content": "Configure cart behavior and promotional features."
       },
       {
-        "type": "text",
+        "type": "number",
         "id": "free_shipping_threshold",
         "label": "Free shipping threshold",
-        "info": "Amount needed for free shipping (without currency symbol)"
+        "info": "Minimum order amount for free shipping (number only)"
       },
       {
         "type": "textarea",
@@ -478,50 +489,7 @@
     "settings": [
       {
         "type": "paragraph",
-        "content": "Optimize your store's performance and loading speed."
-      },
-      {
-        "type": "checkbox",
-        "id": "lazy_loading",
-        "label": "Enable lazy loading",
-        "default": true,
-        "info": "Images load only when they come into view"
-      },
-      {
-        "type": "checkbox",
-        "id": "preload_links",
-        "label": "Preload important links",
-        "default": true,
-        "info": "Preload pages on hover for faster navigation"
-      },
-      {
-        "type": "select",
-        "id": "image_quality",
-        "label": "Image quality",
-        "options": [
-          {
-            "value": "80",
-            "label": "High (larger files)"
-          },
-          {
-            "value": "70",
-            "label": "Medium (recommended)" 
-          },
-          {
-            "value": "60",
-            "label": "Low (smaller files)"
-          }
-        ],
-        "default": "70"
-      }
-    ]
-  },
-  {
-    "name": "Performance Settings",
-    "settings": [
-      {
-        "type": "paragraph",
-        "content": "Configure performance optimization settings for faster loading times."
+        "content": "Optimize your store's performance and loading speed. These settings directly impact Core Web Vitals and SEO rankings."
       },
       {
         "type": "header",
@@ -557,7 +525,34 @@
         "id": "enable_lazy_loading",
         "label": "Enable lazy loading",
         "default": true,
-        "info": "Load images and components when they enter viewport"
+        "info": "Load images and components when they enter viewport (improves LCP)"
+      },
+      {
+        "type": "checkbox",
+        "id": "preload_links",
+        "label": "Preload important links",
+        "default": true,
+        "info": "Preload pages on hover for faster navigation"
+      },
+      {
+        "type": "select",
+        "id": "image_quality",
+        "label": "Default image quality",
+        "options": [
+          {
+            "value": "85",
+            "label": "High quality (larger files)"
+          },
+          {
+            "value": "75",
+            "label": "Balanced (recommended)"
+          },
+          {
+            "value": "65",
+            "label": "Optimized (smaller files)"
+          }
+        ],
+        "default": "75"
       },
       {
         "type": "header",
@@ -598,11 +593,11 @@
         "type": "range",
         "id": "webp_quality",
         "label": "WebP image quality",
-        "min": 60,
-        "max": 95,
+        "min": 65,
+        "max": 90,
         "step": 5,
         "default": 80,
-        "info": "Higher values = better quality, larger file size"
+        "info": "WebP quality setting (65-90). Higher = better quality but larger files"
       },
       {
         "type": "checkbox",
@@ -614,116 +609,6 @@
     ]
   },
   {
-    "name": "Security Settings",
-    "settings": [
-      {
-        "type": "paragraph",
-        "content": "Configure security features to protect your store and customers."
-      },
-      {
-        "type": "header",
-        "content": "Content Security Policy"
-      },
-      {
-        "type": "checkbox",
-        "id": "enable_csp",
-        "label": "Enable Content Security Policy",
-        "default": true,
-        "info": "Prevents XSS attacks by restricting resource loading"
-      },
-      {
-        "type": "checkbox",
-        "id": "enable_html_sanitization",
-        "label": "Enable HTML sanitization",
-        "default": true,
-        "info": "Automatically sanitize user-generated content"
-      },
-      {
-        "type": "header",
-        "content": "Input Validation"
-      },
-      {
-        "type": "checkbox",
-        "id": "strict_form_validation",
-        "label": "Strict form validation",
-        "default": true,
-        "info": "Enhanced validation for all form inputs"
-      },
-      {
-        "type": "checkbox",
-        "id": "enable_csrf_protection",
-        "label": "CSRF protection",
-        "default": true,
-        "info": "Protect forms against cross-site request forgery"
-      },
-      {
-        "type": "header",
-        "content": "Privacy & Data Protection"
-      },
-      {
-        "type": "checkbox",
-        "id": "anonymize_user_data",
-        "label": "Anonymize user data",
-        "default": false,
-        "info": "Anonymize user data in analytics and logs"
-      },
-      {
-        "type": "select",
-        "id": "cookie_consent_level",
-        "label": "Cookie consent level",
-        "options": [
-          {
-            "value": "none",
-            "label": "None"
-          },
-          {
-            "value": "basic",
-            "label": "Basic (essential cookies only)"
-          },
-          {
-            "value": "advanced",
-            "label": "Advanced (with preferences)"
-          }
-        ],
-        "default": "basic"
-      },
-      {
-        "type": "header",
-        "content": "Error Handling"
-      },
-      {
-        "type": "checkbox",
-        "id": "hide_error_details",
-        "label": "Hide error details in production",
-        "default": true,
-        "info": "Prevents exposure of sensitive error information"
-      },
-      {
-        "type": "select",
-        "id": "error_reporting_level",
-        "label": "Error reporting level",
-        "options": [
-          {
-            "value": "none",
-            "label": "None"
-          },
-          {
-            "value": "errors",
-            "label": "Errors only"
-          },
-          {
-            "value": "warnings",
-            "label": "Errors and warnings"
-          },
-          {
-            "value": "all",
-            "label": "All (debug mode)"
-          }
-        ],
-        "default": "errors"
-      }
-    ]
-  },
   {
     "name": "Advanced Features",
     "settings": [
@@ -754,22 +639,22 @@
       {
         "type": "select",
         "id": "ai_recommendation_algorithm",
-        "label": "Recommendation algorithm",
+        "label": "Recommendation strategy",
         "options": [
           {
             "value": "collaborative",
-            "label": "Collaborative filtering"
+            "label": "Customer behavior based"
           },
           {
             "value": "content_based",
-            "label": "Content-based filtering"
+            "label": "Product similarity based"
           },
           {
             "value": "hybrid",
-            "label": "Hybrid approach (recommended)"
+            "label": "Smart hybrid (recommended)"
           }
         ],
-        "default": "hybrid"
+        "default": "collaborative"
       },
       {
         "type": "header",
@@ -843,11 +728,42 @@
     ]
   },
   {
-    "name": "Developer Settings",
+    "name": "Advanced & Developer",
     "settings": [
       {
         "type": "paragraph",
-        "content": "Advanced settings for developers and debugging."
+        "content": "⚠️ Advanced settings for experienced users and developers. Modify with caution."
+      },
+      {
+        "type": "header",
+        "content": "Security & Privacy"
+      },
+      {
+        "type": "checkbox",
+        "id": "enable_csp",
+        "label": "Content Security Policy",
+        "default": true,
+        "info": "Enhanced security - prevents XSS attacks"
+      },
+      {
+        "type": "select",
+        "id": "cookie_consent_level",
+        "label": "Cookie consent",
+        "options": [
+          {
+            "value": "none",
+            "label": "None"
+          },
+          {
+            "value": "basic",
+            "label": "Basic (GDPR compliant)"
+          },
+          {
+            "value": "advanced",
+            "label": "Advanced (with preferences)"
+          }
+        ],
+        "default": "basic"
       },
       {
         "type": "header",
@@ -856,16 +772,16 @@
       {
         "type": "checkbox",
         "id": "debug_mode",
-        "label": "Enable debug mode",
+        "label": "Debug mode",
         "default": false,
-        "info": "Shows additional logging and debug information"
+        "info": "⚠️ Enable only for development - shows debug information"
       },
       {
         "type": "checkbox",
         "id": "show_performance_metrics",
         "label": "Show performance metrics",
         "default": false,
-        "info": "Display Core Web Vitals and performance data"
+        "info": "Display Core Web Vitals in browser console"
       },
       {
         "type": "header",
@@ -875,35 +791,19 @@
         "type": "textarea",
         "id": "custom_css",
         "label": "Custom CSS",
-        "info": "Add custom CSS that will be loaded after theme styles"
+        "info": "Advanced: Add custom styles (loaded after theme CSS)"
       },
       {
         "type": "textarea",
         "id": "custom_js",
         "label": "Custom JavaScript",
-        "info": "Add custom JavaScript (will be executed after theme scripts)"
-      },
-      {
-        "type": "header",
-        "content": "Third-party Integrations"
-      },
-      {
-        "type": "text",
-        "id": "custom_tracking_id",
-        "label": "Custom tracking ID",
-        "info": "For additional analytics or tracking services"
+        "info": "Advanced: Add custom JS (executed after theme scripts)"
       },
       {
         "type": "textarea",
         "id": "custom_head_code",
-        "label": "Custom head code",
-        "info": "HTML/JavaScript to be inserted in the <head> section"
-      },
-      {
-        "type": "textarea",
-        "id": "custom_body_code",
-        "label": "Custom body code",
-        "info": "HTML/JavaScript to be inserted before closing </body> tag"
+        "label": "Custom <head> code",
+        "info": "Expert: HTML/JS inserted in <head> section"
       }
     ]
   },
