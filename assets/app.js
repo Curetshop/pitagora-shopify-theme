@@ -10,6 +10,46 @@ window.PitagoraTheme = window.PitagoraTheme || {
     }
   },
 
+  // Security utilities
+  security: {
+    // HTML sanitization to prevent XSS
+    sanitizeHTML(str) {
+      if (typeof str !== 'string') return '';
+      
+      const div = document.createElement('div');
+      div.textContent = str;
+      return div.innerHTML;
+    },
+
+    // Safe HTML insertion
+    setInnerHTML(element, html) {
+      if (!element) return;
+      
+      // Sanitize the HTML content
+      const sanitizedHTML = this.sanitizeHTML(html);
+      element.innerHTML = sanitizedHTML;
+    },
+
+    // Safe attribute setting
+    setAttribute(element, attribute, value) {
+      if (!element || !attribute) return;
+      
+      // Sanitize attribute value
+      const sanitizedValue = this.sanitizeHTML(value);
+      element.setAttribute(attribute, sanitizedValue);
+    },
+
+    // Validate URL to prevent open redirects
+    isValidURL(url) {
+      try {
+        const urlObj = new URL(url, window.location.origin);
+        return urlObj.origin === window.location.origin;
+      } catch {
+        return false;
+      }
+    }
+  },
+
   // Utility functions
   utils: {
     debounce(func, wait, immediate) {
@@ -51,6 +91,22 @@ window.PitagoraTheme = window.PitagoraTheme || {
         detail: data,
         bubbles: true
       }));
+    },
+
+    // Safe logging for production
+    log(message, type = 'info') {
+      if (window.location.hostname === 'localhost' || window.location.hostname.includes('myshopify.com')) {
+        switch(type) {
+          case 'error':
+            console.error(message);
+            break;
+          case 'warn':
+            console.warn(message);
+            break;
+          default:
+            console.log(message);
+        }
+      }
     }
   },
 
@@ -58,7 +114,7 @@ window.PitagoraTheme = window.PitagoraTheme || {
   init() {
     this.initAccessibility();
     this.initAnalytics();
-    console.log('🎯 Pitagora Theme initialized');
+    this.utils.log('🎯 Pitagora Theme initialized');
   },
 
   // Accessibility features

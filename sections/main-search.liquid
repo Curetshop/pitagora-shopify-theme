@@ -41,29 +41,34 @@ Página de resultados de búsqueda con filtros y grid
 
       {%- comment -%} Search Form {%- endcomment -%}
       <search-form class="search-header__form">
-        <form action="{{ routes.search_url }}" method="get" class="search-form" role="search">
-          <div class="search-form__input-wrapper">
-            <label for="search-input" class="visually-hidden">
-              {{ 'templates.search.search' | t }}
-            </label>
-            <input
-              id="search-input"
-              class="search-form__input"
-              type="search"
-              name="q"
-              value="{{ terms }}"
-              placeholder="{{ 'templates.search.placeholder' | t }}"
-              autocomplete="off"
-              autocorrect="off"
-              autocapitalize="off"
-              spellcheck="false"
-            >
-            <button type="submit" class="search-form__submit">
-              {% render 'icon-search' %}
-              <span class="visually-hidden">{{ 'templates.search.submit' | t }}</span>
-            </button>
-          </div>
-        </form>
+        <div class="search-header__form-wrapper">
+          <form class="search-header__form" action="{{ routes.search_url }}" method="get" role="search">
+            <div class="search-header__input-wrapper">
+              <input 
+                class="search-header__input"
+                type="search"
+                name="q"
+                id="search-input"
+                value="{{ search.terms | escape }}"
+                placeholder="{{ 'search.general.search_placeholder' | t }}"
+                autocomplete="off"
+                autocorrect="off"
+                autocapitalize="off"
+                spellcheck="false"
+                aria-label="{{ 'search.general.search_placeholder' | t }}"
+              >
+              <button 
+                class="search-header__submit" 
+                type="submit" 
+                aria-label="{{ 'search.general.submit' | t }}"
+                data-search-focus
+              >
+                {% render 'icon-search' %}
+              </button>
+            </div>
+            <input type="hidden" name="type" value="product">
+          </form>
+        </div>
       </search-form>
     </header>
 
@@ -236,7 +241,7 @@ Página de resultados de búsqueda con filtros y grid
               <div class="search-results__empty-actions">
                 <button 
                   class="button button--primary"
-                  onclick="document.getElementById('search-input').focus()"
+                  data-search-focus
                 >
                   {{ 'templates.search.try_again' | t }}
                 </button>

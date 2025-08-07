@@ -68,8 +68,21 @@
     .loading-overlay { display: none; }
   </style>
 
-  {%- comment -%} Main stylesheet {%- endcomment -%}
+  {%- comment -%} Main stylesheets - Individual loading for Shopify compatibility {%- endcomment -%}
   {{ 'app.css' | asset_url | stylesheet_tag }}
+  {{ 'header.css' | asset_url | stylesheet_tag }}
+  {{ 'product-card.css' | asset_url | stylesheet_tag }}
+  {{ 'collection.css' | asset_url | stylesheet_tag }}
+  {{ 'cart-drawer.css' | asset_url | stylesheet_tag }}
+  {{ 'announcement-bar.css' | asset_url | stylesheet_tag }}
+  {{ 'newsletter.css' | asset_url | stylesheet_tag }}
+  {{ 'testimonials.css' | asset_url | stylesheet_tag }}
+  {{ 'featured-collections.css' | asset_url | stylesheet_tag }}
+  {{ 'featured-products.css' | asset_url | stylesheet_tag }}
+  {{ 'rich-text.css' | asset_url | stylesheet_tag }}
+  {{ 'image-with-text.css' | asset_url | stylesheet_tag }}
+  {{ 'blog-posts.css' | asset_url | stylesheet_tag }}
+  {{ 'instagram-feed.css' | asset_url | stylesheet_tag }}
 
   {%- comment -%} CSS Variables - Focal v4 system {%- endcomment -%}
   {%- render 'css-variables' -%}

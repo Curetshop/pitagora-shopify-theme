@@ -731,10 +731,10 @@ class AIRecommendationWidget {
   }
   
   showLoading() {
-    this.container.innerHTML = `
+    const loadingHTML = `
       <div class="ai-recommendations ai-recommendations--loading">
         <div class="ai-recommendations__header">
-          <h3 class="ai-recommendations__title">${this.options.title}</h3>
+          <h3 class="ai-recommendations__title">${PitagoraTheme.security.sanitizeHTML(this.options.title)}</h3>
         </div>
         <div class="ai-recommendations__loading">
           <div class="loading-spinner"></div>
@@ -742,19 +742,23 @@ class AIRecommendationWidget {
         </div>
       </div>
     `;
+    
+    PitagoraTheme.security.setInnerHTML(this.container, loadingHTML);
   }
   
   renderRecommendations(recommendations) {
+    const recommendationsHTML = recommendations.map(rec => this.renderRecommendationItem(rec)).join('');
+    
     const html = `
       <div class="ai-recommendations ai-recommendations--${this.options.layout}" data-ai-widget>
         <div class="ai-recommendations__header">
           <h3 class="ai-recommendations__title">
-            🤖 ${this.options.title}
+            🤖 ${PitagoraTheme.security.sanitizeHTML(this.options.title)}
           </h3>
           <p class="ai-recommendations__subtitle">Basado en inteligencia artificial</p>
         </div>
         <div class="ai-recommendations__grid">
-          ${recommendations.map(rec => this.renderRecommendationItem(rec)).join('')}
+          ${recommendationsHTML}
         </div>
         <div class="ai-recommendations__footer">
           <small class="ai-recommendations__powered">
@@ -764,32 +768,31 @@ class AIRecommendationWidget {
       </div>
     `;
     
-    this.container.innerHTML = html;
+    PitagoraTheme.security.setInnerHTML(this.container, html);
     this.setupEventListeners();
   }
   
   renderRecommendationItem(recommendation) {
+    const productTitle = PitagoraTheme.security.sanitizeHTML(recommendation.productTitle || 'Producto Recomendado');
+    const explanation = this.options.showExplanations ? 
+      `<p class="ai-recommendation-item__explanation">${PitagoraTheme.security.sanitizeHTML(recommendation.formattedExplanation)}</p>` : '';
+    
+    const price = this.options.showPrices ? 
+      `<div class="ai-recommendation-item__price"><span class="price">${PitagoraTheme.security.sanitizeHTML(recommendation.price || '$99.99')}</span></div>` : '';
+    
     return `
-      <div class="ai-recommendation-item" data-ai-recommendation="${recommendation.productId}">
-        <a href="/products/${recommendation.productHandle}" class="ai-recommendation-item__link">
+      <div class="ai-recommendation-item" data-ai-recommendation="${PitagoraTheme.security.sanitizeHTML(recommendation.productId)}">
+        <a href="/products/${PitagoraTheme.security.sanitizeHTML(recommendation.productHandle)}" class="ai-recommendation-item__link">
           <div class="ai-recommendation-item__image">
-            <img src="/products/${recommendation.productHandle}.jpg" alt="Producto recomendado" loading="lazy">
+            <img src="${PitagoraTheme.security.sanitizeHTML(recommendation.imageUrl || '/products/default.jpg')}" alt="Producto recomendado" loading="lazy">
             <div class="ai-recommendation-item__confidence">
               ${Math.round(recommendation.confidence * 100)}% match
             </div>
           </div>
           <div class="ai-recommendation-item__info">
-            <h4 class="ai-recommendation-item__title">Producto Recomendado</h4>
-            ${this.options.showExplanations ? `
-              <p class="ai-recommendation-item__explanation">
-                ${recommendation.formattedExplanation}
-              </p>
-            ` : ''}
-            ${this.options.showPrices ? `
-              <div class="ai-recommendation-item__price">
-                <span class="price">$99.99</span>
-              </div>
-            ` : ''}
+            <h4 class="ai-recommendation-item__title">${productTitle}</h4>
+            ${explanation}
+            ${price}
           </div>
         </a>
       </div>
