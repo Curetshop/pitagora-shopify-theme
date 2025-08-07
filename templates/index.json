@@ -1,25 +1,34 @@
+/*
+ * ------------------------------------------------------------
+ * IMPORTANT: The contents of this file are auto-generated.
+ *
+ * This file may be updated by the Shopify admin theme editor
+ * or related systems. Please exercise caution as any changes
+ * made to this file may be overwritten.
+ * ------------------------------------------------------------
+ */
 {
   "sections": {
+    "announcement": {
+      "type": "announcement-bar",
+      "settings": {
+        "enable_bar": true,
+        "text": "<p>🚚 Envío gratis en pedidos superiores a $75 | 📞 Soporte 24/7</p>",
+        "link": "/pages/shipping",
+        "show_close": true,
+        "background_color": "#1f2937",
+        "text_color": "#ffffff"
+      }
+    },
     "hero": {
       "type": "hero-banner",
-      "settings": {
-        "layout": "full_screen",
-        "enable_autoplay": true,
-        "autoplay_duration": 5,
-        "show_navigation": true,
-        "show_pagination": true,
-        "mobile_height": "screen",
-        "desktop_height": "screen"
-      },
       "blocks": {
         "hero_slide_1": {
           "type": "slide",
           "settings": {
-            "image": "",
-            "mobile_image": "",
             "video_url": "",
-            "heading": "Bienvenido a Pitagora",
             "subheading": "Descubre una nueva experiencia de compra",
+            "heading": "Bienvenido a Pitagora",
             "text": "<p>Encuentra los mejores productos con la mejor experiencia de usuario</p>",
             "button_1_text": "Explorar productos",
             "button_1_url": "/collections/all",
@@ -37,11 +46,9 @@
         "hero_slide_2": {
           "type": "slide",
           "settings": {
-            "image": "",
-            "mobile_image": "",
             "video_url": "",
-            "heading": "Calidad Premium",
             "subheading": "Para quienes buscan lo mejor",
+            "heading": "Calidad Premium",
             "text": "<p>Productos cuidadosamente seleccionados para garantizar la máxima calidad</p>",
             "button_1_text": "Ver colección premium",
             "button_1_url": "/collections/premium",
@@ -60,42 +67,24 @@
       "block_order": [
         "hero_slide_1",
         "hero_slide_2"
-      ]
-    },
-    "announcement": {
-      "type": "announcement-bar",
+      ],
       "settings": {
-        "enable_bar": true,
-        "text": "<p>🚚 Envío gratis en pedidos superiores a $75 | 📞 Soporte 24/7</p>",
-        "link": "/pages/shipping",
-        "background_color": "#1f2937",
-        "text_color": "#ffffff",
-        "show_close": true
+        "layout": "full_screen",
+        "mobile_height": "screen",
+        "desktop_height": "screen",
+        "enable_autoplay": true,
+        "autoplay_duration": 5,
+        "show_navigation": true,
+        "show_pagination": true
       }
     },
     "featured_collections": {
       "type": "featured-collections",
-      "settings": {
-        "heading": "Colecciones destacadas",
-        "subheading": "Explora nuestras categorías más populares",
-        "layout": "grid",
-        "collections_to_show": 4,
-        "columns_desktop": 2,
-        "columns_mobile": "1",
-        "show_collection_image": true,
-        "show_collection_description": false,
-        "show_product_count": true,
-        "image_ratio": "square",
-        "enable_quick_shop": true,
-        "background_color": "",
-        "text_color": ""
-      },
       "blocks": {
         "collection_1": {
           "type": "collection",
           "settings": {
             "collection": "",
-            "custom_image": "",
             "heading_override": "",
             "description_override": "",
             "button_text": "Ver colección",
@@ -106,7 +95,6 @@
           "type": "collection",
           "settings": {
             "collection": "",
-            "custom_image": "",
             "heading_override": "",
             "description_override": "",
             "button_text": "Ver colección",
@@ -117,7 +105,6 @@
           "type": "collection",
           "settings": {
             "collection": "",
-            "custom_image": "",
             "heading_override": "",
             "description_override": "",
             "button_text": "Ver colección",
@@ -128,7 +115,6 @@
           "type": "collection",
           "settings": {
             "collection": "",
-            "custom_image": "",
             "heading_override": "",
             "description_override": "",
             "button_text": "Ver colección",
@@ -141,7 +127,21 @@
         "collection_2",
         "collection_3",
         "collection_4"
-      ]
+      ],
+      "settings": {
+        "heading": "Colecciones destacadas",
+        "subheading": "Explora nuestras categorías más populares",
+        "collections_to_show": 4,
+        "columns_desktop": 2,
+        "columns_mobile": "1",
+        "show_collection_image": true,
+        "show_collection_description": false,
+        "show_product_count": true,
+        "image_ratio": "square",
+        "enable_quick_shop": true,
+        "background_color": "",
+        "text_color": ""
+      }
     },
     "featured_products": {
       "type": "featured-products",
@@ -168,24 +168,86 @@
         "text_color": ""
       }
     },
-    "newsletter": {
-      "type": "newsletter",
+    "image_with_text": {
+      "type": "image-with-text",
       "settings": {
-        "heading": "Mantente al día",
-        "subheading": "Suscríbete para recibir ofertas exclusivas y novedades",
-        "text": "<p>Sé el primero en conocer nuestros nuevos productos, ofertas especiales y contenido exclusivo.</p>",
-        "show_name_field": false,
-        "button_text": "Suscribirse",
-        "success_message": "¡Gracias por suscribirte! Te mantendremos informado.",
-        "background_type": "color",
-        "background_color": "#f8fafc",
-        "text_color": "#1f2937",
-        "button_background": "#3b82f6",
-        "button_text_color": "#ffffff"
+        "image_position": "right",
+        "image_width": 50,
+        "enable_video": false,
+        "video_url": "",
+        "subheading": "Productos diseñados para durar",
+        "heading": "Calidad que perdura",
+        "text": "<p>Utilizamos únicamente materiales de primera calidad y trabajamos con proveedores que comparten nuestra visión de excelencia.</p><p>Cada producto pasa por rigurosos controles de calidad antes de llegar a tus manos.</p>",
+        "text_alignment": "left",
+        "button_text": "Descubre nuestro proceso",
+        "button_url": "/pages/quality",
+        "button_style": "primary",
+        "button_2_text": "",
+        "button_2_url": "",
+        "button_2_style": "outline",
+        "background_color": "",
+        "text_color": ""
+      }
+    },
+    "rich_text": {
+      "type": "rich-text",
+      "settings": {
+        "subheading": "Comprometidos con la excelencia",
+        "heading": "¿Por qué elegirnos?",
+        "text": "<p>En Pitagora nos dedicamos a ofrecer productos de la más alta calidad, con un servicio al cliente excepcional y una experiencia de compra sin igual.</p><p>Cada producto es cuidadosamente seleccionado para garantizar que cumpla con nuestros estándares de excelencia.</p>",
+        "button_text": "Conoce más sobre nosotros",
+        "button_url": "/pages/about",
+        "button_style": "primary",
+        "button_2_text": "",
+        "button_2_url": "",
+        "button_2_style": "outline",
+        "text_alignment": "center",
+        "content_width": "medium",
+        "background_type": "none",
+        "background_color": "",
+        "overlay_opacity": 40,
+        "text_color": ""
       }
     },
     "testimonials": {
       "type": "testimonials",
+      "blocks": {
+        "testimonial_1": {
+          "type": "testimonial",
+          "settings": {
+            "quote": "Excelente calidad y servicio al cliente. Definitivamente volvería a comprar aquí.",
+            "author": "María González",
+            "author_title": "Cliente verificada",
+            "rating": 5,
+            "product": ""
+          }
+        },
+        "testimonial_2": {
+          "type": "testimonial",
+          "settings": {
+            "quote": "Los productos superaron mis expectativas. El envío fue rápido y el packaging impecable.",
+            "author": "Carlos Martínez",
+            "author_title": "Comprador frecuente",
+            "rating": 5,
+            "product": ""
+          }
+        },
+        "testimonial_3": {
+          "type": "testimonial",
+          "settings": {
+            "quote": "Una experiencia de compra excepcional. La atención al detalle es notable.",
+            "author": "Ana López",
+            "author_title": "Primera compra",
+            "rating": 5,
+            "product": ""
+          }
+        }
+      },
+      "block_order": [
+        "testimonial_1",
+        "testimonial_2",
+        "testimonial_3"
+      ],
       "settings": {
         "heading": "Lo que dicen nuestros clientes",
         "subheading": "Experiencias reales de compradores satisfechos",
@@ -197,81 +259,23 @@
         "show_author_image": true,
         "background_color": "",
         "text_color": ""
-      },
-      "blocks": {
-        "testimonial_1": {
-          "type": "testimonial",
-          "settings": {
-            "quote": "Excelente calidad y servicio al cliente. Definitivamente volvería a comprar aquí.",
-            "author": "María González",
-            "author_title": "Cliente verificada",
-            "author_image": "",
-            "rating": 5,
-            "product": ""
-          }
-        },
-        "testimonial_2": {
-          "type": "testimonial",
-          "settings": {
-            "quote": "Los productos superaron mis expectativas. El envío fue rápido y el packaging impecable.",
-            "author": "Carlos Martínez",
-            "author_title": "Comprador frecuente",
-            "author_image": "",
-            "rating": 5,
-            "product": ""
-          }
-        },
-        "testimonial_3": {
-          "type": "testimonial",
-          "settings": {
-            "quote": "Una experiencia de compra excepcional. La atención al detalle es notable.",
-            "author": "Ana López",
-            "author_title": "Primera compra",
-            "author_image": "",
-            "rating": 5,
-            "product": ""
-          }
-        }
-      },
-      "block_order": [
-        "testimonial_1",
-        "testimonial_2",
-        "testimonial_3"
-      ]
-    },
-    "rich_text": {
-      "type": "rich-text",
-      "settings": {
-        "heading": "¿Por qué elegirnos?",
-        "subheading": "Comprometidos con la excelencia",
-        "text": "<p>En Pitagora nos dedicamos a ofrecer productos de la más alta calidad, con un servicio al cliente excepcional y una experiencia de compra sin igual.</p><p>Cada producto es cuidadosamente seleccionado para garantizar que cumpla con nuestros estándares de excelencia.</p>",
-        "button_text": "Conoce más sobre nosotros",
-        "button_url": "/pages/about",
-        "button_style": "primary",
-        "text_alignment": "center",
-        "content_width": "medium",
-        "background_type": "none",
-        "background_color": "",
-        "text_color": ""
       }
     },
-    "image_with_text": {
-      "type": "image-with-text",
+    "newsletter": {
+      "type": "newsletter",
       "settings": {
-        "image": "",
-        "image_position": "right",
-        "image_width": 50,
-        "heading": "Calidad que perdura",
-        "subheading": "Productos diseñados para durar",
-        "text": "<p>Utilizamos únicamente materiales de primera calidad y trabajamos con proveedores que comparten nuestra visión de excelencia.</p><p>Cada producto pasa por rigurosos controles de calidad antes de llegar a tus manos.</p>",
-        "button_text": "Descubre nuestro proceso",
-        "button_url": "/pages/quality",
-        "button_style": "primary",
-        "text_alignment": "left",
-        "enable_video": false,
-        "video_url": "",
-        "background_color": "",
-        "text_color": ""
+        "heading": "Mantente al día",
+        "subheading": "Suscríbete para recibir ofertas exclusivas y novedades",
+        "text": "<p>Sé el primero en conocer nuestros nuevos productos, ofertas especiales y contenido exclusivo.</p>",
+        "show_name_field": false,
+        "button_text": "Suscribirse",
+        "success_message": "¡Gracias por suscribirte! Te mantendremos informado.",
+        "background_type": "color",
+        "background_color": "#f8fafc",
+        "overlay_opacity": 30,
+        "text_color": "#1f2937",
+        "button_background": "#3b82f6",
+        "button_text_color": "#ffffff"
       }
     },
     "blog_posts": {
@@ -284,10 +288,10 @@
         "columns_desktop": 3,
         "columns_mobile": "1",
         "show_excerpt": true,
+        "excerpt_length": 150,
         "show_date": true,
         "show_author": false,
         "show_tags": true,
-        "excerpt_length": 150,
         "show_view_all": true,
         "view_all_text": "Ver todos los artículos",
         "background_color": "",
@@ -310,6 +314,57 @@
         "background_color": "",
         "text_color": ""
       }
+    },
+    "contact_form_VyFVdD": {
+      "type": "contact-form",
+      "blocks": {
+        "contact_info_cCWCMt": {
+          "type": "contact_info",
+          "settings": {
+            "icon": "📧",
+            "title": "Email us",
+            "content": "<p>hello@example.com</p>"
+          }
+        },
+        "contact_info_WzXa8X": {
+          "type": "contact_info",
+          "settings": {
+            "icon": "📞",
+            "title": "Call us",
+            "content": "<p>+1 (555) 123-4567</p>"
+          }
+        },
+        "contact_info_ewzQac": {
+          "type": "contact_info",
+          "settings": {
+            "icon": "📍",
+            "title": "Visit us",
+            "content": "<p>123 Main Street<br>City, State 12345</p>"
+          }
+        }
+      },
+      "block_order": [
+        "contact_info_cCWCMt",
+        "contact_info_WzXa8X",
+        "contact_info_ewzQac"
+      ],
+      "name": "Contact form",
+      "settings": {
+        "heading": "Contact us",
+        "subheading": "",
+        "description": "<p>Get in touch with us. We'd love to hear from you!</p>",
+        "show_phone": true,
+        "show_subject": true,
+        "enable_privacy_checkbox": false,
+        "privacy_text": "I agree to the privacy policy",
+        "privacy_policy_url": "",
+        "button_text": "Send message",
+        "button_style": "primary",
+        "success_message": "Thank you for your message. We will get back to you soon!",
+        "show_contact_info": true,
+        "background_color": "",
+        "text_color": ""
+      }
     }
   },
   "order": [
@@ -322,6 +377,7 @@
     "testimonials",
     "newsletter",
     "blog_posts",
-    "instagram_feed"
+    "instagram_feed",
+    "contact_form_VyFVdD"
   ]
 }

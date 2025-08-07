@@ -1,3 +1,12 @@
+/*
+ * ------------------------------------------------------------
+ * IMPORTANT: The contents of this file are auto-generated.
+ *
+ * This file may be updated by the Shopify admin theme editor
+ * or related systems. Please exercise caution as any changes
+ * made to this file may be overwritten.
+ * ------------------------------------------------------------
+ */
 {
   "sections": {
     "main": {
@@ -36,59 +45,37 @@
           "type": "column",
           "settings": {
             "title": "Search",
-            "text": "<p>Try searching for what you need in our search bar.</p>",
-            "link_label": "Search products",
-            "link": "/search",
-            "image_icon": "search"
+            "text": "<p>Try searching for what you need in our search bar.</p>"
           }
         },
         "help_2": {
           "type": "column",
           "settings": {
             "title": "Browse Categories",
-            "text": "<p>Explore our product categories to find what you're looking for.</p>",
-            "link_label": "Browse collections",
-            "link": "/collections",
-            "image_icon": "grid"
+            "text": "<p>Explore our product categories to find what you're looking for.</p>"
           }
         },
         "help_3": {
           "type": "column",
           "settings": {
             "title": "Contact Us",
-            "text": "<p>Need help? Our customer service team is here for you.</p>",
-            "link_label": "Contact support",
-            "link": "/pages/contact",
-            "image_icon": "chat"
+            "text": "<p>Need help? Our customer service team is here for you.</p>"
           }
         }
       },
       "block_order": [
         "help_1",
-        "help_2", 
+        "help_2",
         "help_3"
       ],
       "settings": {
-        "title": "How can we help?",
-        "heading_size": "h2",
-        "image_width": "third",
-        "image_ratio": "adapt",
-        "columns_desktop": 3,
-        "column_alignment": "center",
-        "background_style": "secondary",
-        "button_label": "",
-        "button_link": "",
-        "color_scheme": "",
-        "columns_mobile": "1",
-        "swipe_on_mobile": false,
-        "padding_top": 36,
-        "padding_bottom": 36
+        "columns_desktop": 3
       }
     }
   },
   "order": [
     "main",
-    "popular_products", 
+    "popular_products",
     "help_section"
   ]
 }

@@ -1,14 +1,17 @@
+/*
+ * ------------------------------------------------------------
+ * IMPORTANT: The contents of this file are auto-generated.
+ *
+ * This file may be updated by the Shopify admin theme editor
+ * or related systems. Please exercise caution as any changes
+ * made to this file may be overwritten.
+ * ------------------------------------------------------------
+ */
 {
   "sections": {
     "cart_header": {
       "type": "rich-text",
       "settings": {
-        "desktop_content_position": "center",
-        "content_alignment": "center",
-        "color_scheme": "",
-        "full_width": false,
-        "padding_top": 60,
-        "padding_bottom": 20,
         "heading": "Your shopping cart",
         "text": "<p>Review your items before checkout</p>"
       }
@@ -16,28 +19,13 @@
     "main": {
       "type": "main-cart",
       "settings": {
-        "show_vendor": false,
         "show_cart_note": true,
-        "cart_notes_enable": true,
-        "enable_cart_savings": true,
-        "show_cart_recommendations": true,
-        "cart_recommendations_heading": "You might also like",
-        "cart_recommendations_count": 4,
-        "enable_shipping_calculator": true,
-        "enable_terms_and_conditions": false,
-        "terms_and_conditions_page": "",
-        "enable_gift_wrapping": false
+        "show_vendor": false
       }
     },
     "cart_benefits": {
       "type": "rich-text",
       "settings": {
-        "desktop_content_position": "center",
-        "content_alignment": "center",
-        "color_scheme": "background-2",
-        "full_width": true,
-        "padding_top": 40,
-        "padding_bottom": 40,
         "heading": "Why shop with us?",
         "text": "<ul><li><h4>🚚 Free Shipping</h4><p>On orders over $75</p></li><li><h4>🔒 Secure Checkout</h4><p>SSL encrypted payments</p></li><li><h4>↩️ Easy Returns</h4><p>30-day return policy</p></li><li><h4>💬 24/7 Support</h4><p>Customer service available</p></li></ul>"
       }

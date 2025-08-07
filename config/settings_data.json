@@ -1,6 +1,16 @@
+/*
+ * ------------------------------------------------------------
+ * IMPORTANT: The contents of this file are auto-generated.
+ *
+ * This file may be updated by the Shopify admin theme editor
+ * or related systems. Please exercise caution as any changes
+ * made to this file may be overwritten.
+ * ------------------------------------------------------------
+ */
 {
   "current": {
     "logo_width": 90,
+    "show_vendor": false,
     "colors_solid_button_labels": "#ffffff",
     "colors_accent_1": "#121212",
     "gradient_accent_1": "",
@@ -107,7 +117,7 @@
     "sold_out_badge_color_scheme": "inverse",
     "accent_icons": "text",
     "brand_headline": "",
-    "brand_description": "<p><\/p>",
+    "brand_description": "<p></p>",
     "brand_image_width": 100,
     "social_twitter_link": "",
     "social_facebook_link": "",
@@ -123,24 +133,12 @@
     "predictive_search_show_price": false,
     "currency_code_enabled": true,
     "cart_type": "notification",
-    "show_vendor": false,
     "show_cart_note": false,
     "cart_drawer_collection": "",
     "sections": {
       "header": {
         "type": "header",
-        "settings": {
-          "color_scheme": "background-1",
-          "logo_position": "middle-left",
-          "menu": "main-menu",
-          "menu_type_desktop": "dropdown",
-          "sticky_header_type": "on-scroll-up",
-          "show_line_separator": true,
-          "mobile_logo_position": "center",
-          "margin_bottom": 0,
-          "padding_top": 20,
-          "padding_bottom": 20
-        }
+        "settings": {}
       },
       "footer": {
         "type": "footer",
@@ -163,7 +161,7 @@
             "type": "text",
             "settings": {
               "heading": "Our mission",
-              "subtext": "<p>Share contact information, store details, and brand content with your customers.<\/p>"
+              "subtext": "<p>Share contact information, store details, and brand content with your customers.</p>"
             }
           }
         },
@@ -192,14 +190,11 @@
         "settings": {
           "enable_bar": true,
           "text": "<p>Welcome to our store</p>",
-          "text_alignment": "center",
-          "color_scheme": "background-1",
           "link": ""
         }
       }
     },
-    "content_for_index": [
-    ]
+    "content_for_index": []
   },
   "presets": {
     "Default": {
@@ -233,7 +228,8 @@
           "settings": {
             "enable_bar": true,
             "text": "<p>Welcome to our store</p>",
-            "color_scheme": "background-1"
+            "background_color": "#1f2937",
+            "text_color": "#ffffff"
           }
         }
       }
