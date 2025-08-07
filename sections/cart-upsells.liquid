@@ -1,0 +1,300 @@
+{{ 'cart-upsells.css' | asset_url | stylesheet_tag }}
+
+{%- liquid
+  assign show_on_cart_page = section.settings.show_on_cart_page
+  assign show_in_drawer = section.settings.show_in_drawer
+  assign upsell_type = section.settings.upsell_type
+  assign products_limit = section.settings.products_limit
+  assign color_scheme = section.settings.color_scheme
+-%}
+
+<div class="cart-upsells color-{{ color_scheme }}" 
+     data-section-id="{{ section.id }}"
+     data-upsell-type="{{ upsell_type }}"
+     data-products-limit="{{ products_limit }}"
+     {% if show_in_drawer %}data-show-in-drawer="true"{% endif %}>
+  
+  {%- comment -%} Header {%- endcomment -%}
+  <div class="cart-upsells__header">
+    <h3 class="cart-upsells__title">
+      {{ section.settings.title | default: 'You might also like' }}
+    </h3>
+    {%- if section.settings.subtitle != blank -%}
+      <p class="cart-upsells__subtitle">{{ section.settings.subtitle }}</p>
+    {%- endif -%}
+  </div>
+
+  {%- comment -%} Products Container {%- endcomment -%}
+  <div class="cart-upsells__container" data-upsells-container>
+    
+    {%- comment -%} Loading State {%- endcomment -%}
+    <div class="cart-upsells__loading" data-upsells-loading>
+      <div class="cart-upsells__spinner"></div>
+      <p class="cart-upsells__loading-text">{{ 'cart.upsells.loading' | t }}</p>
+    </div>
+
+    {%- comment -%} Products Grid {%- endcomment -%}
+    <div class="cart-upsells__grid" data-upsells-grid style="display: none;">
+      {%- comment -%} Products will be dynamically inserted here {%- endcomment -%}
+    </div>
+
+    {%- comment -%} Empty State {%- endcomment -%}
+    <div class="cart-upsells__empty" data-upsells-empty style="display: none;">
+      <p class="cart-upsells__empty-text">{{ 'cart.upsells.no_recommendations' | t }}</p>
+    </div>
+  </div>
+
+  {%- comment -%} Fallback Products (for initial load) {%- endcomment -%}
+  {%- if section.blocks.size > 0 -%}
+    <div class="cart-upsells__fallback" data-upsells-fallback style="display: none;">
+      <div class="cart-upsells__grid">
+        {%- for block in section.blocks -%}
+          {%- case block.type -%}
+            {%- when 'product' -%}
+              {%- assign product = all_products[block.settings.product] -%}
+              {%- if product != blank -%}
+                {%- render 'cart-upsell-card', 
+                    product: product, 
+                    block: block,
+                    is_fallback: true -%}
+              {%- endif -%}
+          {%- endcase -%}
+        {%- endfor -%}
+      </div>
+    </div>
+  {%- endif -%}
+
+  {%- comment -%} Quick Add Modal {%- endcomment -%}
+  <cart-upsell-modal class="cart-upsells__modal" data-upsells-modal style="display: none;">
+    <div class="cart-upsells__modal-overlay" data-modal-overlay>
+      <div class="cart-upsells__modal-content" data-modal-content>
+        
+        <button class="cart-upsells__modal-close" 
+                data-modal-close
+                aria-label="{{ 'accessibility.close' | t }}">
+          <svg class="icon icon--close" viewBox="0 0 24 24" aria-hidden="true">
+            <path fill="currentColor" d="M19,6.41L17.59,5L12,10.59L6.41,5L5,6.41L10.59,12L5,17.59L6.41,19L12,13.41L17.59,19L19,17.59L13.41,12L19,6.41Z"/>
+          </svg>
+        </button>
+
+        <div class="cart-upsells__modal-body" data-modal-body>
+          {%- comment -%} Quick add content will be loaded here {%- endcomment -%}
+        </div>
+      </div>
+    </div>
+  </cart-upsell-modal>
+</div>
+
+{%- comment -%} Upsell Product Card Template {%- endcomment -%}
+<template data-upsell-card-template>
+  <div class="cart-upsells__card" data-product-id="">
+    <div class="cart-upsells__card-content">
+      
+      <div class="cart-upsells__image-wrapper">
+        <a href="" class="cart-upsells__image-link">
+          <img class="cart-upsells__image" src="" alt="" loading="lazy">
+          
+          {%- comment -%} Hover Image {%- endcomment -%}
+          <img class="cart-upsells__image-hover" src="" alt="" loading="lazy">
+          
+          {%- comment -%} Sale Badge {%- endcomment -%}
+          <div class="cart-upsells__badge cart-upsells__badge--sale" style="display: none;">
+            <span class="cart-upsells__badge-text">{{ 'products.product.sale' | t }}</span>
+            <span class="cart-upsells__badge-discount"></span>
+          </div>
+          
+          {%- comment -%} Quick View Button {%- endcomment -%}
+          <button class="cart-upsells__quick-view"
+                  data-quick-view
+                  aria-label="{{ 'products.product.quick_view' | t }}">
+            <svg class="icon icon--eye" viewBox="0 0 24 24" aria-hidden="true">
+              <path fill="currentColor" d="M12,9A3,3 0 0,0 9,12A3,3 0 0,0 12,15A3,3 0 0,0 15,12A3,3 0 0,0 12,9M12,17A5,5 0 0,1 7,12A5,5 0 0,1 12,7A5,5 0 0,1 17,12A5,5 0 0,1 12,17M12,4.5C7,4.5 2.73,7.61 1,12C2.73,16.39 7,19.5 12,19.5C17,19.5 21.27,16.39 23,12C21.27,7.61 17,4.5 12,4.5Z"/>
+            </svg>
+          </button>
+        </a>
+      </div>
+
+      <div class="cart-upsells__info">
+        <h4 class="cart-upsells__product-title">
+          <a href="" class="cart-upsells__title-link"></a>
+        </h4>
+        
+        <div class="cart-upsells__vendor" style="display: none;"></div>
+        
+        <div class="cart-upsells__rating" style="display: none;">
+          <div class="cart-upsells__stars" aria-label="">
+            {%- for i in (1..5) -%}
+              <svg class="cart-upsells__star" viewBox="0 0 24 24" aria-hidden="true">
+                <path fill="currentColor" d="M12,17.27L18.18,21L16.54,13.97L22,9.24L14.81,8.62L12,2L9.19,8.62L2,9.24L7.45,13.97L5.82,21L12,17.27Z"/>
+              </svg>
+            {%- endfor -%}
+          </div>
+          <span class="cart-upsells__rating-count"></span>
+        </div>
+
+        <div class="cart-upsells__price-wrapper">
+          <div class="cart-upsells__price"></div>
+          <div class="cart-upsells__compare-price" style="display: none;"></div>
+        </div>
+        
+        <div class="cart-upsells__variants" style="display: none;">
+          {%- comment -%} Variant options will be inserted here {%- endcomment -%}
+        </div>
+        
+        <form class="cart-upsells__form" data-product-form>
+          <input type="hidden" name="id" value="">
+          <input type="hidden" name="quantity" value="1">
+          
+          <button type="submit" class="cart-upsells__add-button button button--primary"
+                  data-add-to-cart>
+            <span class="cart-upsells__add-text">{{ 'products.product.add_to_cart' | t }}</span>
+            <div class="cart-upsells__add-loading" style="display: none;">
+              <div class="cart-upsells__add-spinner"></div>
+            </div>
+          </button>
+        </form>
+      </div>
+    </div>
+  </div>
+</template>
+
+{%- comment -%} Variant Option Template {%- endcomment -%}
+<template data-variant-option-template>
+  <div class="cart-upsells__variant-option">
+    <label class="cart-upsells__variant-label">
+      <input type="radio" name="variant" class="cart-upsells__variant-input">
+      <span class="cart-upsells__variant-text"></span>
+      <span class="cart-upsells__variant-price"></span>
+    </label>
+  </div>
+</template>
+
+<script src="{{ 'cart-upsells.js' | asset_url }}" defer></script>
+
+{% schema %}
+{
+  "name": "Cart Upsells",
+  "tag": "section",
+  "class": "section-cart-upsells",
+  "settings": [
+    {
+      "type": "header",
+      "content": "Content"
+    },
+    {
+      "type": "text",
+      "id": "title",
+      "label": "Title",
+      "default": "You might also like"
+    },
+    {
+      "type": "text",
+      "id": "subtitle",
+      "label": "Subtitle",
+      "info": "Optional subtitle text"
+    },
+    {
+      "type": "header",
+      "content": "Settings"
+    },
+    {
+      "type": "select",
+      "id": "upsell_type",
+      "label": "Upsell type",
+      "options": [
+        {
+          "value": "related",
+          "label": "Related products"
+        },
+        {
+          "value": "complementary",
+          "label": "Complementary products"
+        },
+        {
+          "value": "recently_viewed",
+          "label": "Recently viewed"
+        },
+        {
+          "value": "trending",
+          "label": "Trending products"
+        },
+        {
+          "value": "manual",
+          "label": "Manual selection"
+        }
+      ],
+      "default": "related"
+    },
+    {
+      "type": "range",
+      "id": "products_limit",
+      "min": 2,
+      "max": 12,
+      "step": 1,
+      "label": "Number of products to show",
+      "default": 4
+    },
+    {
+      "type": "checkbox",
+      "id": "show_on_cart_page",
+      "label": "Show on cart page",
+      "default": true
+    },
+    {
+      "type": "checkbox",
+      "id": "show_in_drawer",
+      "label": "Show in cart drawer",
+      "default": true
+    },
+    {
+      "type": "checkbox",
+      "id": "show_vendor",
+      "label": "Show vendor",
+      "default": false
+    },
+    {
+      "type": "checkbox",
+      "id": "show_rating",
+      "label": "Show rating",
+      "default": true
+    },
+    {
+      "type": "checkbox",
+      "id": "show_quick_view",
+      "label": "Show quick view button",
+      "default": true
+    },
+    {
+      "type": "color_scheme",
+      "id": "color_scheme",
+      "label": "Color scheme",
+      "default": "background-1"
+    }
+  ],
+  "blocks": [
+    {
+      "type": "product",
+      "name": "Product",
+      "settings": [
+        {
+          "type": "product",
+          "id": "product",
+          "label": "Product"
+        },
+        {
+          "type": "text",
+          "id": "custom_title",
+          "label": "Custom title",
+          "info": "Override product title (optional)"
+        }
+      ]
+    }
+  ],
+  "max_blocks": 12,
+  "presets": [
+    {
+      "name": "Cart Upsells"
+    }
+  ]
+}
+{% endschema %}
