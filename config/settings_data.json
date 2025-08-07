@@ -223,7 +223,7 @@
     "content_for_index": []
   },
   "color_schemes": {
-    "scheme-1": {
+    "background-1": {
       "settings": {
         "colors_solid_button_labels": "#ffffff",
         "colors_accent_1": "#121212", 
@@ -238,7 +238,22 @@
         "gradient_background_2": ""
       }
     },
-    "scheme-2": {
+    "background-2": {
+      "settings": {
+        "colors_solid_button_labels": "#121212",
+        "colors_accent_1": "#334fb4",
+        "gradient_accent_1": "",
+        "colors_accent_2": "#121212",
+        "gradient_accent_2": "",
+        "colors_text": "#121212", 
+        "colors_outline_button_labels": "#334fb4",
+        "colors_background_1": "#f3f3f3",
+        "gradient_background_1": "",
+        "colors_background_2": "#ffffff", 
+        "gradient_background_2": ""
+      }
+    },
+    "inverse": {
       "settings": {
         "colors_solid_button_labels": "#121212",
         "colors_accent_1": "#ffffff",
@@ -253,48 +268,33 @@
         "gradient_background_2": ""
       }
     },
-    "scheme-3": {
+    "accent-1": {
       "settings": {
         "colors_solid_button_labels": "#ffffff",
-        "colors_accent_1": "#0f766e",
+        "colors_accent_1": "#121212",
         "gradient_accent_1": "",
-        "colors_accent_2": "#f59e0b",
+        "colors_accent_2": "#334fb4",
         "gradient_accent_2": "",
-        "colors_text": "#0f172a",
-        "colors_outline_button_labels": "#0f766e",
-        "colors_background_1": "#f8fafc",
+        "colors_text": "#ffffff",
+        "colors_outline_button_labels": "#ffffff",
+        "colors_background_1": "#121212",
         "gradient_background_1": "",
-        "colors_background_2": "#e2e8f0",
+        "colors_background_2": "#334fb4",
         "gradient_background_2": ""
       }
     },
-    "scheme-4": {
+    "accent-2": {
       "settings": {
         "colors_solid_button_labels": "#ffffff",
-        "colors_accent_1": "#7c3aed",
+        "colors_accent_1": "#334fb4",
         "gradient_accent_1": "",
-        "colors_accent_2": "#ec4899", 
+        "colors_accent_2": "#121212",
         "gradient_accent_2": "",
-        "colors_text": "#1e293b",
-        "colors_outline_button_labels": "#7c3aed",
-        "colors_background_1": "#fefbff",
+        "colors_text": "#ffffff",
+        "colors_outline_button_labels": "#ffffff",
+        "colors_background_1": "#334fb4",
         "gradient_background_1": "",
-        "colors_background_2": "#f1f5f9",
-        "gradient_background_2": ""
-      }
-    },
-    "scheme-5": {
-      "settings": {
-        "colors_solid_button_labels": "#ffffff",
-        "colors_accent_1": "#dc2626",
-        "gradient_accent_1": "",
-        "colors_accent_2": "#ea580c",
-        "gradient_accent_2": "",
-        "colors_text": "#18181b", 
-        "colors_outline_button_labels": "#dc2626",
-        "colors_background_1": "#fefefe",
-        "gradient_background_1": "",
-        "colors_background_2": "#f4f4f5",
+        "colors_background_2": "#121212",
         "gradient_background_2": ""
       }
     }

@@ -1,0 +1,31 @@
+{%- comment -%}
+  Product Recommendations Content
+  Renders the actual product recommendations grid
+  
+  Parameters:
+  - recommendations: Products to display
+  - section: Section settings
+  - request_type: Type of recommendation request
+{%- endcomment -%}
+
+{%- if recommendations.products.size > 0 -%}
+  <div class="product-recommendations__grid grid grid--{{ section.settings.columns_mobile }}-col-mobile grid--{{ section.settings.columns_tablet }}-col-tablet grid--{{ section.settings.columns_desktop }}-col-desktop">
+    {%- for product in recommendations.products -%}
+      <div class="grid__item">
+        {%- render 'product-card',
+          product: product,
+          show_vendor: section.settings.show_vendor,
+          show_rating: section.settings.show_rating,
+          show_quick_add: section.settings.show_quick_add,
+          show_quick_view: section.settings.show_quick_view,
+          image_ratio: section.settings.image_ratio,
+          section_id: section.id
+        -%}
+      </div>
+    {%- endfor -%}
+  </div>
+{%- else -%}
+  <div class="product-recommendations__empty">
+    <p>{{ 'products.recommendations.no_products' | default: 'No recommendations available at this time.' | t }}</p>
+  </div>
+{%- endif -%}

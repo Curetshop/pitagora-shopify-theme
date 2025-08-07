@@ -8,11 +8,11 @@
     "theme_support_url": "https://github.com/Curetshop/pitagora-shopify-theme/issues"
   },
   {
-    "name": "color_schemes",
+    "name": "Colors",
     "settings": [
       {
         "type": "color_scheme_group",
-        "id": "color_scheme_group",
+        "id": "color_schemes",
         "definition": [
           {
             "type": "color",
@@ -77,48 +77,6 @@
             "label": "Secondary background gradient"
           }
         ]
-      }
-    ]
-  },
-  {
-    "name": "Colors",
-    "settings": [
-      {
-        "type": "paragraph",
-        "content": "Customize your brand colors. These colors will be used throughout the theme for consistency."
-      },
-      {
-        "type": "color",
-        "id": "color_primary",
-        "label": "Primary color",
-        "default": "#000000",
-        "info": "Used for buttons, links, and accents"
-      },
-      {
-        "type": "color",
-        "id": "color_secondary",
-        "label": "Secondary color", 
-        "default": "#666666",
-        "info": "Used for secondary elements and text"
-      },
-      {
-        "type": "color",
-        "id": "color_background",
-        "label": "Background color",
-        "default": "#ffffff"
-      },
-      {
-        "type": "color",
-        "id": "color_text",
-        "label": "Text color",
-        "default": "#000000"
-      },
-      {
-        "type": "color",
-        "id": "color_accent",
-        "label": "Accent color",
-        "default": "#ff6b35",
-        "info": "Used for highlights and special elements"
       }
     ]
   },

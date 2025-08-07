@@ -370,6 +370,11 @@
     }
   },
   "sections": {
+    "all": {
+      "colors": {
+        "label": "Esquema de color"
+      }
+    },
     "header": {
       "announcement": "Anuncio",
       "menu": "Menú",
