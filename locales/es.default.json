@@ -107,6 +107,9 @@
       "low_stock": "{{ count }} disponibles",
       "you_might_like": "También te puede gustar"
     },
+    "recommendations": {
+      "loading": "Cargando recomendaciones..."
+    },
     "ai": {
       "loading_message": "Basado en inteligencia artificial",
       "analyzing_preferences": "Analizando tus preferencias...",
