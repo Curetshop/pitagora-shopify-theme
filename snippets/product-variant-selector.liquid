@@ -40,7 +40,7 @@
             id="{{ section.id }}-{{ option.position }}-{{ forloop.index0 }}"
             name="{{ option.name }}"
             value="{{ value | escape }}"
-            form="{{ product_form_id }}"
+            form="{{ product.id }}"
             {% if option.selected_value == value %}checked{% endif %}
             {% unless variant_available %}disabled{% endunless %}
             class="variant-swatch-input visually-hidden"
@@ -90,7 +90,7 @@
             id="{{ section.id }}-{{ option.position }}-{{ forloop.index0 }}"
             name="{{ option.name }}"
             value="{{ value | escape }}"
-            form="{{ product_form_id }}"
+            form="{{ product.id }}"
             {% if option.selected_value == value %}checked{% endif %}
             {% unless variant_available %}disabled{% endunless %}
             class="variant-button-input visually-hidden"
