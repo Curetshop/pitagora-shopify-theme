@@ -1,0 +1,80 @@
+{%- comment -%}
+Collection Promotion Blocks - Pitagora Theme
+Renderiza bloques promocionales dentro de las colecciones
+{%- endcomment -%}
+
+{%- if blocks.size > 0 -%}
+  <div class="collection-promotion-blocks">
+    {%- for block in blocks -%}
+      {%- liquid
+        assign text_position_parts = block.settings.text_position | split: '_'
+        assign vertical_position = text_position_parts[0]
+        assign horizontal_position = text_position_parts[1]
+      -%}
+      
+      <div 
+        id="block-{{ section.id }}-{{ block.id }}" 
+        class="collection-promotion-block collection-promotion-block--{{ vertical_position }}-{{ horizontal_position }}"
+        {{ block.shopify_attributes }}
+        style="
+          --promotion-background: {{ block.settings.background.red }}, {{ block.settings.background.green }}, {{ block.settings.background.blue }};
+          --promotion-text-color: {{ block.settings.text_color.red }}, {{ block.settings.text_color.green }}, {{ block.settings.text_color.blue }};
+          --promotion-button-background: {{ block.settings.button_background.red }}, {{ block.settings.button_background.green }}, {{ block.settings.button_background.blue }};
+          --promotion-button-text-color: {{ block.settings.button_text_color.red }}, {{ block.settings.button_text_color.green }}, {{ block.settings.button_text_color.blue }};
+        "
+      >
+        {%- if block.settings.link_url != blank -%}
+          <a href="{{ block.settings.link_url }}" class="collection-promotion-block__link">
+        {%- endif -%}
+
+        {%- if block.settings.image != blank -%}
+          <div class="collection-promotion-block__media">
+            <img
+              class="collection-promotion-block__image"
+              src="{{ block.settings.image | image_url: width: 800 }}"
+              alt="{{ block.settings.image.alt | escape | default: block.settings.title | escape }}"
+              width="{{ block.settings.image.width }}"
+              height="{{ block.settings.image.height }}"
+              loading="lazy"
+              sizes="(max-width: 767px) 100vw, (max-width: 1023px) 50vw, 33vw"
+              srcset="
+                {{ block.settings.image | image_url: width: 400 }} 400w,
+                {{ block.settings.image | image_url: width: 600 }} 600w,
+                {{ block.settings.image | image_url: width: 800 }} 800w,
+                {{ block.settings.image | image_url: width: 1200 }} 1200w
+              "
+            >
+          </div>
+        {%- endif -%}
+
+        <div class="collection-promotion-block__content">
+          <div class="collection-promotion-block__text">
+            {%- if block.settings.subheading != blank -%}
+              <p class="collection-promotion-block__subheading">
+                {{ block.settings.subheading | escape }}
+              </p>
+            {%- endif -%}
+
+            {%- if block.settings.title != blank -%}
+              <h3 class="collection-promotion-block__title">
+                {{ block.settings.title | escape | newline_to_br }}
+              </h3>
+            {%- endif -%}
+
+            {%- if block.settings.link_text != blank -%}
+              <div class="collection-promotion-block__button-wrapper">
+                <span class="collection-promotion-block__button button button--primary">
+                  {{ block.settings.link_text | escape }}
+                </span>
+              </div>
+            {%- endif -%}
+          </div>
+        </div>
+
+        {%- if block.settings.link_url != blank -%}
+          </a>
+        {%- endif -%}
+      </div>
+    {%- endfor -%}
+  </div>
+{%- endif -%}

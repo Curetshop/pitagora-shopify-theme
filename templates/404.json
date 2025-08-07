@@ -1,0 +1,94 @@
+{
+  "sections": {
+    "main": {
+      "type": "main-404",
+      "settings": {
+        "layout": "full_width"
+      }
+    },
+    "popular_products": {
+      "type": "featured-products",
+      "settings": {
+        "heading": "Popular Products",
+        "subheading": "Maybe you'll find what you're looking for here",
+        "collection": "",
+        "products_to_show": 4,
+        "columns_desktop": 4,
+        "columns_tablet": 2,
+        "columns_mobile": 2,
+        "show_quick_add": true,
+        "show_quick_view": false,
+        "show_vendor": false,
+        "show_rating": true,
+        "show_price": true,
+        "image_ratio": "square",
+        "show_view_all": true,
+        "view_all_text": "View all products",
+        "view_all_url": "/collections/all",
+        "background_color": "",
+        "text_color": ""
+      }
+    },
+    "help_section": {
+      "type": "multicolumn",
+      "blocks": {
+        "help_1": {
+          "type": "column",
+          "settings": {
+            "title": "Search",
+            "text": "<p>Try searching for what you need in our search bar.</p>",
+            "link_label": "Search products",
+            "link": "/search",
+            "image_icon": "search"
+          }
+        },
+        "help_2": {
+          "type": "column",
+          "settings": {
+            "title": "Browse Categories",
+            "text": "<p>Explore our product categories to find what you're looking for.</p>",
+            "link_label": "Browse collections",
+            "link": "/collections",
+            "image_icon": "grid"
+          }
+        },
+        "help_3": {
+          "type": "column",
+          "settings": {
+            "title": "Contact Us",
+            "text": "<p>Need help? Our customer service team is here for you.</p>",
+            "link_label": "Contact support",
+            "link": "/pages/contact",
+            "image_icon": "chat"
+          }
+        }
+      },
+      "block_order": [
+        "help_1",
+        "help_2", 
+        "help_3"
+      ],
+      "settings": {
+        "title": "How can we help?",
+        "heading_size": "h2",
+        "image_width": "third",
+        "image_ratio": "adapt",
+        "columns_desktop": 3,
+        "column_alignment": "center",
+        "background_style": "secondary",
+        "button_label": "",
+        "button_link": "",
+        "color_scheme": "",
+        "columns_mobile": "1",
+        "swipe_on_mobile": false,
+        "padding_top": 36,
+        "padding_bottom": 36
+      }
+    }
+  },
+  "order": [
+    "main",
+    "popular_products", 
+    "help_section"
+  ]
+}

@@ -1,0 +1,141 @@
+{%- comment -%}
+  Product Variant Selector - Renders variant option controls
+  Supports swatches, buttons, and dropdowns
+{%- endcomment -%}
+
+{%- liquid
+  assign option_index = forloop.index0
+  assign option_name = option.name | downcase
+  assign selector_type = 'button'
+  
+  if option_name contains 'color' or option_name contains 'colour'
+    assign selector_type = 'swatch'
+  elsif option.values.size > 7
+    assign selector_type = 'select'
+  endif
+-%}
+
+{%- case selector_type -%}
+  
+  {%- when 'swatch' -%}
+    <div class="product-form-variant-swatches">
+      {%- for value in option.values -%}
+        {%- liquid
+          assign color_value = value | downcase | replace: ' ', ''
+          assign color_file_name = color_value | append: '.png'
+          assign color_image = images[color_file_name]
+          assign variant_available = false
+          
+          for variant in product.variants
+            if variant.options[option_index] == value and variant.available
+              assign variant_available = true
+              break
+            endif
+          endfor
+        -%}
+        
+        <div class="variant-swatch-wrapper">
+          <input
+            type="radio"
+            id="{{ section.id }}-{{ option.position }}-{{ forloop.index0 }}"
+            name="{{ option.name }}"
+            value="{{ value | escape }}"
+            form="{{ product_form_id }}"
+            {% if option.selected_value == value %}checked{% endif %}
+            {% unless variant_available %}disabled{% endunless %}
+            class="variant-swatch-input visually-hidden"
+          >
+          <label 
+            class="variant-swatch variant-swatch--color{% unless variant_available %} variant-swatch--disabled{% endunless %}"
+            for="{{ section.id }}-{{ option.position }}-{{ forloop.index0 }}"
+            title="{{ value | escape }}"
+          >
+            {%- if color_image -%}
+              <img 
+                src="{{ color_image | image_url: width: 60 }}" 
+                alt="{{ value | escape }}"
+                width="30"
+                height="30"
+                loading="lazy"
+              >
+            {%- else -%}
+              <span 
+                class="variant-swatch-color" 
+                style="background-color: {{ color_value }};"
+              ></span>
+            {%- endif -%}
+            <span class="visually-hidden">{{ value }}</span>
+          </label>
+        </div>
+      {%- endfor -%}
+    </div>
+  
+  {%- when 'button' -%}
+    <div class="product-form-variant-buttons">
+      {%- for value in option.values -%}
+        {%- liquid
+          assign variant_available = false
+          
+          for variant in product.variants
+            if variant.options[option_index] == value and variant.available
+              assign variant_available = true
+              break
+            endif
+          endfor
+        -%}
+        
+        <div class="variant-button-wrapper">
+          <input
+            type="radio"
+            id="{{ section.id }}-{{ option.position }}-{{ forloop.index0 }}"
+            name="{{ option.name }}"
+            value="{{ value | escape }}"
+            form="{{ product_form_id }}"
+            {% if option.selected_value == value %}checked{% endif %}
+            {% unless variant_available %}disabled{% endunless %}
+            class="variant-button-input visually-hidden"
+          >
+          <label 
+            class="variant-button{% unless variant_available %} variant-button--disabled{% endunless %}"
+            for="{{ section.id }}-{{ option.position }}-{{ forloop.index0 }}"
+          >
+            {{ value }}
+          </label>
+        </div>
+      {%- endfor -%}
+    </div>
+  
+  {%- when 'select' -%}
+    <div class="product-form-variant-select">
+      <select
+        id="{{ section.id }}-{{ option.position }}"
+        name="{{ option.name }}"
+        form="{{ product_form_id }}"
+        class="variant-select"
+      >
+        {%- for value in option.values -%}
+          {%- liquid
+            assign variant_available = false
+            
+            for variant in product.variants
+              if variant.options[option_index] == value and variant.available
+                assign variant_available = true
+                break
+              endif
+            endfor
+          -%}
+          <option 
+            value="{{ value | escape }}"
+            {% if option.selected_value == value %}selected{% endif %}
+            {% unless variant_available %}disabled{% endunless %}
+          >
+            {{ value }}{% unless variant_available %} - {{ 'products.product.sold_out' | t }}{% endunless %}
+          </option>
+        {%- endfor -%}
+      </select>
+      <div class="variant-select-icon">
+        {%- render 'icon-caret' -%}
+      </div>
+    </div>
+    
+{%- endcase -%}

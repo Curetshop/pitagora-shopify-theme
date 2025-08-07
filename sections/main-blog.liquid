@@ -1,0 +1,459 @@
+{%- comment -%}
+Main Blog Section - Pitagora Theme
+Página de blog con grid de artículos y sidebar
+{%- endcomment -%}
+
+{{ 'blog.css' | asset_url | stylesheet_tag }}
+<script src="{{ 'blog.js' | asset_url }}" defer="defer"></script>
+
+<div class="blog-template">
+  <div class="page-width">
+    {%- if section.settings.show_blog_title or section.settings.show_blog_description -%}
+      <header class="blog-header">
+        {%- if section.settings.show_blog_title -%}
+          <h1 class="blog-header__title">{{ blog.title | escape }}</h1>
+        {%- endif -%}
+        
+        {%- if section.settings.show_blog_description and blog.description != blank -%}
+          <div class="blog-header__description rte">
+            {{ blog.description }}
+          </div>
+        {%- endif -%}
+      </header>
+    {%- endif -%}
+
+    <div class="blog-container{% if section.settings.enable_sidebar %} blog-container--has-sidebar{% endif %}">
+      <main class="blog-main" role="main">
+        {%- liquid
+          assign posts_per_page = section.settings.posts_per_page | default: 12
+        -%}
+        
+        {%- paginate blog.articles by posts_per_page -%}
+          {%- if blog.articles.size > 0 -%}
+            <div 
+              class="blog-grid blog-grid--{{ section.settings.blog_layout }}"
+              style="
+                --columns-desktop: {{ section.settings.columns_desktop | default: 3 }};
+                --columns-tablet: {{ section.settings.columns_tablet | default: 2 }};
+                --columns-mobile: {{ section.settings.columns_mobile | default: 1 }};
+              "
+            >
+              {%- for article in blog.articles -%}
+                <article class="blog-article-card">
+                  {%- if section.settings.show_featured_image and article.image -%}
+                    <div class="blog-article-card__media blog-article-card__media--{{ section.settings.image_ratio }}">
+                      <a href="{{ article.url }}" class="blog-article-card__media-link">
+                        <img
+                          src="{{ article.image | image_url: width: 600 }}"
+                          alt="{{ article.image.alt | escape | default: article.title | escape }}"
+                          loading="{% if forloop.index <= 3 %}eager{% else %}lazy{% endif %}"
+                          width="{{ article.image.width }}"
+                          height="{{ article.image.height }}"
+                          sizes="(max-width: 767px) 100vw, (max-width: 1023px) 50vw, 33vw"
+                          srcset="
+                            {{ article.image | image_url: width: 300 }} 300w,
+                            {{ article.image | image_url: width: 400 }} 400w,
+                            {{ article.image | image_url: width: 600 }} 600w,
+                            {{ article.image | image_url: width: 800 }} 800w
+                          "
+                        >
+                      </a>
+                      
+                      {%- if section.settings.show_date -%}
+                        <div class="blog-article-card__date">
+                          <time datetime="{{ article.published_at | date: '%Y-%m-%d' }}">
+                            {{ article.published_at | date: '%b %d' }}
+                          </time>
+                        </div>
+                      {%- endif -%}
+                    </div>
+                  {%- endif -%}
+
+                  <div class="blog-article-card__content">
+                    {%- if section.settings.show_tags and article.tags.size > 0 -%}
+                      <div class="blog-article-card__tags">
+                        {%- for tag in article.tags limit: 2 -%}
+                          <a href="{{ blog.url }}/tagged/{{ tag | handle }}" class="blog-article-card__tag">
+                            {{ tag | escape }}
+                          </a>
+                        {%- endfor -%}
+                      </div>
+                    {%- endif -%}
+
+                    <h2 class="blog-article-card__title">
+                      <a href="{{ article.url }}">{{ article.title | escape }}</a>
+                    </h2>
+
+                    <div class="blog-article-card__meta">
+                      {%- if section.settings.show_author -%}
+                        <span class="blog-article-card__author">
+                          {{ 'blogs.article.by_author' | t: author: article.author | escape }}
+                        </span>
+                      {%- endif -%}
+                      
+                      {%- unless article.image -%}
+                        {%- if section.settings.show_date -%}
+                          <time 
+                            datetime="{{ article.published_at | date: '%Y-%m-%d' }}"
+                            class="blog-article-card__date blog-article-card__date--inline"
+                          >
+                            {{ article.published_at | date: '%B %d, %Y' }}
+                          </time>
+                        {%- endif -%}
+                      {%- endunless -%}
+                      
+                      <span class="blog-article-card__read-time">
+                        {%- liquid
+                          assign words_per_minute = 200
+                          assign word_count = article.content | strip_html | split: ' ' | size
+                          assign read_time = word_count | divided_by: words_per_minute
+                          if read_time < 1
+                            assign read_time = 1
+                          endif
+                        -%}
+                        {{ read_time }} {{ 'blogs.article.min_read' | t }}
+                      </span>
+                    </div>
+
+                    {%- if section.settings.show_excerpt -%}
+                      <div class="blog-article-card__excerpt">
+                        {%- liquid
+                          assign excerpt_length = section.settings.excerpt_length | default: 120
+                          if article.excerpt != blank
+                            assign excerpt_text = article.excerpt | strip_html | truncate: excerpt_length
+                          else
+                            assign excerpt_text = article.content | strip_html | truncate: excerpt_length
+                          endif
+                        -%}
+                        <p>{{ excerpt_text }}</p>
+                      </div>
+                    {%- endif -%}
+
+                    <div class="blog-article-card__footer">
+                      <a 
+                        href="{{ article.url }}" 
+                        class="blog-article-card__read-more"
+                        aria-label="{{ 'blogs.article.read_more_title' | t: title: article.title }}"
+                      >
+                        {{ 'blogs.article.read_more' | t }}
+                        {% render 'icon-arrow-right' %}
+                      </a>
+                    </div>
+                  </div>
+                </article>
+              {%- endfor -%}
+            </div>
+
+            {%- if paginate.pages > 1 -%}
+              {% render 'pagination', paginate: paginate, anchor: '' %}
+            {%- endif -%}
+          {%- else -%}
+            <div class="blog-empty">
+              <div class="blog-empty__content">
+                <h2>{{ 'blogs.general.no_articles' | t }}</h2>
+                <p>{{ 'blogs.general.no_articles_description' | t }}</p>
+              </div>
+            </div>
+          {%- endif -%}
+        {%- endpaginate -%}
+      </main>
+
+      {%- if section.settings.enable_sidebar -%}
+        <aside class="blog-sidebar" role="complementary">
+          {%- if section.settings.show_search -%}
+            <div class="blog-sidebar__section">
+              <h3 class="blog-sidebar__title">{{ 'blogs.general.search_blog' | t }}</h3>
+              <form action="{{ blog.url }}" method="get" class="blog-search-form" role="search">
+                <div class="blog-search-form__input-wrapper">
+                  <label for="blog-search-input" class="visually-hidden">
+                    {{ 'blogs.general.search_blog' | t }}
+                  </label>
+                  <input
+                    id="blog-search-input"
+                    class="blog-search-form__input"
+                    type="search"
+                    name="q"
+                    value="{{ request.params.q | escape }}"
+                    placeholder="{{ 'blogs.general.search_placeholder' | t }}"
+                    autocomplete="off"
+                  >
+                  <button type="submit" class="blog-search-form__submit">
+                    {% render 'icon-search' %}
+                    <span class="visually-hidden">{{ 'general.search.submit' | t }}</span>
+                  </button>
+                </div>
+              </form>
+            </div>
+          {%- endif -%}
+
+          {%- if section.settings.show_categories -%}
+            <div class="blog-sidebar__section">
+              <h3 class="blog-sidebar__title">{{ 'blogs.general.categories' | t }}</h3>
+              <nav class="blog-categories">
+                <ul class="blog-categories__list">
+                  <li class="blog-categories__item{% unless request.params.tag %} blog-categories__item--current{% endunless %}">
+                    <a href="{{ blog.url }}" class="blog-categories__link">
+                      {{ 'blogs.general.all_posts' | t }}
+                      <span class="blog-categories__count">({{ blog.articles_count }})</span>
+                    </a>
+                  </li>
+                  {%- for tag in blog.all_tags limit: 10 -%}
+                    {%- liquid
+                      assign tag_url = blog.url | append: '/tagged/' | append: tag | handle
+                      assign tag_count = 0
+                      for article in blog.articles
+                        if article.tags contains tag
+                          assign tag_count = tag_count | plus: 1
+                        endif
+                      endfor
+                    -%}
+                    <li class="blog-categories__item{% if request.params.tag == tag %} blog-categories__item--current{% endif %}">
+                      <a href="{{ tag_url }}" class="blog-categories__link">
+                        {{ tag | escape }}
+                        <span class="blog-categories__count">({{ tag_count }})</span>
+                      </a>
+                    </li>
+                  {%- endfor -%}
+                </ul>
+              </nav>
+            </div>
+          {%- endif -%}
+
+          {%- if section.settings.show_recent_posts -%}
+            <div class="blog-sidebar__section">
+              <h3 class="blog-sidebar__title">{{ 'blogs.general.recent_posts' | t }}</h3>
+              <div class="blog-recent-posts">
+                {%- for article in blog.articles limit: 5 -%}
+                  <article class="blog-recent-post">
+                    {%- if article.image -%}
+                      <a href="{{ article.url }}" class="blog-recent-post__image">
+                        <img
+                          src="{{ article.image | image_url: width: 120 }}"
+                          alt="{{ article.image.alt | escape | default: article.title | escape }}"
+                          loading="lazy"
+                          width="60"
+                          height="60"
+                        >
+                      </a>
+                    {%- endif -%}
+                    
+                    <div class="blog-recent-post__content">
+                      <h4 class="blog-recent-post__title">
+                        <a href="{{ article.url }}">{{ article.title | escape }}</a>
+                      </h4>
+                      <time datetime="{{ article.published_at | date: '%Y-%m-%d' }}" class="blog-recent-post__date">
+                        {{ article.published_at | date: '%b %d, %Y' }}
+                      </time>
+                    </div>
+                  </article>
+                {%- endfor -%}
+              </div>
+            </div>
+          {%- endif -%}
+
+          {%- if section.settings.show_popular_tags -%}
+            <div class="blog-sidebar__section">
+              <h3 class="blog-sidebar__title">{{ 'blogs.general.popular_tags' | t }}</h3>
+              <div class="blog-tags-cloud">
+                {%- for tag in blog.all_tags limit: 15 -%}
+                  <a 
+                    href="{{ blog.url }}/tagged/{{ tag | handle }}" 
+                    class="blog-tags-cloud__tag{% if request.params.tag == tag %} blog-tags-cloud__tag--current{% endif %}"
+                  >
+                    {{ tag | escape }}
+                  </a>
+                {%- endfor -%}
+              </div>
+            </div>
+          {%- endif -%}
+        </aside>
+      {%- endif -%}
+    </div>
+  </div>
+</div>
+
+{% schema %}
+{
+  "name": "Blog",
+  "class": "shopify-section-main-blog",
+  "settings": [
+    {
+      "type": "header",
+      "content": "Blog header"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_blog_title",
+      "label": "Show blog title",
+      "default": true
+    },
+    {
+      "type": "checkbox",
+      "id": "show_blog_description",
+      "label": "Show blog description",
+      "default": true
+    },
+    {
+      "type": "header",
+      "content": "Blog layout"
+    },
+    {
+      "type": "range",
+      "id": "posts_per_page",
+      "label": "Posts per page",
+      "min": 6,
+      "max": 24,
+      "step": 6,
+      "default": 12
+    },
+    {
+      "type": "select",
+      "id": "blog_layout",
+      "label": "Blog layout",
+      "options": [
+        {
+          "value": "grid",
+          "label": "Grid"
+        },
+        {
+          "value": "list",
+          "label": "List"
+        }
+      ],
+      "default": "grid"
+    },
+    {
+      "type": "range",
+      "id": "columns_desktop",
+      "label": "Desktop columns",
+      "min": 1,
+      "max": 4,
+      "step": 1,
+      "default": 3
+    },
+    {
+      "type": "range",
+      "id": "columns_tablet",
+      "label": "Tablet columns",
+      "min": 1,
+      "max": 3,
+      "step": 1,
+      "default": 2
+    },
+    {
+      "type": "select",
+      "id": "columns_mobile",
+      "label": "Mobile columns",
+      "options": [
+        {
+          "value": "1",
+          "label": "1 column"
+        },
+        {
+          "value": "2",
+          "label": "2 columns"
+        }
+      ],
+      "default": "1"
+    },
+    {
+      "type": "header",
+      "content": "Article cards"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_featured_image",
+      "label": "Show featured images",
+      "default": true
+    },
+    {
+      "type": "select",
+      "id": "image_ratio",
+      "label": "Image ratio",
+      "options": [
+        {
+          "value": "square",
+          "label": "Square"
+        },
+        {
+          "value": "landscape",
+          "label": "Landscape"
+        },
+        {
+          "value": "portrait",
+          "label": "Portrait"
+        }
+      ],
+      "default": "landscape"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_excerpt",
+      "label": "Show excerpts",
+      "default": true
+    },
+    {
+      "type": "range",
+      "id": "excerpt_length",
+      "label": "Excerpt length",
+      "min": 50,
+      "max": 200,
+      "step": 10,
+      "default": 120,
+      "info": "Characters to show in excerpt"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_author",
+      "label": "Show author",
+      "default": true
+    },
+    {
+      "type": "checkbox",
+      "id": "show_date",
+      "label": "Show published date",
+      "default": true
+    },
+    {
+      "type": "checkbox",
+      "id": "show_tags",
+      "label": "Show tags",
+      "default": true
+    },
+    {
+      "type": "header",
+      "content": "Sidebar"
+    },
+    {
+      "type": "checkbox",
+      "id": "enable_sidebar",
+      "label": "Enable sidebar",
+      "default": true
+    },
+    {
+      "type": "checkbox",
+      "id": "show_search",
+      "label": "Show blog search",
+      "default": true
+    },
+    {
+      "type": "checkbox",
+      "id": "show_categories",
+      "label": "Show categories",
+      "default": true
+    },
+    {
+      "type": "checkbox",
+      "id": "show_recent_posts",
+      "label": "Show recent posts",
+      "default": true
+    },
+    {
+      "type": "checkbox",
+      "id": "show_popular_tags",
+      "label": "Show popular tags",
+      "default": true
+    }
+  ]
+}
+{% endschema %}

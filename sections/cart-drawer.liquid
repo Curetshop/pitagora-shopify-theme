@@ -1,0 +1,107 @@
+{{ 'cart-drawer.css' | asset_url | stylesheet_tag }}
+<script src="{{ 'cart-drawer.js' | asset_url }}" defer="defer"></script>
+
+{% render 'cart-drawer' %}
+
+{% schema %}
+{
+  "name": "Cart drawer",
+  "settings": [
+    {
+      "type": "header",
+      "content": "General"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_cart_note",
+      "label": "Show cart note",
+      "default": true
+    },
+    {
+      "type": "checkbox",
+      "id": "show_vendor",
+      "label": "Show vendor",
+      "default": false
+    },
+    {
+      "type": "header",
+      "content": "Cart drawer styling"
+    },
+    {
+      "type": "color",
+      "id": "drawer_background",
+      "label": "Drawer background",
+      "default": "#ffffff"
+    },
+    {
+      "type": "color",
+      "id": "drawer_text",
+      "label": "Drawer text color",
+      "default": "#000000"
+    },
+    {
+      "type": "select",
+      "id": "drawer_width",
+      "label": "Drawer width",
+      "options": [
+        {
+          "value": "300",
+          "label": "Small (300px)"
+        },
+        {
+          "value": "400",
+          "label": "Medium (400px)"
+        },
+        {
+          "value": "500",
+          "label": "Large (500px)"
+        }
+      ],
+      "default": "400"
+    },
+    {
+      "type": "header",
+      "content": "Cart items"
+    },
+    {
+      "type": "range",
+      "id": "cart_image_size",
+      "label": "Cart image size",
+      "min": 60,
+      "max": 120,
+      "step": 10,
+      "unit": "px",
+      "default": 80
+    },
+    {
+      "type": "checkbox",
+      "id": "show_item_variants",
+      "label": "Show item variants",
+      "default": true
+    },
+    {
+      "type": "checkbox",
+      "id": "show_item_properties",
+      "label": "Show item properties",
+      "default": true
+    },
+    {
+      "type": "header",
+      "content": "Checkout"
+    },
+    {
+      "type": "text",
+      "id": "checkout_button_text",
+      "label": "Checkout button text",
+      "default": "Checkout"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_additional_checkout_buttons",
+      "label": "Show additional checkout buttons",
+      "info": "Shows PayPal, Apple Pay, etc.",
+      "default": true
+    }
+  ]
+}
+{% endschema %}

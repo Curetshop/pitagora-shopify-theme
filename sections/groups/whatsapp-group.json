@@ -1,0 +1,38 @@
+{
+  "name": "WhatsApp Global",
+  "type": "static",
+  "sections": {
+    "whatsapp-button": {
+      "type": "whatsapp-button",
+      "settings": {
+        "enable_whatsapp": true,
+        "phone_number": "5491123456789",
+        "custom_message": "¡Hola! Me interesa obtener más información.",
+        "position": "bottom-right",
+        "button_size": 60,
+        "mobile_button_size": 50,
+        "button_color": "#25d366",
+        "button_hover_color": "#128c7e",
+        "bottom_margin": 40,
+        "side_margin": 40,
+        "mobile_bottom_margin": 20,
+        "mobile_side_margin": 20,
+        "show_tooltip": true,
+        "tooltip_text": "¡Contáctanos!",
+        "tooltip_bg_color": "#333333",
+        "tooltip_text_color": "#ffffff",
+        "hide_tooltip_mobile": true,
+        "animation_entrance": "slide-up",
+        "animation_delay": 2,
+        "hover_scale": 110,
+        "include_page_url": true,
+        "include_product_info": true,
+        "opacity": 100,
+        "z_index": 1000
+      }
+    }
+  },
+  "order": [
+    "whatsapp-button"
+  ]
+}

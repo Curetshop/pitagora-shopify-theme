@@ -1,0 +1,107 @@
+{%- comment -%}
+Collection Filter Price Range - Pitagora Theme
+Maneja filtros de rango de precios con slider dual
+{%- endcomment -%}
+
+{%- liquid
+  assign min_price = filter.range_min | divided_by: 100.0 | round: 2
+  assign max_price = filter.range_max | divided_by: 100.0 | round: 2
+  assign min_value = filter.min_value.value | default: min_price | divided_by: 100.0 | round: 2
+  assign max_value = filter.max_value.value | default: max_price | divided_by: 100.0 | round: 2
+  assign currency_symbol = cart.currency.symbol | default: '$'
+-%}
+
+<div class="collection-filter-price-range">
+  <div class="price-range-inputs">
+    <div class="price-range-input">
+      <label for="filter-price-min" class="price-range-input__label">
+        {{ 'collections.filters.price_from' | t }}
+      </label>
+      <div class="price-range-input__wrapper">
+        <span class="price-range-input__currency">{{ currency_symbol }}</span>
+        <input 
+          type="number" 
+          id="filter-price-min"
+          name="{{ filter.min_value.param_name }}" 
+          value="{{ min_value }}"
+          min="{{ min_price }}"
+          max="{{ max_price }}"
+          step="0.01"
+          class="price-range-input__field"
+          placeholder="{{ min_price }}"
+          data-price-min
+        >
+      </div>
+    </div>
+
+    <div class="price-range-input">
+      <label for="filter-price-max" class="price-range-input__label">
+        {{ 'collections.filters.price_to' | t }}
+      </label>
+      <div class="price-range-input__wrapper">
+        <span class="price-range-input__currency">{{ currency_symbol }}</span>
+        <input 
+          type="number" 
+          id="filter-price-max"
+          name="{{ filter.max_value.param_name }}" 
+          value="{{ max_value }}"
+          min="{{ min_price }}"
+          max="{{ max_price }}"
+          step="0.01"
+          class="price-range-input__field"
+          placeholder="{{ max_price }}"
+          data-price-max
+        >
+      </div>
+    </div>
+  </div>
+
+  <div class="price-range-slider" data-price-range-slider>
+    <div class="price-range-slider__track">
+      <div 
+        class="price-range-slider__range"
+        data-price-range-fill
+      ></div>
+    </div>
+    
+    <input 
+      type="range" 
+      class="price-range-slider__input price-range-slider__input--min"
+      min="{{ min_price }}"
+      max="{{ max_price }}"
+      value="{{ min_value }}"
+      step="0.01"
+      data-price-slider-min
+    >
+    
+    <input 
+      type="range" 
+      class="price-range-slider__input price-range-slider__input--max"
+      min="{{ min_price }}"
+      max="{{ max_price }}"
+      value="{{ max_value }}"
+      step="0.01"
+      data-price-slider-max
+    >
+  </div>
+
+  <div class="price-range-values">
+    <span class="price-range-values__min">
+      {{ currency_symbol }}<span data-price-display-min>{{ min_value }}</span>
+    </span>
+    <span class="price-range-values__separator">-</span>
+    <span class="price-range-values__max">
+      {{ currency_symbol }}<span data-price-display-max>{{ max_value }}</span>
+    </span>
+  </div>
+
+  {%- if filter.min_value.value or filter.max_value.value -%}
+    <button 
+      type="button" 
+      class="price-range-clear"
+      data-clear-price-filter
+    >
+      {{ 'collections.filters.clear_price' | t }}
+    </button>
+  {%- endif -%}
+</div>

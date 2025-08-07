@@ -1,0 +1,534 @@
+{%- if section.settings.enable_whatsapp -%}
+<style>
+  .whatsapp-float-{{ section.id }} {
+    position: fixed;
+    width: {{ section.settings.button_size }}px;
+    height: {{ section.settings.button_size }}px;
+    {% case section.settings.position %}
+      {% when 'bottom-right' %}
+        bottom: {{ section.settings.bottom_margin }}px;
+        right: {{ section.settings.side_margin }}px;
+      {% when 'bottom-left' %}
+        bottom: {{ section.settings.bottom_margin }}px;
+        left: {{ section.settings.side_margin }}px;
+      {% when 'top-right' %}
+        top: {{ section.settings.top_margin }}px;
+        right: {{ section.settings.side_margin }}px;
+      {% when 'top-left' %}
+        top: {{ section.settings.top_margin }}px;
+        left: {{ section.settings.side_margin }}px;
+    {% endcase %}
+    background-color: {{ section.settings.button_color }};
+    color: #FFF;
+    border-radius: 50px;
+    text-align: center;
+    font-size: {{ section.settings.button_size | divided_by: 2 }}px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+    z-index: {{ section.settings.z_index }};
+    cursor: pointer;
+    transition: all 0.3s ease;
+    text-decoration: none;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: none;
+    opacity: {{ section.settings.opacity | divided_by: 100.0 }};
+  }
+
+  .whatsapp-float-{{ section.id }}:hover {
+    background-color: {{ section.settings.button_hover_color }};
+    transform: scale({{ section.settings.hover_scale | divided_by: 100.0 }});
+    box-shadow: 0 6px 20px rgba(37, 211, 102, 0.4);
+  }
+
+  .whatsapp-icon-{{ section.id }} {
+    width: {{ section.settings.button_size | divided_by: 1.7 }}px;
+    height: {{ section.settings.button_size | divided_by: 1.7 }}px;
+    fill: white;
+  }
+
+  {% if section.settings.show_tooltip %}
+  .whatsapp-float-{{ section.id }}::before {
+    content: "{{ section.settings.tooltip_text }}";
+    position: absolute;
+    {% if section.settings.position contains 'right' %}
+      right: {{ section.settings.button_size | plus: 10 }}px;
+    {% else %}
+      left: {{ section.settings.button_size | plus: 10 }}px;
+    {% endif %}
+    top: 50%;
+    transform: translateY(-50%);
+    background: {{ section.settings.tooltip_bg_color }};
+    color: {{ section.settings.tooltip_text_color }};
+    padding: 8px 12px;
+    border-radius: 6px;
+    font-size: 14px;
+    white-space: nowrap;
+    opacity: 0;
+    visibility: hidden;
+    transition: all 0.3s ease;
+    font-family: Arial, sans-serif;
+    font-weight: normal;
+  }
+
+  .whatsapp-float-{{ section.id }}::after {
+    content: "";
+    position: absolute;
+    {% if section.settings.position contains 'right' %}
+      right: {{ section.settings.button_size }}px;
+      border-left-color: {{ section.settings.tooltip_bg_color }};
+      border-right-color: transparent;
+    {% else %}
+      left: {{ section.settings.button_size }}px;
+      border-right-color: {{ section.settings.tooltip_bg_color }};
+      border-left-color: transparent;
+    {% endif %}
+    top: 50%;
+    transform: translateY(-50%);
+    border: 6px solid transparent;
+    opacity: 0;
+    visibility: hidden;
+    transition: all 0.3s ease;
+  }
+
+  .whatsapp-float-{{ section.id }}:hover::before,
+  .whatsapp-float-{{ section.id }}:hover::after {
+    opacity: 1;
+    visibility: visible;
+  }
+  {% endif %}
+
+  /* Responsive */
+  @media screen and (max-width: 768px) {
+    .whatsapp-float-{{ section.id }} {
+      width: {{ section.settings.mobile_button_size }}px;
+      height: {{ section.settings.mobile_button_size }}px;
+      font-size: {{ section.settings.mobile_button_size | divided_by: 2 }}px;
+      bottom: {{ section.settings.mobile_bottom_margin }}px;
+      {% if section.settings.position contains 'right' %}
+        right: {{ section.settings.mobile_side_margin }}px;
+      {% else %}
+        left: {{ section.settings.mobile_side_margin }}px;
+      {% endif %}
+    }
+    
+    .whatsapp-icon-{{ section.id }} {
+      width: {{ section.settings.mobile_button_size | divided_by: 1.7 }}px;
+      height: {{ section.settings.mobile_button_size | divided_by: 1.7 }}px;
+    }
+
+    {% if section.settings.hide_tooltip_mobile %}
+    .whatsapp-float-{{ section.id }}::before,
+    .whatsapp-float-{{ section.id }}::after {
+      display: none;
+    }
+    {% endif %}
+  }
+
+  {% if section.settings.animation_entrance != 'none' %}
+  .whatsapp-float-{{ section.id }} {
+    {% case section.settings.animation_entrance %}
+      {% when 'fade-in' %}
+        animation: fadeInWhatsApp{{ section.id }} 0.8s ease {{ section.settings.animation_delay }}s both;
+      {% when 'slide-up' %}
+        animation: slideUpWhatsApp{{ section.id }} 0.8s ease {{ section.settings.animation_delay }}s both;
+      {% when 'bounce' %}
+        animation: bounceInWhatsApp{{ section.id }} 1s ease {{ section.settings.animation_delay }}s both;
+      {% when 'pulse' %}
+        animation: pulseWhatsApp{{ section.id }} 2s infinite {{ section.settings.animation_delay }}s;
+    {% endcase %}
+  }
+
+  @keyframes fadeInWhatsApp{{ section.id }} {
+    from { opacity: 0; }
+    to { opacity: {{ section.settings.opacity | divided_by: 100.0 }}; }
+  }
+
+  @keyframes slideUpWhatsApp{{ section.id }} {
+    from { 
+      opacity: 0; 
+      transform: translateY(100px); 
+    }
+    to { 
+      opacity: {{ section.settings.opacity | divided_by: 100.0 }}; 
+      transform: translateY(0); 
+    }
+  }
+
+  @keyframes bounceInWhatsApp{{ section.id }} {
+    0% { opacity: 0; transform: scale(0.3); }
+    50% { opacity: 1; transform: scale(1.05); }
+    70% { transform: scale(0.9); }
+    100% { opacity: {{ section.settings.opacity | divided_by: 100.0 }}; transform: scale(1); }
+  }
+
+  @keyframes pulseWhatsApp{{ section.id }} {
+    0% { transform: scale(1); }
+    50% { transform: scale(1.1); }
+    100% { transform: scale(1); }
+  }
+  {% endif %}
+</style>
+
+<a href="#" 
+   class="whatsapp-float-{{ section.id }}" 
+   id="whatsapp-btn-{{ section.id }}"
+   {% if section.settings.custom_class != blank %}data-custom-class="{{ section.settings.custom_class }}"{% endif %}>
+  <svg class="whatsapp-icon-{{ section.id }}" viewBox="0 0 24 24">
+    <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893A11.821 11.821 0 0020.465 3.63"/>
+  </svg>
+</a>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+  var whatsappBtn = document.getElementById('whatsapp-btn-{{ section.id }}');
+  
+  if (whatsappBtn) {
+    whatsappBtn.addEventListener('click', function(e) {
+      e.preventDefault();
+      
+      // Configuración del botón
+      var phoneNumber = '{{ section.settings.phone_number }}';
+      var customMessage = '{{ section.settings.custom_message }}';
+      var includeUrl = {{ section.settings.include_page_url }};
+      var includeProductInfo = {{ section.settings.include_product_info }};
+      
+      var message = customMessage || 'Hola! Me interesa obtener más información.';
+      
+      // Detectar si estamos en una página de producto - MEJORADO para tema Focal
+      if (includeProductInfo) {
+        var isProductPage = window.location.pathname.includes('/products/') || 
+                           document.body.classList.contains('template-product') ||
+                           document.querySelector('[data-section-type="product"]') ||
+                           document.querySelector('.product-meta__title') ||
+                           document.querySelector('.product__title');
+        
+        if (isProductPage) {
+          // Múltiples selectores para el tema Focal
+          var productTitle = '';
+          var selectors = [
+            '.product-meta__title',
+            'h1.product-meta__title', 
+            '.product__title',
+            '.product-title',
+            'h1[data-product-title]',
+            '.product-form__title',
+            '.product-card__title',
+            '.main-product h1',
+            '.product h1',
+            'h1'
+          ];
+          
+          for (var i = 0; i < selectors.length; i++) {
+            var element = document.querySelector(selectors[i]);
+            if (element && element.textContent && element.textContent.trim()) {
+              productTitle = element.textContent.trim();
+              break;
+            }
+          }
+          
+          if (productTitle) {
+            message += ' - ' + productTitle;
+          }
+        }
+      }
+      
+      // Agregar URL si está habilitado
+      if (includeUrl) {
+        message += ' ' + window.location.href;
+      }
+      
+      // Crear URL de WhatsApp
+      var encodedMessage = encodeURIComponent(message);
+      var whatsappUrl = 'https://wa.me/' + phoneNumber + '?text=' + encodedMessage;
+      
+      // Tracking (opcional)
+      if (typeof gtag !== 'undefined') {
+        gtag('event', 'whatsapp_click', {
+          'event_category': 'engagement',
+          'event_label': 'whatsapp_button',
+          'value': 1
+        });
+      }
+      
+      // Abrir WhatsApp
+      window.open(whatsappUrl, '_blank');
+    });
+  }
+});
+</script>
+
+{%- endif -%}
+
+{% schema %}
+{
+  "name": "Botón WhatsApp Flotante",
+  "tag": "section",
+  "class": "whatsapp-section",
+  "settings": [
+    {
+      "type": "header",
+      "content": "⚙️ Configuración General"
+    },
+    {
+      "type": "checkbox",
+      "id": "enable_whatsapp",
+      "label": "Activar botón de WhatsApp",
+      "default": true
+    },
+    {
+      "type": "text",
+      "id": "phone_number",
+      "label": "📱 Número de WhatsApp",
+      "info": "Incluye código de país sin +. Ej: 5491123456789",
+      "placeholder": "5491123456789"
+    },
+    {
+      "type": "textarea",
+      "id": "custom_message",
+      "label": "💬 Mensaje personalizado",
+      "default": "¡Hola! Me interesa obtener más información.",
+      "info": "Mensaje que se enviará automáticamente"
+    },
+    {
+      "type": "header",
+      "content": "🎨 Apariencia del Botón"
+    },
+    {
+      "type": "range",
+      "id": "button_size",
+      "min": 40,
+      "max": 80,
+      "step": 5,
+      "unit": "px",
+      "label": "Tamaño del botón (Escritorio)",
+      "default": 60
+    },
+    {
+      "type": "range",
+      "id": "mobile_button_size",
+      "min": 35,
+      "max": 70,
+      "step": 5,
+      "unit": "px",
+      "label": "Tamaño del botón (Móvil)",
+      "default": 50
+    },
+    {
+      "type": "color",
+      "id": "button_color",
+      "label": "Color del botón",
+      "default": "#25d366"
+    },
+    {
+      "type": "color",
+      "id": "button_hover_color",
+      "label": "Color del botón (hover)",
+      "default": "#128c7e"
+    },
+    {
+      "type": "range",
+      "id": "opacity",
+      "min": 50,
+      "max": 100,
+      "step": 5,
+      "unit": "%",
+      "label": "Opacidad",
+      "default": 100
+    },
+    {
+      "type": "header",
+      "content": "📍 Posición y Espaciado"
+    },
+    {
+      "type": "select",
+      "id": "position",
+      "label": "Posición del botón",
+      "options": [
+        {
+          "value": "bottom-right",
+          "label": "Abajo a la derecha"
+        },
+        {
+          "value": "bottom-left",
+          "label": "Abajo a la izquierda"
+        },
+        {
+          "value": "top-right",
+          "label": "Arriba a la derecha"
+        },
+        {
+          "value": "top-left",
+          "label": "Arriba a la izquierda"
+        }
+      ],
+      "default": "bottom-right"
+    },
+    {
+      "type": "range",
+      "id": "bottom_margin",
+      "min": 10,
+      "max": 100,
+      "step": 5,
+      "unit": "px",
+      "label": "Margen inferior (Escritorio)",
+      "default": 40
+    },
+    {
+      "type": "range",
+      "id": "side_margin",
+      "min": 10,
+      "max": 100,
+      "step": 5,
+      "unit": "px",
+      "label": "Margen lateral (Escritorio)",
+      "default": 40
+    },
+    {
+      "type": "range",
+      "id": "mobile_bottom_margin",
+      "min": 10,
+      "max": 60,
+      "step": 5,
+      "unit": "px",
+      "label": "Margen inferior (Móvil)",
+      "default": 20
+    },
+    {
+      "type": "range",
+      "id": "mobile_side_margin",
+      "min": 10,
+      "max": 60,
+      "step": 5,
+      "unit": "px",
+      "label": "Margen lateral (Móvil)",
+      "default": 20
+    },
+    {
+      "type": "range",
+      "id": "z_index",
+      "min": 1000,
+      "max": 5000,
+      "step": 100,
+      "label": "Z-Index (profundidad)",
+      "default": 1000,
+      "info": "Valores más altos aparecen encima de otros elementos"
+    },
+    {
+      "type": "header",
+      "content": "💭 Tooltip (Mensaje emergente)"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_tooltip",
+      "label": "Mostrar tooltip al pasar el mouse",
+      "default": true
+    },
+    {
+      "type": "text",
+      "id": "tooltip_text",
+      "label": "Texto del tooltip",
+      "default": "¡Contáctanos!",
+      "info": "Solo se muestra si el tooltip está activado"
+    },
+    {
+      "type": "color",
+      "id": "tooltip_bg_color",
+      "label": "Color de fondo del tooltip",
+      "default": "#333333"
+    },
+    {
+      "type": "color",
+      "id": "tooltip_text_color",
+      "label": "Color del texto del tooltip",
+      "default": "#ffffff"
+    },
+    {
+      "type": "checkbox",
+      "id": "hide_tooltip_mobile",
+      "label": "Ocultar tooltip en móviles",
+      "default": true
+    },
+    {
+      "type": "header",
+      "content": "🎭 Efectos y Animaciones"
+    },
+    {
+      "type": "select",
+      "id": "animation_entrance",
+      "label": "Animación de entrada",
+      "options": [
+        {
+          "value": "none",
+          "label": "Sin animación"
+        },
+        {
+          "value": "fade-in",
+          "label": "Aparecer gradualmente"
+        },
+        {
+          "value": "slide-up",
+          "label": "Deslizar desde abajo"
+        },
+        {
+          "value": "bounce",
+          "label": "Rebote"
+        },
+        {
+          "value": "pulse",
+          "label": "Pulso continuo"
+        }
+      ],
+      "default": "slide-up"
+    },
+    {
+      "type": "range",
+      "id": "animation_delay",
+      "min": 0,
+      "max": 5,
+      "step": 0.5,
+      "unit": "s",
+      "label": "Retraso de animación",
+      "default": 2
+    },
+    {
+      "type": "range",
+      "id": "hover_scale",
+      "min": 100,
+      "max": 130,
+      "step": 5,
+      "unit": "%",
+      "label": "Escala al pasar el mouse",
+      "default": 110
+    },
+    {
+      "type": "header",
+      "content": "🔧 Configuración Avanzada"
+    },
+    {
+      "type": "checkbox",
+      "id": "include_page_url",
+      "label": "Incluir URL de la página en el mensaje",
+      "default": true
+    },
+    {
+      "type": "checkbox",
+      "id": "include_product_info",
+      "label": "Incluir información del producto",
+      "default": true,
+      "info": "Solo en páginas de producto"
+    },
+    {
+      "type": "text",
+      "id": "custom_class",
+      "label": "Clase CSS personalizada",
+      "info": "Para desarrolladores: agregar clases CSS adicionales"
+    }
+  ],
+  "presets": [
+    {
+      "name": "Botón WhatsApp Flotante"
+    }
+  ]
+}
+{% endschema %}

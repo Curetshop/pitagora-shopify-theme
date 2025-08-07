@@ -1,0 +1,158 @@
+{%- comment -%}
+  Product Media Item - Renders individual product media
+  Supports images, videos, and 3D models
+  Optimized for performance with lazy loading
+{%- endcomment -%}
+
+{%- liquid
+  assign loading = priority | default: 'lazy'
+  assign media_id = media.id
+  assign media_class = 'product-media-item product-media-item--' | append: media.media_type
+  
+  if class != blank
+    assign media_class = media_class | append: ' ' | append: class
+  endif
+  
+  case media.media_type
+    when 'image'
+      assign media_aspect_ratio = media.aspect_ratio
+    when 'video'
+      assign media_aspect_ratio = media.aspect_ratio
+    when 'model'
+      assign media_aspect_ratio = 1
+  endcase
+-%}
+
+<div 
+  class="{{ media_class }}"
+  data-media-id="{{ media_id }}"
+  data-media-type="{{ media.media_type }}"
+  {% if media.media_type == 'image' %}data-media-position="{{ media.position }}"{% endif %}
+>
+  {%- case media.media_type -%}
+    
+    {%- when 'image' -%}
+      <div class="product-media-image" {% if enable_zoom %}data-zoom{% endif %}>
+        {%- if enable_zoom -%}
+          <button 
+            type="button" 
+            class="product-media-zoom-trigger"
+            aria-label="{{ 'products.product.media.zoom_image' | t }}"
+            data-zoom-image="{{ media | image_url: width: 2048 }}"
+          >
+        {%- endif -%}
+        
+        <img
+          src="{{ media | image_url: width: 1280 }}"
+          alt="{{ media.alt | escape }}"
+          width="{{ media.width }}"
+          height="{{ media.height }}"
+          loading="{{ loading }}"
+          sizes="(min-width: 768px) 50vw, 100vw"
+          {% if media.width > 1280 %}
+            srcset="{{ media | image_url: width: 640 }} 640w,
+                    {{ media | image_url: width: 960 }} 960w,
+                    {{ media | image_url: width: 1280 }} 1280w,
+                    {{ media | image_url: width: 1600 }} 1600w"
+          {% endif %}
+        >
+        
+        {%- if enable_zoom -%}
+          </button>
+        {%- endif -%}
+      </div>
+    
+    {%- when 'video' -%}
+      <div class="product-media-video">
+        <button
+          type="button"
+          class="product-media-video-trigger"
+          aria-label="{{ 'products.product.media.play_video' | t }}"
+          data-video-id="{{ media.id }}"
+        >
+          <img
+            src="{{ media.preview_image | image_url: width: 1280 }}"
+            alt="{{ media.preview_image.alt | escape | default: media.alt | escape }}"
+            width="{{ media.preview_image.width }}"
+            height="{{ media.preview_image.height }}"
+            loading="{{ loading }}"
+          >
+          <span class="product-media-video-play-button">
+            {%- render 'icon-play' -%}
+          </span>
+        </button>
+        
+        {%- comment -%} Video Element (Hidden by default) {%- endcomment -%}
+        <div class="product-media-video-container" style="display: none;" data-video-container>
+          {{ media | video_tag: 
+              image_size: '1280x',
+              controls: true,
+              preload: 'metadata' }}
+        </div>
+      </div>
+    
+    {%- when 'model' -%}
+      <div class="product-media-model">
+        <button
+          type="button"
+          class="product-media-model-trigger"
+          aria-label="{{ 'products.product.media.load_model' | t }}"
+          data-model-id="{{ media.id }}"
+        >
+          <img
+            src="{{ media.preview_image | image_url: width: 1280 }}"
+            alt="{{ media.preview_image.alt | escape | default: media.alt | escape }}"
+            width="{{ media.preview_image.width }}"
+            height="{{ media.preview_image.height }}"
+            loading="{{ loading }}"
+          >
+          <span class="product-media-model-play-button">
+            {%- render 'icon-3d' -%}
+          </span>
+        </button>
+        
+        {%- comment -%} 3D Model Element {%- endcomment -%}
+        <model-viewer
+          src="{{ media.sources[1].url }}"
+          alt="{{ media.alt | escape }}"
+          ar
+          auto-rotate
+          camera-controls
+          poster="{{ media.preview_image | image_url: width: 1280 }}"
+          style="width: 100%; height: 100%; display: none;"
+          data-model-viewer
+        ></model-viewer>
+      </div>
+    
+    {%- when 'external_video' -%}
+      <div class="product-media-external-video">
+        <div class="product-media-external-video-container">
+          {%- if media.host == 'youtube' -%}
+            <iframe
+              src="https://www.youtube.com/embed/{{ media.external_id }}?enablejsapi=1&rel=0"
+              class="js-youtube"
+              allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture"
+              allowfullscreen
+              title="{{ 'products.product.media.video_alt' | t: title: media.alt | escape }}"
+            ></iframe>
+          {%- elsif media.host == 'vimeo' -%}
+            <iframe
+              src="https://player.vimeo.com/video/{{ media.external_id }}"
+              class="js-vimeo"
+              allow="autoplay; encrypted-media; picture-in-picture"
+              allowfullscreen
+              title="{{ 'products.product.media.video_alt' | t: title: media.alt | escape }}"
+            ></iframe>
+          {%- endif -%}
+        </div>
+      </div>
+      
+  {%- endcase -%}
+  
+  {%- comment -%} Media Caption (opcional) {%- endcomment -%}
+  {%- if media.alt != blank and display_captions -%}
+    <div class="product-media-caption">
+      <p>{{ media.alt | escape }}</p>
+    </div>
+  {%- endif -%}
+</div>

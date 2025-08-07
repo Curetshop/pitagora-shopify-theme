@@ -1,0 +1,128 @@
+{%- comment -%}
+Collection Pagination - Pitagora Theme
+Sistema de paginación optimizado con navegación avanzada
+{%- endcomment -%}
+
+{%- if paginate.pages > 1 -%}
+  <nav class="collection-pagination" role="navigation" aria-label="{{ 'general.pagination.label' | t }}">
+    <ul class="collection-pagination__list">
+      {%- comment -%} Previous Page {%- endcomment -%}
+      {%- if paginate.previous -%}
+        <li class="collection-pagination__item collection-pagination__item--prev">
+          <a 
+            href="{{ paginate.previous.url }}" 
+            class="collection-pagination__link collection-pagination__link--prev"
+            aria-label="{{ 'general.pagination.previous' | t }}"
+          >
+            {% render 'icon-chevron-left' %}
+            <span class="collection-pagination__text">{{ 'general.pagination.previous' | t }}</span>
+          </a>
+        </li>
+      {%- else -%}
+        <li class="collection-pagination__item collection-pagination__item--prev collection-pagination__item--disabled">
+          <span class="collection-pagination__link collection-pagination__link--prev collection-pagination__link--disabled">
+            {% render 'icon-chevron-left' %}
+            <span class="collection-pagination__text">{{ 'general.pagination.previous' | t }}</span>
+          </span>
+        </li>
+      {%- endif -%}
+
+      {%- comment -%} Page Numbers {%- endcomment -%}
+      {%- liquid
+        assign show_pages = 5
+        assign half_show = show_pages | divided_by: 2 | floor
+        assign start_page = paginate.current_page | minus: half_show
+        assign end_page = paginate.current_page | plus: half_show
+        
+        if start_page < 1
+          assign start_page = 1
+          assign end_page = show_pages | at_most: paginate.pages
+        endif
+        
+        if end_page > paginate.pages
+          assign end_page = paginate.pages
+          assign start_page = paginate.pages | minus: show_pages | plus: 1 | at_least: 1
+        endif
+      -%}
+
+      {%- comment -%} First page if not in range {%- endcomment -%}
+      {%- if start_page > 1 -%}
+        <li class="collection-pagination__item">
+          <a href="{{ paginate.parts.first.url }}" class="collection-pagination__link">1</a>
+        </li>
+        {%- if start_page > 2 -%}
+          <li class="collection-pagination__item collection-pagination__item--ellipsis">
+            <span class="collection-pagination__ellipsis">...</span>
+          </li>
+        {%- endif -%}
+      {%- endif -%}
+
+      {%- comment -%} Page range {%- endcomment -%}
+      {%- for i in (start_page..end_page) -%}
+        <li class="collection-pagination__item">
+          {%- if i == paginate.current_page -%}
+            <span 
+              class="collection-pagination__link collection-pagination__link--current" 
+              aria-current="page"
+              aria-label="{{ 'general.pagination.current_page' | t: page: i }}"
+            >
+              {{ i }}
+            </span>
+          {%- else -%}
+            <a 
+              href="{{ paginate.parts[i].url }}" 
+              class="collection-pagination__link"
+              aria-label="{{ 'general.pagination.page' | t: page: i }}"
+            >
+              {{ i }}
+            </a>
+          {%- endif -%}
+        </li>
+      {%- endfor -%}
+
+      {%- comment -%} Last page if not in range {%- endcomment -%}
+      {%- if end_page < paginate.pages -%}
+        {%- if end_page < paginate.pages | minus: 1 -%}
+          <li class="collection-pagination__item collection-pagination__item--ellipsis">
+            <span class="collection-pagination__ellipsis">...</span>
+          </li>
+        {%- endif -%}
+        <li class="collection-pagination__item">
+          <a href="{{ paginate.parts.last.url }}" class="collection-pagination__link">{{ paginate.pages }}</a>
+        </li>
+      {%- endif -%}
+
+      {%- comment -%} Next Page {%- endcomment -%}
+      {%- if paginate.next -%}
+        <li class="collection-pagination__item collection-pagination__item--next">
+          <a 
+            href="{{ paginate.next.url }}" 
+            class="collection-pagination__link collection-pagination__link--next"
+            aria-label="{{ 'general.pagination.next' | t }}"
+          >
+            <span class="collection-pagination__text">{{ 'general.pagination.next' | t }}</span>
+            {% render 'icon-chevron-right' %}
+          </a>
+        </li>
+      {%- else -%}
+        <li class="collection-pagination__item collection-pagination__item--next collection-pagination__item--disabled">
+          <span class="collection-pagination__link collection-pagination__link--next collection-pagination__link--disabled">
+            <span class="collection-pagination__text">{{ 'general.pagination.next' | t }}</span>
+            {% render 'icon-chevron-right' %}
+          </span>
+        </li>
+      {%- endif -%}
+    </ul>
+
+    {%- comment -%} Pagination Info {%- endcomment -%}
+    <div class="collection-pagination__info">
+      <span class="collection-pagination__info-text">
+        {{ 'general.pagination.showing_x_of_y' | t: 
+          current: paginate.current_offset | plus: 1, 
+          last: paginate.current_offset | plus: paginate.page_size | at_most: paginate.items,
+          total: paginate.items 
+        }}
+      </span>
+    </div>
+  </nav>
+{%- endif -%}

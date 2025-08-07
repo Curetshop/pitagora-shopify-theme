@@ -1,0 +1,97 @@
+{%- comment -%}
+Collection Filter List - Pitagora Theme
+Maneja filtros tipo lista (Size, Brand, Color, etc.)
+{%- endcomment -%}
+
+{%- liquid
+  assign filter_id = filter.param_name | handle
+  assign is_color_filter = false
+  assign filter_name_downcase = filter.label | downcase
+  
+  if show_color_swatch and filter_name_downcase contains 'color' or filter_name_downcase contains 'colour'
+    assign is_color_filter = true
+  endif
+-%}
+
+<div class="collection-filter-list collection-filter-list--{{ filter.type }}{% if is_color_filter %} collection-filter-list--colors{% endif %}">
+  {%- if filter.values.size > 10 -%}
+    <div class="collection-filter-search">
+      <input 
+        type="text" 
+        class="collection-filter-search__input"
+        placeholder="{{ 'collections.filters.search_placeholder' | t: filter: filter.label }}"
+        data-filter-search="{{ filter_id }}"
+      >
+      <span class="collection-filter-search__icon">
+        {% render 'icon-search' %}
+      </span>
+    </div>
+  {%- endif -%}
+
+  <div class="collection-filter-options{% if filter.values.size > 8 %} collection-filter-options--scrollable{% endif %}">
+    {%- for filter_value in filter.values -%}
+      {%- liquid
+        assign value_id = filter_id | append: '-' | append: filter_value.value | handle
+        assign is_active = false
+        
+        for active_value in filter.active_values
+          if active_value.value == filter_value.value
+            assign is_active = true
+            break
+          endif
+        endfor
+      -%}
+
+      <div 
+        class="collection-filter-option collection-filter-option--{{ filter.type }}{% if is_active %} collection-filter-option--active{% endif %}{% if filter_value.count == 0 %} collection-filter-option--unavailable{% endif %}"
+        data-filter-option="{{ filter_value.value | handle }}"
+      >
+        <input 
+          type="checkbox" 
+          id="{{ value_id }}"
+          name="{{ filter_value.param_name }}" 
+          value="{{ filter_value.value }}"
+          {% if is_active %}checked{% endif %}
+          {% if filter_value.count == 0 %}disabled{% endif %}
+          class="collection-filter-option__input"
+          data-filter-input
+        >
+        
+        <label for="{{ value_id }}" class="collection-filter-option__label">
+          {%- if is_color_filter -%}
+            <span class="collection-filter-option__color-swatch">
+              <span 
+                class="color-swatch color-swatch--filter"
+                style="background-color: {{ filter_value.value | handle }}; background-image: url('{{ filter_value.value | handle | append: '.png' | asset_url }}');"
+              ></span>
+            </span>
+          {%- endif -%}
+          
+          <span class="collection-filter-option__text">
+            {{ filter_value.label }}
+          </span>
+          
+          <span class="collection-filter-option__count">
+            ({{ filter_value.count }})
+          </span>
+        </label>
+      </div>
+    {%- endfor -%}
+  </div>
+
+  {%- if filter.values.size > 8 -%}
+    <button 
+      type="button" 
+      class="collection-filter-show-more" 
+      data-filter-show-more="{{ filter_id }}"
+    >
+      <span class="collection-filter-show-more__text-show">
+        {{ 'collections.filters.show_more' | t }} (+{{ filter.values.size | minus: 8 }})
+      </span>
+      <span class="collection-filter-show-more__text-hide" style="display: none;">
+        {{ 'collections.filters.show_less' | t }}
+      </span>
+      {% render 'icon-chevron-down' %}
+    </button>
+  {%- endif -%}
+</div>

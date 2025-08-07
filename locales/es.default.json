@@ -10,7 +10,38 @@
       "play": "Reproducir",
       "pause": "Pausar",
       "open": "Abrir",
-      "scroll_to_top": "Volver arriba"
+      "scroll_to_top": "Volver arriba",
+      "star_reviews_info": "de 5 estrellas",
+      "error": "Error",
+      "refresh_page": "Actualizar página",
+      "link_messages": "Ir a mensajes",
+      "selection_help": "Usa las flechas izquierda/derecha para navegar por la presentación o deslízate hacia la izquierda/derecha si usas un dispositivo móvil",
+      "unit_price_separator": "por"
+    },
+    "social": {
+      "alt_text": {
+        "share_on_facebook": "Compartir en Facebook",
+        "share_on_twitter": "Tuitear en Twitter",
+        "share_on_pinterest": "Pinear en Pinterest"
+      },
+      "links": {
+        "twitter": "Twitter",
+        "facebook": "Facebook",
+        "pinterest": "Pinterest",
+        "instagram": "Instagram",
+        "tumblr": "Tumblr",
+        "snapchat": "Snapchat",
+        "youtube": "YouTube",
+        "vimeo": "Vimeo",
+        "tiktok": "TikTok"
+      },
+      "share": "Compartir",
+      "copy_link": "Copiar enlace",
+      "link_copied": "Enlace copiado"
+    },
+    "testimonials": {
+      "about": "acerca de",
+      "testimonial_from": "Testimonio de"
     },
     "meta": {
       "tags": "Etiquetado \"{{ tags }}\"",
@@ -57,7 +88,85 @@
       "include_taxes": "Impuestos incluidos",
       "shipping_calculated_at_checkout": "Envío calculado en el checkout",
       "pickup_available_at_html": "Recogida disponible en <span class=\"color-foreground\">{{ location_name }}</span>",
-      "pickup_unavailable_at_html": "Recogida no disponible en <span class=\"color-foreground\">{{ location_name }}</span>"
+      "pickup_unavailable_at_html": "Recogida no disponible en <span class=\"color-foreground\">{{ location_name }}</span>",
+      "other_variants": "Otros colores disponibles",
+      "view_color_variant": "Ver variante de color {{ color }} del producto {{ product }}",
+      "view_product": "Ver producto",
+      "view_all_variants": "Ver todas las variantes",
+      "in_stock": "En stock",
+      "out_of_stock": "Agotado",
+      "low_stock": "{{ count }} disponibles",
+      "you_might_like": "También te puede gustar"
+    },
+    "ai": {
+      "loading_message": "Basado en inteligencia artificial",
+      "analyzing_preferences": "Analizando tus preferencias...",
+      "recommendation_reasons": {
+        "collaborative": "Otros clientes como tú también compraron este producto",
+        "content_similar": "Similar a productos que has visto",
+        "content_preference": "Basado en tus intereses",
+        "content_history": "Basado en tu historial de navegación",
+        "behavioral_trending": "Está en tendencia ahora",
+        "behavioral_bundle": "Frecuentemente comprado junto",
+        "behavioral_seasonal": "Popular esta temporada"
+      },
+      "confidence_labels": {
+        "high": "Muy recomendado",
+        "medium": "Recomendado",
+        "low": "Podría interesarte"
+      },
+      "no_recommendations": "Explora más productos para personalizar tus recomendaciones",
+      "error_message": "No pudimos cargar las recomendaciones en este momento"
+    },
+    "voice_search": {
+      "search_by_voice": "Buscar por voz",
+      "listening": "Escuchando...",
+      "processing": "Procesando...",
+      "speaking": "Respondiendo...",
+      "initializing": "Inicializando búsqueda por voz...",
+      "say_something": "Di algo para empezar...",
+      "try_saying": "Prueba decir:",
+      "examples": {
+        "search_products": "Buscar camisetas rojas",
+        "find_items": "Encuentra zapatos deportivos",
+        "navigation": "Ir al carrito",
+        "account": "Mostrar mi cuenta"
+      },
+      "commands": {
+        "search": "Para buscar productos, di: 'Busca...' o 'Encuentra...'",
+        "navigation": "Para navegar, di: 'Ir a...' o 'Abrir...'",
+        "cart": "Para el carrito, di: 'Agregar al carrito' o 'Ver carrito'",
+        "help": "Para ayuda, di: 'Ayuda' o 'Qué puedo decir'"
+      },
+      "errors": {
+        "not_supported": "Tu navegador no soporta búsqueda por voz",
+        "no_speech": "No detecté ningún audio. Intenta de nuevo.",
+        "no_microphone": "No se pudo acceder al micrófono",
+        "permission_denied": "Necesitas dar permiso para usar el micrófono",
+        "network_error": "Error de conexión. Verifica tu internet",
+        "no_match": "No entendí lo que dijiste. ¿Puedes repetir?",
+        "timeout": "Tiempo agotado. Intenta de nuevo.",
+        "general_error": "Error en el reconocimiento de voz"
+      },
+      "permission_title": "Activar búsqueda por voz",
+      "permission_message": "Para usar la búsqueda por voz, necesitamos acceso a tu micrófono. Tus grabaciones no se almacenan.",
+      "allow_microphone": "Permitir micrófono",
+      "maybe_later": "Tal vez después",
+      "javascript_required": "La búsqueda por voz requiere JavaScript habilitado",
+      "browser_not_supported": "Tu navegador no soporta búsqueda por voz. Prueba con Chrome, Edge o Safari.",
+      "initialization_failed": "No se pudo inicializar la búsqueda por voz",
+      "feedback": {
+        "searching": "Buscando",
+        "found_results": "Encontré {{count}} resultados",
+        "no_results": "No encontré resultados para",
+        "navigating": "Navegando a",
+        "adding_to_cart": "Agregando al carrito",
+        "opening": "Abriendo",
+        "error": "Hubo un error procesando tu solicitud"
+      },
+      "shortcuts": {
+        "activate": "Ctrl+K para activar búsqueda por voz"
+      }
     },
     "general": {
       "view_all": "Ver todo",
@@ -104,7 +213,51 @@
     "title": "Resultados de búsqueda",
     "page": "Página",
     "search": "Buscar",
-    "placeholder": "Buscar productos..."
+    "placeholder": "Buscar productos...",
+    "loading": "Cargando resultados...",
+    "suggestions": {
+      "title": "Sugerencias:",
+      "products": "Productos",
+      "collections": "Colecciones", 
+      "pages": "Páginas",
+      "articles": "Artículos"
+    }
+  },
+  "blogs": {
+    "article": {
+      "blog": "Blog",
+      "read_more_title": "Leer más: {{ title }}",
+      "read_more": "Leer más",
+      "author": "por {{ author }}",
+      "older_post": "Entrada anterior", 
+      "newer_post": "Entrada siguiente",
+      "tags": "Etiquetas",
+      "comment_form_title": "Dejar un comentario",
+      "moderated": "Ten en cuenta que los comentarios deben aprobarse antes de que se publiquen",
+      "post_comment": "Publicar comentario",
+      "back_to_blog": "Volver al blog",
+      "share": "Compartir este artículo",
+      "success": "Tu comentario se publicó correctamente. ¡Gracias!",
+      "success_moderated": "Tu comentario se envió correctamente. Lo publicaremos en un momento, ya que nuestro blog está moderado."
+    },
+    "comments": {
+      "title": "Dejar un comentario",
+      "name": "Nombre",
+      "email": "Email",
+      "message": "Mensaje", 
+      "post": "Publicar comentario",
+      "moderated": "Ten en cuenta que los comentarios deben aprobarse antes de que se publiquen",
+      "success": "Tu comentario se publicó correctamente. ¡Gracias!",
+      "success_moderated": "Tu comentario se envió correctamente. Lo publicaremos en un momento, ya que nuestro blog está moderado."
+    },
+    "general": {
+      "previous": "Anterior",
+      "next": "Siguiente", 
+      "comments": {
+        "one": "{{ count }} comentario",
+        "other": "{{ count }} comentarios"
+      }
+    }
   },
   "cart": {
     "general": {
@@ -156,6 +309,12 @@
       "view_all": "Ver todo",
       "onboarding_title": "Entrada del blog",
       "onboarding_content": "Dale a tus clientes un resumen de tu entrada del blog"
+    },
+    "newsletter": {
+      "label": "Email",
+      "success": "¡Gracias por suscribirte!",
+      "button_label": "Suscribirse", 
+      "placeholder": "Introduce tu email"
     },
     "featured_collection": {
       "view_all": "Ver todo",

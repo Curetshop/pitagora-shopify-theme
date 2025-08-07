@@ -1,0 +1,73 @@
+{
+  "sections": {
+    "main": {
+      "type": "main-search",
+      "settings": {
+        "results_per_page": 24,
+        "enable_filtering": true,
+        "enable_sorting": true,
+        "show_product_count": true,
+        "show_search_suggestions": true,
+        "columns_desktop": 4,
+        "columns_tablet": 3,
+        "columns_mobile": 2,
+        "image_ratio": "square",
+        "show_vendor": false,
+        "show_rating": true,
+        "show_quick_add": true,
+        "show_quick_view": true
+      }
+    },
+    "search_suggestions": {
+      "type": "search-suggestions",
+      "settings": {
+        "enable_suggestions": true,
+        "show_popular_searches": true,
+        "show_recent_searches": true,
+        "show_trending_products": true,
+        "max_suggestions": 8
+      }
+    },
+    "related_collections": {
+      "type": "related-collections",
+      "settings": {
+        "heading": "Explore categories",
+        "subheading": "Browse our most popular collections",
+        "collections_to_show": 6,
+        "columns_desktop": 3,
+        "columns_mobile": 2,
+        "show_only_when_no_results": true
+      },
+      "blocks": {
+        "collection_1": {
+          "type": "collection",
+          "settings": {
+            "collection": ""
+          }
+        },
+        "collection_2": {
+          "type": "collection",
+          "settings": {
+            "collection": ""
+          }
+        },
+        "collection_3": {
+          "type": "collection",
+          "settings": {
+            "collection": ""
+          }
+        }
+      },
+      "block_order": [
+        "collection_1",
+        "collection_2", 
+        "collection_3"
+      ]
+    }
+  },
+  "order": [
+    "main",
+    "search_suggestions",
+    "related_collections"
+  ]
+}

@@ -1,0 +1,68 @@
+{
+  "sections": {
+    "main": {
+      "type": "main-blog",
+      "settings": {
+        "show_blog_title": true,
+        "show_blog_description": true,
+        "posts_per_page": 12,
+        "blog_layout": "grid",
+        "columns_desktop": 3,
+        "columns_tablet": 2,
+        "columns_mobile": 1,
+        "show_excerpt": true,
+        "excerpt_length": 120,
+        "show_author": true,
+        "show_date": true,
+        "show_tags": true,
+        "show_featured_image": true,
+        "image_ratio": "landscape",
+        "enable_sidebar": true,
+        "show_search": true,
+        "show_categories": true,
+        "show_recent_posts": true,
+        "show_popular_tags": true
+      }
+    },
+    "blog_newsletter": {
+      "type": "newsletter",
+      "settings": {
+        "heading": "Never miss a post",
+        "subheading": "Subscribe to our blog",
+        "text": "<p>Get the latest articles and insights delivered straight to your inbox.</p>",
+        "show_name_field": false,
+        "button_text": "Subscribe to blog",
+        "success_message": "Thanks for subscribing to our blog!",
+        "background_type": "color",
+        "background_color": "#f8fafc",
+        "text_color": "#1f2937"
+      }
+    },
+    "related_products": {
+      "type": "featured-products",
+      "settings": {
+        "heading": "You might also like",
+        "subheading": "Products mentioned in our articles",
+        "collection": "",
+        "products_to_show": 4,
+        "columns_desktop": 4,
+        "columns_tablet": 2,
+        "columns_mobile": 2,
+        "show_quick_add": true,
+        "show_quick_view": false,
+        "show_vendor": false,
+        "show_rating": true,
+        "show_price": true,
+        "image_ratio": "square",
+        "show_view_all": false,
+        "background_color": "",
+        "text_color": ""
+      }
+    }
+  },
+  "order": [
+    "main",
+    "blog_newsletter",
+    "related_products"
+  ]
+}

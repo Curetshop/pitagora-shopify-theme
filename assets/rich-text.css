@@ -1,0 +1,331 @@
+.rich-text {
+  padding: var(--section-padding-y, 6rem) 0;
+  position: relative;
+  overflow: hidden;
+}
+
+.rich-text__bg-image {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: -2;
+}
+
+.rich-text__bg-image img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.rich-text__overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: -1;
+}
+
+.rich-text__container {
+  display: flex;
+  flex-direction: column;
+  gap: 2.4rem;
+}
+
+/* Content Width Variants */
+.rich-text--small .rich-text__container {
+  max-width: 54rem;
+  margin: 0 auto;
+}
+
+.rich-text--medium .rich-text__container {
+  max-width: 72rem;
+  margin: 0 auto;
+}
+
+.rich-text--large .rich-text__container {
+  max-width: 96rem;
+  margin: 0 auto;
+}
+
+.rich-text--full .rich-text__container {
+  max-width: 100%;
+}
+
+/* Text Alignment */
+.rich-text--left .rich-text__container {
+  text-align: left;
+  margin-left: 0;
+  margin-right: auto;
+}
+
+.rich-text--center .rich-text__container {
+  text-align: center;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.rich-text--right .rich-text__container {
+  text-align: right;
+  margin-left: auto;
+  margin-right: 0;
+}
+
+/* Typography */
+.rich-text__subheading {
+  margin: 0;
+  font-size: 1.6rem;
+  font-weight: 500;
+  opacity: 0.8;
+  text-transform: uppercase;
+  letter-spacing: 0.1rem;
+}
+
+.rich-text__heading {
+  margin: 0;
+  font-size: clamp(2.4rem, 5vw, 4.8rem);
+  font-weight: 600;
+  line-height: 1.2;
+}
+
+.rich-text__content {
+  font-size: 1.8rem;
+  line-height: 1.7;
+  color: inherit;
+}
+
+.rich-text__content > *:first-child {
+  margin-top: 0;
+}
+
+.rich-text__content > *:last-child {
+  margin-bottom: 0;
+}
+
+/* Rich Text Elements */
+.rich-text__content h1,
+.rich-text__content h2,
+.rich-text__content h3,
+.rich-text__content h4,
+.rich-text__content h5,
+.rich-text__content h6 {
+  margin: 3rem 0 1.5rem;
+  font-weight: 600;
+  line-height: 1.3;
+}
+
+.rich-text__content h1 { font-size: 3.6rem; }
+.rich-text__content h2 { font-size: 3rem; }
+.rich-text__content h3 { font-size: 2.4rem; }
+.rich-text__content h4 { font-size: 2rem; }
+.rich-text__content h5 { font-size: 1.8rem; }
+.rich-text__content h6 { font-size: 1.6rem; }
+
+.rich-text__content p {
+  margin: 0 0 1.6rem;
+}
+
+.rich-text__content ul,
+.rich-text__content ol {
+  margin: 0 0 1.6rem;
+  padding-left: 3rem;
+}
+
+.rich-text__content li {
+  margin-bottom: 0.8rem;
+}
+
+.rich-text__content blockquote {
+  margin: 3rem 0;
+  padding: 2rem 3rem;
+  border-left: 0.4rem solid rgb(var(--color-primary));
+  background: var(--color-background-2);
+  font-style: italic;
+  font-size: 2rem;
+  line-height: 1.6;
+}
+
+.rich-text__content blockquote p:last-child {
+  margin-bottom: 0;
+}
+
+.rich-text__content a {
+  color: rgb(var(--color-primary));
+  text-decoration: underline;
+  text-underline-offset: 0.3rem;
+  transition: opacity 0.15s ease;
+}
+
+.rich-text__content a:hover {
+  opacity: 0.8;
+}
+
+.rich-text__content strong {
+  font-weight: 600;
+}
+
+.rich-text__content em {
+  font-style: italic;
+}
+
+.rich-text__content img {
+  max-width: 100%;
+  height: auto;
+  border-radius: var(--border-radius);
+}
+
+.rich-text__content table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 2rem 0;
+  border-radius: var(--border-radius);
+  overflow: hidden;
+  box-shadow: var(--shadow-sm);
+}
+
+.rich-text__content th,
+.rich-text__content td {
+  padding: 1.2rem;
+  text-align: left;
+  border-bottom: 1px solid var(--color-border);
+}
+
+.rich-text__content th {
+  background: var(--color-background-2);
+  font-weight: 600;
+}
+
+/* Buttons */
+.rich-text__buttons {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1.5rem;
+  margin-top: 1rem;
+}
+
+.rich-text--center .rich-text__buttons {
+  justify-content: center;
+}
+
+.rich-text--right .rich-text__buttons {
+  justify-content: flex-end;
+}
+
+.rich-text__button {
+  min-width: 16rem;
+}
+
+/* Mobile Optimizations */
+@media (max-width: 767px) {
+  .rich-text {
+    padding: 4rem 0;
+  }
+  
+  .rich-text__container {
+    gap: 2rem;
+  }
+  
+  .rich-text__subheading {
+    font-size: 1.4rem;
+  }
+  
+  .rich-text__content {
+    font-size: 1.6rem;
+  }
+  
+  .rich-text__content h1 { font-size: 2.8rem; }
+  .rich-text__content h2 { font-size: 2.4rem; }
+  .rich-text__content h3 { font-size: 2rem; }
+  .rich-text__content h4 { font-size: 1.8rem; }
+  .rich-text__content h5 { font-size: 1.6rem; }
+  .rich-text__content h6 { font-size: 1.5rem; }
+  
+  .rich-text__content blockquote {
+    margin: 2rem 0;
+    padding: 1.5rem 2rem;
+    font-size: 1.8rem;
+  }
+  
+  .rich-text__content ul,
+  .rich-text__content ol {
+    padding-left: 2rem;
+  }
+  
+  .rich-text__buttons {
+    flex-direction: column;
+    align-items: stretch;
+  }
+  
+  .rich-text--center .rich-text__buttons {
+    align-items: center;
+  }
+  
+  .rich-text--right .rich-text__buttons {
+    align-items: flex-end;
+  }
+  
+  .rich-text__button {
+    min-width: auto;
+    width: 100%;
+    max-width: 30rem;
+  }
+  
+  .rich-text__content table {
+    font-size: 1.4rem;
+  }
+  
+  .rich-text__content th,
+  .rich-text__content td {
+    padding: 1rem;
+  }
+}
+
+/* Content width adjustments on mobile */
+@media (max-width: 767px) {
+  .rich-text--small .rich-text__container,
+  .rich-text--medium .rich-text__container {
+    max-width: 100%;
+  }
+}
+
+/* Print styles */
+@media print {
+  .rich-text__buttons {
+    display: none;
+  }
+  
+  .rich-text__bg-image,
+  .rich-text__overlay {
+    display: none;
+  }
+}
+
+/* High contrast mode */
+@media (prefers-contrast: high) {
+  .rich-text__content blockquote {
+    border-left-width: 0.6rem;
+    background: transparent;
+    border: 1px solid currentColor;
+  }
+  
+  .rich-text__content table {
+    border: 2px solid currentColor;
+  }
+  
+  .rich-text__content th {
+    border-bottom-width: 2px;
+  }
+}
+
+/* Dark mode adjustments */
+@media (prefers-color-scheme: dark) {
+  .rich-text__content blockquote {
+    background: rgba(255, 255, 255, 0.05);
+  }
+  
+  .rich-text__content th {
+    background: rgba(255, 255, 255, 0.05);
+  }
+}

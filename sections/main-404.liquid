@@ -1,0 +1,392 @@
+{%- comment -%}
+Main 404 Section - Pitagora Theme
+Página de error 404 con mensaje personalizado y navegación útil
+{%- endcomment -%}
+
+{{ '404.css' | asset_url | stylesheet_tag }}
+
+<div class="error-404">
+  <div class="page-width">
+    <div class="error-404__content">
+      <div class="error-404__illustration">
+        <div class="error-404__number">404</div>
+        <div class="error-404__icon">
+          <svg viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <circle cx="50" cy="50" r="48" stroke="currentColor" stroke-width="4" opacity="0.1"/>
+            <path d="M30 70L70 30M30 30L70 70" stroke="currentColor" stroke-width="4" stroke-linecap="round"/>
+            <circle cx="35" cy="35" r="5" fill="currentColor" opacity="0.6"/>
+            <circle cx="65" cy="35" r="5" fill="currentColor" opacity="0.6"/>
+            <circle cx="50" cy="65" r="3" fill="currentColor" opacity="0.4"/>
+          </svg>
+        </div>
+      </div>
+
+      <div class="error-404__text">
+        <h1 class="error-404__title">
+          {{ 'templates.404.title' | t }}
+        </h1>
+        
+        <p class="error-404__message">
+          {{ 'templates.404.subtext' | t }}
+        </p>
+        
+        <div class="error-404__search">
+          <h2 class="error-404__search-title">{{ 'general.search.title' | t }}</h2>
+          <form action="{{ routes.search_url }}" method="get" role="search" class="error-404__search-form">
+            <div class="error-404__search-input-wrapper">
+              <label class="field__label" for="Search-404">
+                {{ 'general.search.placeholder' | t }}
+              </label>
+              <input
+                class="search__input field__input"
+                id="Search-404"
+                type="search"
+                name="q"
+                value="{{ search.terms | escape }}"
+                placeholder="{{ 'general.search.placeholder' | t }}"
+                {%- if search.performed -%}
+                  autofocus
+                {%- endif -%}
+              >
+              <button type="submit" class="error-404__search-button field__button" aria-label="{{ 'general.search.search' | t }}">
+                {% render 'icon-search' %}
+              </button>
+            </div>
+          </form>
+        </div>
+        
+        <div class="error-404__actions">
+          <a href="{{ routes.root_url }}" class="button button--primary">
+            {{ 'general.404.link' | t }}
+          </a>
+          <a href="{{ routes.collections_url }}" class="button button--secondary">
+            {{ 'general.continue_shopping' | t }}
+          </a>
+        </div>
+        
+        <div class="error-404__breadcrumb">
+          <p class="error-404__breadcrumb-text">
+            {{ 'templates.404.go_back' | t }}
+            <a href="javascript:history.back()" class="error-404__breadcrumb-link">
+              {{ 'general.accessibility.previous_page' | t }}
+            </a>
+          </p>
+        </div>
+      </div>
+    </div>
+
+    <div class="error-404__suggestions">
+      <h2 class="error-404__suggestions-title">{{ 'templates.404.popular_links' | t }}</h2>
+      
+      <div class="error-404__suggestions-grid">
+        <div class="error-404__suggestion">
+          <a href="{{ routes.collections_url }}" class="error-404__suggestion-link">
+            <div class="error-404__suggestion-icon">
+              {% render 'icon-grid' %}
+            </div>
+            <h3 class="error-404__suggestion-title">{{ 'sections.header.menu' | t }}</h3>
+            <p class="error-404__suggestion-text">{{ 'templates.404.browse_collections' | t }}</p>
+          </a>
+        </div>
+        
+        <div class="error-404__suggestion">
+          <a href="{{ routes.search_url }}" class="error-404__suggestion-link">
+            <div class="error-404__suggestion-icon">
+              {% render 'icon-search' %}
+            </div>
+            <h3 class="error-404__suggestion-title">{{ 'general.search.search' | t }}</h3>
+            <p class="error-404__suggestion-text">{{ 'templates.404.search_products' | t }}</p>
+          </a>
+        </div>
+        
+        {%- if blog != blank -%}
+          <div class="error-404__suggestion">
+            <a href="{{ blog.url }}" class="error-404__suggestion-link">
+              <div class="error-404__suggestion-icon">
+                {% render 'icon-blog' %}
+              </div>
+              <h3 class="error-404__suggestion-title">{{ 'sections.header.blog' | t }}</h3>
+              <p class="error-404__suggestion-text">{{ 'templates.404.read_blog' | t }}</p>
+            </a>
+          </div>
+        {%- endif -%}
+        
+        <div class="error-404__suggestion">
+          <a href="{{ routes.account_login_url }}" class="error-404__suggestion-link">
+            <div class="error-404__suggestion-icon">
+              {% render 'icon-account' %}
+            </div>
+            <h3 class="error-404__suggestion-title">{{ 'customer.account.title' | t }}</h3>
+            <p class="error-404__suggestion-text">{{ 'templates.404.account_access' | t }}</p>
+          </a>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<style>
+.error-404 {
+  padding: 6rem 0 8rem;
+  text-align: center;
+}
+
+.error-404__content {
+  margin-bottom: 8rem;
+}
+
+.error-404__illustration {
+  position: relative;
+  margin: 0 auto 4rem;
+  width: min(40rem, 80vw);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.error-404__number {
+  font-size: clamp(8rem, 15vw, 16rem);
+  font-weight: 800;
+  color: rgb(var(--color-primary));
+  opacity: 0.1;
+  position: absolute;
+  z-index: 1;
+  line-height: 1;
+}
+
+.error-404__icon {
+  position: relative;
+  z-index: 2;
+  width: 12rem;
+  height: 12rem;
+  color: rgb(var(--color-primary));
+}
+
+.error-404__icon svg {
+  width: 100%;
+  height: 100%;
+}
+
+.error-404__title {
+  margin: 0 0 2rem;
+  font-size: clamp(2.4rem, 5vw, 4.8rem);
+  font-weight: 700;
+  line-height: 1.2;
+}
+
+.error-404__message {
+  margin: 0 0 4rem;
+  font-size: 1.8rem;
+  line-height: 1.6;
+  color: var(--color-foreground-75);
+  max-width: 54rem;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.error-404__search {
+  margin-bottom: 4rem;
+  max-width: 48rem;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.error-404__search-title {
+  margin: 0 0 2rem;
+  font-size: 2rem;
+  font-weight: 600;
+}
+
+.error-404__search-form {
+  position: relative;
+}
+
+.error-404__search-input-wrapper {
+  position: relative;
+  display: flex;
+  background: var(--color-background-2);
+  border: 1px solid var(--color-border);
+  border-radius: var(--border-radius-lg);
+  overflow: hidden;
+  transition: border-color 0.15s ease;
+}
+
+.error-404__search-input-wrapper:focus-within {
+  border-color: rgb(var(--color-primary));
+}
+
+.error-404__search-input-wrapper .field__label {
+  position: absolute;
+  left: -9999px;
+}
+
+.error-404__search-input-wrapper .search__input {
+  flex: 1;
+  border: none;
+  background: transparent;
+  padding: 1.5rem 2rem;
+  font-size: 1.6rem;
+  color: var(--color-foreground);
+}
+
+.error-404__search-input-wrapper .search__input:focus {
+  outline: none;
+}
+
+.error-404__search-button {
+  background: rgb(var(--color-primary));
+  border: none;
+  padding: 1.5rem 2rem;
+  color: white;
+  cursor: pointer;
+  transition: background-color 0.15s ease;
+}
+
+.error-404__search-button:hover {
+  background: rgba(var(--color-primary), 0.9);
+}
+
+.error-404__search-button svg {
+  width: 2rem;
+  height: 2rem;
+  fill: currentColor;
+}
+
+.error-404__actions {
+  display: flex;
+  gap: 2rem;
+  justify-content: center;
+  flex-wrap: wrap;
+  margin-bottom: 3rem;
+}
+
+.error-404__breadcrumb {
+  padding-top: 3rem;
+  border-top: 1px solid var(--color-border);
+}
+
+.error-404__breadcrumb-text {
+  margin: 0;
+  color: var(--color-foreground-75);
+}
+
+.error-404__breadcrumb-link {
+  color: rgb(var(--color-primary));
+  text-decoration: none;
+}
+
+.error-404__breadcrumb-link:hover {
+  text-decoration: underline;
+}
+
+.error-404__suggestions-title {
+  margin: 0 0 4rem;
+  font-size: 2.4rem;
+  font-weight: 600;
+}
+
+.error-404__suggestions-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(24rem, 1fr));
+  gap: 3rem;
+}
+
+.error-404__suggestion-link {
+  display: block;
+  padding: 3rem 2rem;
+  background: var(--color-background);
+  border: 1px solid var(--color-border);
+  border-radius: var(--border-radius-lg);
+  text-decoration: none;
+  color: inherit;
+  transition: all 0.2s ease;
+}
+
+.error-404__suggestion-link:hover {
+  transform: translateY(-0.5rem);
+  box-shadow: var(--shadow-lg);
+  border-color: rgb(var(--color-primary));
+}
+
+.error-404__suggestion-icon {
+  width: 6rem;
+  height: 6rem;
+  margin: 0 auto 2rem;
+  color: rgb(var(--color-primary));
+  opacity: 0.8;
+}
+
+.error-404__suggestion-icon svg {
+  width: 100%;
+  height: 100%;
+  fill: currentColor;
+}
+
+.error-404__suggestion-title {
+  margin: 0 0 1rem;
+  font-size: 1.8rem;
+  font-weight: 600;
+}
+
+.error-404__suggestion-text {
+  margin: 0;
+  color: var(--color-foreground-75);
+  line-height: 1.5;
+}
+
+@media (max-width: 767px) {
+  .error-404 {
+    padding: 4rem 0 6rem;
+  }
+  
+  .error-404__content {
+    margin-bottom: 6rem;
+  }
+  
+  .error-404__actions {
+    flex-direction: column;
+    align-items: center;
+  }
+  
+  .error-404__actions .button {
+    width: 100%;
+    max-width: 28rem;
+  }
+  
+  .error-404__suggestions-grid {
+    grid-template-columns: 1fr;
+    gap: 2rem;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .error-404__suggestion-link:hover {
+    transform: none;
+  }
+}
+</style>
+
+{% schema %}
+{
+  "name": "t:sections.main-404.name",
+  "class": "section",
+  "settings": [
+    {
+      "type": "select",
+      "id": "layout",
+      "options": [
+        {
+          "value": "full_width",
+          "label": "t:sections.main-404.settings.layout.options__1.label"
+        },
+        {
+          "value": "constrained",
+          "label": "t:sections.main-404.settings.layout.options__2.label"
+        }
+      ],
+      "default": "constrained",
+      "label": "t:sections.main-404.settings.layout.label"
+    }
+  ]
+}
+{% endschema %}

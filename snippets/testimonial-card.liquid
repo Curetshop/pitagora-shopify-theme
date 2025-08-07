@@ -1,0 +1,78 @@
+{%- comment -%}
+Testimonial Card Component
+Individual testimonial with rating, quote, and author info
+{%- endcomment -%}
+
+{%- liquid
+  assign quote = block.settings.quote
+  assign author = block.settings.author
+  assign author_title = block.settings.author_title
+  assign author_image = block.settings.author_image
+  assign rating = block.settings.rating | default: 5
+  assign product = collections.all.products[block.settings.product]
+-%}
+
+<div 
+  class="testimonial-card{% if is_first %} testimonial-card--active{% endif %}"
+  data-testimonial-index="{{ index }}"
+  {{ block.shopify_attributes }}
+>
+  <div class="testimonial-card__content">
+    {%- if show_ratings and rating > 0 -%}
+      <div class="testimonial-card__rating">
+        {%- for i in (1..5) -%}
+          <span class="testimonial-card__star{% if i <= rating %} testimonial-card__star--filled{% endif %}">
+            {% render 'icon-star' %}
+          </span>
+        {%- endfor -%}
+        <span class="visually-hidden">{{ rating }} {{ 'general.accessibility.star_reviews_info' | t }}</span>
+      </div>
+    {%- endif -%}
+
+    {%- if quote != blank -%}
+      <blockquote class="testimonial-card__quote">
+        <p>"{{ quote | escape }}"</p>
+      </blockquote>
+    {%- endif -%}
+
+    <div class="testimonial-card__author">
+      {%- if show_author_image and author_image != blank -%}
+        <div class="testimonial-card__author-image">
+          <img
+            src="{{ author_image | image_url: width: 80 }}"
+            alt="{{ author_image.alt | escape | default: author | escape }}"
+            loading="lazy"
+            width="40"
+            height="40"
+            sizes="80px"
+            srcset="
+              {{ author_image | image_url: width: 40 }} 40w,
+              {{ author_image | image_url: width: 80 }} 80w
+            "
+          >
+        </div>
+      {%- elsif show_author_image -%}
+        <div class="testimonial-card__author-image testimonial-card__author-image--placeholder">
+          {% render 'icon-person' %}
+        </div>
+      {%- endif -%}
+
+      <div class="testimonial-card__author-info">
+        {%- if author != blank -%}
+          <cite class="testimonial-card__author-name">{{ author | escape }}</cite>
+        {%- endif -%}
+        
+        {%- if author_title != blank -%}
+          <p class="testimonial-card__author-title">{{ author_title | escape }}</p>
+        {%- endif -%}
+        
+        {%- if product != empty -%}
+          <a href="{{ product.url }}" class="testimonial-card__product-link">
+            <span>{{ 'general.testimonials.about' | t }}</span>
+            <strong>{{ product.title | escape }}</strong>
+          </a>
+        {%- endif -%}
+      </div>
+    </div>
+  </div>
+</div>

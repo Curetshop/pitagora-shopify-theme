@@ -1,0 +1,571 @@
+{%- comment -%}
+  Main Product Section - Pitagora Theme
+  Arquitectura híbrida basada en Vettro + optimizaciones enterprise
+  Custom elements system de Focal v4
+{%- endcomment -%}
+
+{{ 'product.css' | asset_url | stylesheet_tag }}
+{{ 'product-siblings.css' | asset_url | stylesheet_tag }}
+
+{%- liquid
+  assign first_3d_model = product.media | where: "media_type", "model" | first
+  assign media_aspect_ratio = section.settings.media_aspect_ratio
+  assign enable_zoom = section.settings.enable_zoom
+  assign media_layout = section.settings.media_layout
+  assign hide_variants = section.settings.hide_variants
+  assign featured_media = product.selected_or_first_available_variant.featured_media
+  assign variant_images = product.images | where: 'attached_to_variant?', true | map: 'src'
+  
+  assign sizes = '375x375,640x640,960x960,1280x1280'
+  if media_aspect_ratio == 'adapt'
+    assign sizes = '375x0,640x0,960x0,1280x0'
+  elsif media_aspect_ratio == 'portrait'
+    assign sizes = '375x469,640x800,960x1200,1280x1600'
+  elsif media_aspect_ratio == 'landscape'
+    assign sizes = '375x281,640x480,960x720,1280x960'
+  endif
+  
+  assign media_count = product.media.size
+  if hide_variants and media_count > 1 and variant_images.size > 0
+    assign media_count = media_count | minus: variant_images.size | plus: 1
+  endif
+  
+  assign single_media_visible = false
+  if media_count <= 1
+    assign single_media_visible = true
+  endif
+-%}
+
+{%- comment -%} 3D Model Viewer Support {%- endcomment -%}
+{%- if first_3d_model -%}
+  <link 
+    id="ModelViewerStyle" 
+    rel="stylesheet" 
+    href="https://cdn.shopify.com/shopifycloud/model-viewer-ui/assets/v1.0/model-viewer-ui.css" 
+    media="print" 
+    onload="this.media='all'"
+  >
+  <link 
+    id="ModelViewerOverride" 
+    rel="stylesheet" 
+    href="{{ 'product-model-viewer-ui.css' | asset_url }}" 
+    media="print" 
+    onload="this.media='all'"
+  >
+{%- endif -%}
+
+{%- comment -%} Schema.org Structured Data - SEO Enterprise {%- endcomment -%}
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "Product",
+  "name": {{ product.title | json }},
+  "url": {{ shop.url | append: product.url | json }},
+  {% if product.featured_media -%}
+    "image": [
+      {{ product.featured_media | image_url: width: 1200 | prepend: "https:" | json }}
+      {%- for media in product.media limit: 8 -%}
+        {%- unless media.id == product.featured_media.id -%}
+          ,{{ media | image_url: width: 1200 | prepend: "https:" | json }}
+        {%- endunless -%}
+      {%- endfor -%}
+    ],
+  {%- endif %}
+  "description": {{ product.description | strip_html | json }},
+  {% if product.selected_or_first_available_variant.sku != blank -%}
+    "sku": {{ product.selected_or_first_available_variant.sku | json }},
+  {%- endif %}
+  {% if product.selected_or_first_available_variant.barcode != blank -%}
+    "gtin": {{ product.selected_or_first_available_variant.barcode | json }},
+  {%- endif %}
+  "brand": {
+    "@type": "Brand",
+    "name": {{ product.vendor | json }}
+  },
+  "offers": [
+    {%- for variant in product.variants -%}
+      {
+        "@type": "Offer",
+        {% if variant.sku != blank -%}"sku": {{ variant.sku | json }},{% endif %}
+        "availability": "https://schema.org/{% if variant.available %}InStock{% else %}OutOfStock{% endif %}",
+        "price": {{ variant.price | divided_by: 100.00 | json }},
+        "priceCurrency": {{ cart.currency.iso_code | json }},
+        "url": {{ shop.url | append: variant.url | json }}
+      }{% unless forloop.last %},{% endunless %}
+    {%- endfor -%}
+  ]
+}
+</script>
+
+<section class="product-main-section" data-section="{{ section.id }}">
+  <div class="container">
+    <div class="product-layout product-layout--{{ section.settings.layout }}">
+      
+      {%- comment -%} Product Media Gallery {%- endcomment -%}
+      <div class="product-media" id="ProductMedia-{{ section.id }}">
+        <product-media 
+          class="product-media-gallery"
+          data-enable-zoom="{{ enable_zoom }}"
+          data-media-count="{{ media_count }}"
+          data-hide-variants="{{ hide_variants }}"
+        >
+          
+          {%- comment -%} Main Media Container {%- endcomment -%}
+          <div class="product-media-main">
+            
+            {%- if product.media.size > 0 -%}
+              
+              {%- comment -%} Featured Media First {%- endcomment -%}
+              {%- if featured_media -%}
+                {%- render 'product-media-item', 
+                    media: featured_media, 
+                    sizes: sizes, 
+                    enable_zoom: enable_zoom,
+                    priority: 'high',
+                    class: 'featured-media' -%}
+              {%- endif -%}
+              
+              {%- comment -%} Rest of Media {%- endcomment -%}
+              {%- for media in product.media -%}
+                {%- unless media.id == featured_media.id -%}
+                  {%- render 'product-media-item', 
+                      media: media, 
+                      sizes: sizes,
+                      enable_zoom: enable_zoom,
+                      priority: 'auto' -%}
+                {%- endunless -%}
+              {%- endfor -%}
+              
+            {%- else -%}
+              {%- comment -%} Placeholder Image {%- endcomment -%}
+              <div class="product-media-item product-media-item--placeholder">
+                {{ 'product-1' | placeholder_svg_tag: 'placeholder-svg' }}
+              </div>
+            {%- endif -%}
+            
+          </div>
+          
+          {%- comment -%} Thumbnails (si hay más de una imagen) {%- endcomment -%}
+          {%- unless single_media_visible -%}
+            <div class="product-media-thumbnails">
+              {%- if featured_media -%}
+                <button 
+                  type="button" 
+                  class="product-media-thumb product-media-thumb--active"
+                  data-media-id="{{ featured_media.id }}"
+                  aria-label="{{ 'products.product.media.load_image' | t: index: 1 }}"
+                >
+                  <img 
+                    src="{{ featured_media | image_url: width: 120 }}" 
+                    alt="{{ featured_media.alt | escape }}"
+                    width="60"
+                    height="60"
+                    loading="lazy"
+                  >
+                </button>
+              {%- endif -%}
+              
+              {%- assign thumb_index = 1 -%}
+              {%- for media in product.media -%}
+                {%- unless media.id == featured_media.id -%}
+                  {%- assign thumb_index = thumb_index | plus: 1 -%}
+                  <button 
+                    type="button" 
+                    class="product-media-thumb"
+                    data-media-id="{{ media.id }}"
+                    aria-label="{{ 'products.product.media.load_image' | t: index: thumb_index }}"
+                  >
+                    <img 
+                      src="{{ media | image_url: width: 120 }}" 
+                      alt="{{ media.alt | escape }}"
+                      width="60"
+                      height="60"
+                      loading="lazy"
+                    >
+                    {%- if media.media_type == 'video' -%}
+                      <span class="media-badge media-badge--video">
+                        {%- render 'icon-play' -%}
+                      </span>
+                    {%- elsif media.media_type == 'model' -%}
+                      <span class="media-badge media-badge--3d">
+                        {%- render 'icon-3d' -%}
+                      </span>
+                    {%- endif -%}
+                  </button>
+                {%- endunless -%}
+              {%- endfor -%}
+            </div>
+          {%- endunless -%}
+          
+          {%- comment -%} 3D Model Button {%- endcomment -%}
+          {%- if first_3d_model -%}
+            <button
+              class="product-media-3d-button"
+              aria-label="{{ 'products.product.view_in_space_label' | t }}"
+              data-shopify-xr
+              data-shopify-model3d-id="{{ first_3d_model.id }}"
+              data-shopify-title="{{ product.title | escape }}"
+              data-shopify-xr-hidden
+            >
+              {%- render 'icon-3d' -%}
+              {{ 'products.product.view_in_space' | t }}
+            </button>
+          {%- endif -%}
+          
+        </product-media>
+      </div>
+      
+      {%- comment -%} Product Information {%- endcomment -%}
+      <div class="product-info">
+        
+        {%- comment -%} Product Header {%- endcomment -%}
+        <div class="product-header">
+          
+          {%- if section.settings.show_vendor and product.vendor != blank -%}
+            <div class="product-vendor">
+              <a href="{{ collections.all.url }}?filter.p.vendor={{ product.vendor | url_encode }}">
+                {{ product.vendor }}
+              </a>
+            </div>
+          {%- endif -%}
+          
+          <h1 class="product-title">{{ product.title }}</h1>
+          
+          {%- comment -%} Reviews/Rating placeholder {%- endcomment -%}
+          {%- if section.settings.enable_reviews -%}
+            <div class="product-reviews" id="product-reviews">
+              {%- comment -%} Reviews app integration point {%- endcomment -%}
+            </div>
+          {%- endif -%}
+          
+        </div>
+        
+        {%- comment -%} Product Form - Custom Elements System {%- endcomment -%}
+        <product-form class="product-form">
+          {%- form 'product', product, id: product.id, class: 'product-form-form', novalidate: 'novalidate', data-type: 'add-to-cart-form' -%}
+            
+            <input type="hidden" name="id" value="{{ product.selected_or_first_available_variant.id }}">
+            
+            {%- comment -%} Price Display {%- endcomment -%}
+            <div class="product-price" id="price-{{ section.id }}">
+              {%- render 'product-price', product: product, use_variant: true, show_badges: true -%}
+            </div>
+            
+            {%- comment -%} Variant Selectors - Custom Element {%- endcomment -%}
+            {%- unless product.has_only_default_variant -%}
+              <variant-selects 
+                class="product-variant-selects"
+                data-section="{{ section.id }}" 
+                data-url="{{ product.url }}"
+                data-update-url="{% if section.settings.update_url %}true{% else %}false{% endif %}"
+              >
+                {%- for option in product.options_with_values -%}
+                  <fieldset class="product-form-input">
+                    <legend class="form-label">{{ option.name }}:</legend>
+                    {%- render 'product-variant-selector', 
+                        product: product, 
+                        option: option, 
+                        block: block -%}
+                  </fieldset>
+                {%- endfor -%}
+              </variant-selects>
+            {%- endunless -%}
+            
+            {%- comment -%} Quantity Selector - Custom Element {%- endcomment -%}
+            <div class="product-form-input product-form-input--quantity">
+              <label class="form-label" for="quantity-{{ section.id }}">
+                {{ 'products.product.quantity.label' | t }}
+              </label>
+              <quantity-input class="quantity-input">
+                <button class="quantity-input-button quantity-input-button--minus" type="button">
+                  <span class="visually-hidden">{{ 'products.product.quantity.decrease' | t: product: product.title | escape }}</span>
+                  {%- render 'icon-minus' -%}
+                </button>
+                <input 
+                  class="quantity-input-field" 
+                  type="number" 
+                  name="quantity" 
+                  id="quantity-{{ section.id }}"
+                  min="1" 
+                  value="1"
+                  form="{{ product.id }}"
+                >
+                <button class="quantity-input-button quantity-input-button--plus" type="button">
+                  <span class="visually-hidden">{{ 'products.product.quantity.increase' | t: product: product.title | escape }}</span>
+                  {%- render 'icon-plus' -%}
+                </button>
+              </quantity-input>
+            </div>
+            
+            {%- comment -%} Add to Cart Button {%- endcomment -%}
+            <div class="product-form-buttons">
+              <button
+                type="submit" 
+                name="add"
+                class="btn btn--primary btn--full product-form-cart-button"
+                {%- if product.selected_or_first_available_variant.available == false -%}disabled{%- endif -%}
+              >
+                <span class="btn-text">
+                  {%- if product.selected_or_first_available_variant.available -%}
+                    {{ 'products.product.add_to_cart' | t }}
+                  {%- else -%}
+                    {{ 'products.product.sold_out' | t }}
+                  {%- endif -%}
+                </span>
+                <div class="loading-overlay">
+                  {%- render 'icon-loading' -%}
+                </div>
+              </button>
+              
+              {%- comment -%} Quick Buy Button (si está habilitado) {%- endcomment -%}
+              {%- if section.settings.show_dynamic_checkout -%}
+                {{ form | payment_button }}
+              {%- endif -%}
+            </div>
+            
+            {%- comment -%} Product Badges/Features {%- endcomment -%}
+            {%- if section.settings.show_product_features -%}
+              <div class="product-features">
+                {%- for block in section.blocks -%}
+                  {%- case block.type -%}
+                    {%- when 'feature' -%}
+                      <div class="product-feature">
+                        {%- if block.settings.icon != blank -%}
+                          {%- render 'icon', icon: block.settings.icon -%}
+                        {%- endif -%}
+                        <span>{{ block.settings.text }}</span>
+                      </div>
+                  {%- endcase -%}
+                {%- endfor -%}
+              </div>
+            {%- endif -%}
+            
+            {%- comment -%} Inventory Notice {%- endcomment -%}
+            <div class="product-inventory-notice" id="inventory-notice-{{ section.id }}">
+              {%- render 'product-inventory-notice', variant: product.selected_or_first_available_variant -%}
+            </div>
+            
+          {%- endform -%}
+        </product-form>
+        
+        {%- comment -%} Product Description {%- endcomment -%}
+        {%- if product.description != blank -%}
+          <div class="product-description">
+            <div class="rte">
+              {{ product.description }}
+            </div>
+          </div>
+        {%- endif -%}
+        
+        {%- comment -%} Product Siblings System - Color/Style Variants {%- endcomment -%}
+        {%- if section.settings.show_product_siblings -%}
+          {%- render 'product-siblings', product: product, class: 'product-siblings-section' -%}
+        {%- endif -%}
+        
+        {%- comment -%} Additional Information Tabs/Accordions {%- endcomment -%}
+        {%- if section.settings.show_additional_info -%}
+          <div class="product-additional-info">
+            {%- for block in section.blocks -%}
+              {%- case block.type -%}
+                {%- when 'collapsible_tab' -%}
+                  <details class="product-accordion">
+                    <summary class="product-accordion-summary">
+                      <span>{{ block.settings.heading | default: block.settings.page.title }}</span>
+                      {%- render 'icon-caret' -%}
+                    </summary>
+                    <div class="product-accordion-content rte">
+                      {%- if block.settings.content != blank -%}
+                        {{ block.settings.content }}
+                      {%- elsif block.settings.page != blank -%}
+                        {{ block.settings.page.content }}
+                      {%- endif -%}
+                    </div>
+                  </details>
+              {%- endcase -%}
+            {%- endfor -%}
+          </div>
+        {%- endif -%}
+        
+        {%- comment -%} Social Share {%- endcomment -%}
+        {%- if section.settings.enable_social_sharing -%}
+          {%- render 'product-social-share', product: product -%}
+        {%- endif -%}
+        
+      </div>
+    </div>
+  </div>
+</section>
+
+{%- comment -%} JavaScript para Custom Elements {%- endcomment -%}
+<script src="{{ 'product.js' | asset_url }}" defer></script>
+<script src="{{ 'product-siblings.js' | asset_url }}" defer></script>
+
+{%- comment -%} Schema Configuration {%- endcomment -%}
+{% schema %}
+{
+  "name": "t:sections.main-product.name",
+  "tag": "section",
+  "class": "section",
+  "settings": [
+    {
+      "type": "select",
+      "id": "layout",
+      "options": [
+        {
+          "value": "grid",
+          "label": "Grid"
+        },
+        {
+          "value": "list", 
+          "label": "List"
+        }
+      ],
+      "default": "grid",
+      "label": "Layout"
+    },
+    {
+      "type": "select",
+      "id": "media_aspect_ratio",
+      "options": [
+        {
+          "value": "adapt",
+          "label": "Adapt to image"
+        },
+        {
+          "value": "portrait",
+          "label": "Portrait"
+        },
+        {
+          "value": "landscape", 
+          "label": "Landscape"
+        },
+        {
+          "value": "square",
+          "label": "Square"
+        }
+      ],
+      "default": "adapt",
+      "label": "Media aspect ratio"
+    },
+    {
+      "type": "select",
+      "id": "media_layout",
+      "options": [
+        {
+          "value": "slider",
+          "label": "Slider"
+        },
+        {
+          "value": "thumbnails",
+          "label": "Thumbnails"
+        },
+        {
+          "value": "stacked",
+          "label": "Stacked"
+        }
+      ],
+      "default": "slider",
+      "label": "Media layout"
+    },
+    {
+      "type": "checkbox",
+      "id": "enable_zoom",
+      "default": true,
+      "label": "Enable image zoom"
+    },
+    {
+      "type": "checkbox",
+      "id": "hide_variants",
+      "default": true,
+      "label": "Hide sold out variants"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_vendor",
+      "default": true,
+      "label": "Show vendor"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_dynamic_checkout",
+      "default": true,
+      "label": "Show dynamic checkout buttons"
+    },
+    {
+      "type": "checkbox",
+      "id": "enable_reviews",
+      "default": true,
+      "label": "Enable reviews"
+    },
+    {
+      "type": "checkbox",
+      "id": "enable_social_sharing",
+      "default": true,
+      "label": "Enable social sharing"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_product_features",
+      "default": true,
+      "label": "Show product features"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_additional_info",
+      "default": true,
+      "label": "Show additional information tabs"
+    },
+    {
+      "type": "checkbox",
+      "id": "update_url",
+      "default": true,
+      "label": "Update URL when variant changes"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_product_siblings",
+      "default": true,
+      "label": "Show product siblings (color/style variants)"
+    }
+  ],
+  "blocks": [
+    {
+      "type": "feature",
+      "name": "Feature",
+      "settings": [
+        {
+          "type": "text",
+          "id": "icon",
+          "label": "Icon name"
+        },
+        {
+          "type": "text",
+          "id": "text",
+          "label": "Text"
+        }
+      ]
+    },
+    {
+      "type": "collapsible_tab",
+      "name": "Collapsible tab",
+      "settings": [
+        {
+          "type": "text",
+          "id": "heading",
+          "label": "Heading"
+        },
+        {
+          "type": "richtext",
+          "id": "content",
+          "label": "Content"
+        },
+        {
+          "type": "page",
+          "id": "page",
+          "label": "Page"
+        }
+      ]
+    }
+  ]
+}
+{% endschema %}

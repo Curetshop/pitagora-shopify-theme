@@ -1,0 +1,423 @@
+{%- comment -%}
+  🤖 PITAGORA AI RECOMMENDATIONS SECTION
+  First-ever AI-powered product recommendations for Shopify themes
+  
+  Features:
+  - Machine learning-based product recommendations
+  - Real-time user behavior analysis
+  - Multiple recommendation algorithms (collaborative, content-based, behavioral)
+  - Customizable layouts and appearance
+  - Advanced analytics and tracking
+  
+  Usage:
+  This section can be added to any template through the theme customizer.
+{%- endcomment -%}
+
+{%- liquid
+  assign show_ai_recommendations = section.settings.show_ai_recommendations
+  assign recommendation_title = section.settings.title | default: 'Recomendado para ti'
+  assign max_recommendations = section.settings.max_recommendations | default: 4
+  assign layout_style = section.settings.layout | default: 'grid'
+  assign show_explanations = section.settings.show_explanations
+  assign show_prices = section.settings.show_prices
+  assign show_confidence = section.settings.show_confidence
+  assign enable_auto_update = section.settings.enable_auto_update
+-%}
+
+{%- if show_ai_recommendations -%}
+  
+  {%- comment -%} Load AI Recommendations Assets {%- endcomment -%}
+  {{ 'ai-recommendations.css' | asset_url | stylesheet_tag }}
+  
+  <section class="ai-recommendations-section section-{{ section.id }}" data-section-id="{{ section.id }}">
+    <div class="container">
+      
+      {%- comment -%} AI Recommendations Container {%- endcomment -%}
+      <div 
+        id="ai-recommendations-{{ section.id }}" 
+        class="ai-recommendations-container"
+        data-ai-recommendations
+        data-title="{{ recommendation_title }}"
+        data-layout="{{ layout_style }}"
+        data-max-items="{{ max_recommendations }}"
+        data-show-explanations="{{ show_explanations }}"
+        data-show-prices="{{ show_prices }}"
+        data-show-confidence="{{ show_confidence }}"
+        data-auto-update="{{ enable_auto_update }}"
+        data-section-type="{{ template.name }}"
+        {%- if product -%}
+          data-current-product="{{ product.id }}"
+          data-current-product-handle="{{ product.handle }}"
+        {%- endif -%}
+        {%- if collection -%}
+          data-current-collection="{{ collection.id }}"
+          data-current-collection-handle="{{ collection.handle }}"
+        {%- endif -%}
+      >
+        
+        {%- comment -%} Loading State {%- endcomment -%}
+        <div class="ai-recommendations ai-recommendations--loading">
+          <div class="ai-recommendations__header">
+            <h3 class="ai-recommendations__title">🤖 {{ recommendation_title }}</h3>
+            <p class="ai-recommendations__subtitle">{{ 'ai.loading_message' | t }}</p>
+          </div>
+          <div class="ai-recommendations__loading">
+            <div class="loading-spinner"></div>
+            <p>{{ 'ai.analyzing_preferences' | t }}</p>
+          </div>
+        </div>
+        
+      </div>
+      
+      {%- comment -%} Fallback Content for No-JS {%- endcomment -%}
+      <noscript>
+        <div class="ai-recommendations-fallback">
+          <div class="ai-recommendations">
+            <div class="ai-recommendations__header">
+              <h3 class="ai-recommendations__title">{{ 'products.general.you_might_like' | t }}</h3>
+            </div>
+            <div class="ai-recommendations__grid">
+              
+              {%- comment -%} Show popular/related products as fallback {%- endcomment -%}
+              {%- liquid
+                if product
+                  # Show related products from same collection
+                  assign fallback_products = collections[product.collections.first.handle].products | where_not: 'handle', product.handle | limit: max_recommendations
+                elsif collection
+                  # Show popular products from current collection
+                  assign fallback_products = collection.products | limit: max_recommendations
+                else
+                  # Show popular products from all
+                  assign fallback_products = collections.all.products | limit: max_recommendations
+                endif
+              -%}
+              
+              {%- for fallback_product in fallback_products -%}
+                <div class="ai-recommendation-item">
+                  <a href="{{ fallback_product.url }}" class="ai-recommendation-item__link">
+                    <div class="ai-recommendation-item__image">
+                      <img 
+                        src="{{ fallback_product.featured_image | image_url: width: 300 }}" 
+                        alt="{{ fallback_product.title | escape }}"
+                        width="300"
+                        height="300"
+                        loading="lazy"
+                      >
+                    </div>
+                    <div class="ai-recommendation-item__info">
+                      <h4 class="ai-recommendation-item__title">{{ fallback_product.title }}</h4>
+                      {%- if show_prices -%}
+                        <div class="ai-recommendation-item__price">
+                          {%- if fallback_product.compare_at_price > fallback_product.price -%}
+                            <span class="price">{{ fallback_product.price | money }}</span>
+                            <span class="price price--compare">{{ fallback_product.compare_at_price | money }}</span>
+                          {%- else -%}
+                            <span class="price">{{ fallback_product.price | money }}</span>
+                          {%- endif -%}
+                        </div>
+                      {%- endif -%}
+                    </div>
+                  </a>
+                </div>
+              {%- endfor -%}
+              
+            </div>
+          </div>
+        </div>
+      </noscript>
+      
+    </div>
+  </section>
+  
+  {%- comment -%} Initialize AI Recommendations {%- endcomment -%}
+  <script src="{{ 'ai-recommendations.js' | asset_url }}" defer></script>
+  
+  {%- comment -%} Section-specific initialization {%- endcomment -%}
+  <script>
+    document.addEventListener('DOMContentLoaded', function() {
+      const container = document.getElementById('ai-recommendations-{{ section.id }}');
+      if (!container) return;
+      
+      // Wait for AI engine to be ready
+      document.addEventListener('ai:recommendations:ready', function(event) {
+        const aiEngine = event.detail.engine;
+        
+        // Create widget with section-specific settings
+        const widget = new window.PitagoraAI.RecommendationWidget(container, aiEngine, {
+          title: '{{ recommendation_title | escape }}',
+          layout: '{{ layout_style }}',
+          maxItems: {{ max_recommendations }},
+          showExplanations: {{ show_explanations | json }},
+          showPrices: {{ show_prices | json }},
+          showConfidence: {{ show_confidence | json }},
+          autoUpdate: {{ enable_auto_update | json }},
+          sectionId: '{{ section.id }}',
+          
+          // Context from Liquid
+          context: {
+            {%- if product -%}
+              currentProduct: {
+                id: {{ product.id | json }},
+                handle: {{ product.handle | json }},
+                title: {{ product.title | json }},
+                vendor: {{ product.vendor | json }},
+                type: {{ product.type | json }},
+                tags: {{ product.tags | json }},
+                price: {{ product.price | json }},
+                compare_at_price: {{ product.compare_at_price | json }},
+                available: {{ product.available | json }}
+              },
+            {%- endif -%}
+            {%- if collection -%}
+              currentCollection: {
+                id: {{ collection.id | json }},
+                handle: {{ collection.handle | json }},
+                title: {{ collection.title | json }}
+              },
+            {%- endif -%}
+            templateName: {{ template.name | json }},
+            customerId: {{ customer.id | json }},
+            customerTags: {{ customer.tags | json }}
+          }
+        });
+        
+        // Track section view
+        aiEngine.trackBehavior('ai_section_view', {
+          sectionId: '{{ section.id }}',
+          sectionSettings: {
+            title: '{{ recommendation_title }}',
+            layout: '{{ layout_style }}',
+            maxItems: {{ max_recommendations }},
+            showExplanations: {{ show_explanations | json }},
+            templateName: {{ template.name | json }}
+          }
+        });
+      });
+      
+      // Fallback initialization if AI engine fails
+      setTimeout(function() {
+        if (!window.PitagoraAI || !window.PitagoraAI.engine) {
+          console.warn('AI Recommendations engine failed to initialize, showing fallback content');
+          const fallbackContent = container.querySelector('noscript');
+          if (fallbackContent) {
+            container.innerHTML = fallbackContent.innerHTML;
+          }
+        }
+      }, 10000); // 10 second timeout
+    });
+  </script>
+  
+  {%- comment -%} Enhanced Analytics Integration {%- endcomment -%}
+  <script>
+    // Enhanced tracking for AI recommendations
+    document.addEventListener('DOMContentLoaded', function() {
+      // Track when AI recommendations are displayed
+      const observer = new IntersectionObserver(function(entries) {
+        entries.forEach(function(entry) {
+          if (entry.isIntersecting) {
+            // Track impression
+            if (typeof gtag !== 'undefined') {
+              gtag('event', 'ai_recommendations_impression', {
+                event_category: 'AI Recommendations',
+                event_label: '{{ section.id }}',
+                section_title: '{{ recommendation_title | escape }}',
+                template_name: {{ template.name | json }}
+              });
+            }
+            
+            // Track for other analytics platforms
+            if (typeof dataLayer !== 'undefined') {
+              dataLayer.push({
+                event: 'ai_recommendations_impression',
+                section_id: '{{ section.id }}',
+                section_title: '{{ recommendation_title | escape }}',
+                template_name: {{ template.name | json }},
+                max_recommendations: {{ max_recommendations }}
+              });
+            }
+            
+            observer.unobserve(entry.target);
+          }
+        });
+      }, {
+        threshold: 0.1,
+        rootMargin: '0px 0px -10% 0px'
+      });
+      
+      const section = document.querySelector('.section-{{ section.id }}');
+      if (section) {
+        observer.observe(section);
+      }
+    });
+  </script>
+  
+  {%- comment -%} Structured Data for AI Recommendations {%- endcomment -%}
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "ItemList",
+    "name": {{ recommendation_title | json }},
+    "description": "AI-powered product recommendations based on machine learning algorithms",
+    "numberOfItems": {{ max_recommendations }},
+    "itemListOrder": "https://schema.org/ItemListOrderAscending",
+    "provider": {
+      "@type": "Organization",
+      "name": "Pitagora AI Engine",
+      "description": "First AI-powered recommendation system for Shopify themes"
+    },
+    "algorithm": {
+      "@type": "SoftwareApplication",
+      "name": "Pitagora Hybrid Recommendation Algorithm",
+      "description": "Combines collaborative filtering, content-based filtering, and behavioral analysis",
+      "applicationCategory": "Machine Learning",
+      "operatingSystem": "Web Browser"
+    }
+  }
+  </script>
+
+{%- endif -%}
+
+{%- comment -%} Schema Configuration {%- endcomment -%}
+{% schema %}
+{
+  "name": "🤖 AI Product Recommendations",
+  "tag": "section",
+  "class": "section",
+  "settings": [
+    {
+      "type": "checkbox",
+      "id": "show_ai_recommendations",
+      "label": "Show AI recommendations",
+      "default": true,
+      "info": "Enable AI-powered product recommendations"
+    },
+    {
+      "type": "text",
+      "id": "title",
+      "label": "Section title",
+      "default": "Recomendado para ti",
+      "info": "Title displayed above recommendations"
+    },
+    {
+      "type": "range",
+      "id": "max_recommendations",
+      "min": 2,
+      "max": 12,
+      "step": 1,
+      "label": "Maximum recommendations",
+      "default": 4,
+      "info": "Maximum number of products to show"
+    },
+    {
+      "type": "select",
+      "id": "layout",
+      "label": "Layout style",
+      "options": [
+        {
+          "value": "grid",
+          "label": "Grid"
+        },
+        {
+          "value": "carousel",
+          "label": "Carousel"
+        },
+        {
+          "value": "list",
+          "label": "List"
+        }
+      ],
+      "default": "grid",
+      "info": "How to display the recommendations"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_explanations",
+      "label": "Show AI explanations",
+      "default": true,
+      "info": "Show why each product was recommended"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_prices",
+      "label": "Show product prices",
+      "default": true
+    },
+    {
+      "type": "checkbox",
+      "id": "show_confidence",
+      "label": "Show confidence scores",
+      "default": true,
+      "info": "Show AI confidence percentage for each recommendation"
+    },
+    {
+      "type": "checkbox",
+      "id": "enable_auto_update",
+      "label": "Enable real-time updates",
+      "default": true,
+      "info": "Update recommendations based on user behavior"
+    },
+    {
+      "type": "header",
+      "content": "Advanced AI Settings"
+    },
+    {
+      "type": "range",
+      "id": "confidence_threshold",
+      "min": 10,
+      "max": 90,
+      "step": 5,
+      "unit": "%",
+      "label": "Minimum confidence threshold",
+      "default": 30,
+      "info": "Only show recommendations above this confidence level"
+    },
+    {
+      "type": "range",
+      "id": "diversity_factor",
+      "min": 10,
+      "max": 100,
+      "step": 5,
+      "unit": "%",
+      "label": "Recommendation diversity",
+      "default": 70,
+      "info": "Higher values show more diverse recommendations"
+    },
+    {
+      "type": "checkbox",
+      "id": "enable_collaborative",
+      "label": "Enable collaborative filtering",
+      "default": true,
+      "info": "Recommend based on similar users' behavior"
+    },
+    {
+      "type": "checkbox",
+      "id": "enable_content_based",
+      "label": "Enable content-based filtering",
+      "default": true,
+      "info": "Recommend based on product similarities"
+    },
+    {
+      "type": "checkbox",
+      "id": "enable_behavioral",
+      "label": "Enable behavioral analysis",
+      "default": true,
+      "info": "Recommend based on browsing patterns"
+    }
+  ],
+  "presets": [
+    {
+      "name": "🤖 AI Recommendations",
+      "settings": {
+        "show_ai_recommendations": true,
+        "title": "Recomendado para ti",
+        "max_recommendations": 4,
+        "layout": "grid",
+        "show_explanations": true,
+        "show_prices": true,
+        "show_confidence": true,
+        "enable_auto_update": true
+      }
+    }
+  ]
+}
+{% endschema %}

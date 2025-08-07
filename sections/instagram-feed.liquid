@@ -1,0 +1,280 @@
+{%- comment -%}
+Instagram Feed Section - Pitagora Theme
+Grid de posts de Instagram con integration simulada
+{%- endcomment -%}
+
+{{ 'instagram-feed.css' | asset_url | stylesheet_tag }}
+<script src="{{ 'instagram-feed.js' | asset_url }}" defer="defer"></script>
+
+<style>
+  #shopify-section-{{ section.id }} {
+    --instagram-bg: {{ section.settings.background_color | default: 'transparent' }};
+    --instagram-text: {{ section.settings.text_color | default: 'inherit' }};
+    --columns-desktop: {{ section.settings.columns_desktop | default: 6 }};
+    --columns-mobile: {{ section.settings.columns_mobile | default: 3 }};
+  }
+</style>
+
+<div 
+  class="instagram-feed section-padding"
+  style="background: var(--instagram-bg); color: var(--instagram-text);"
+>
+  <div class="page-width">
+    {%- if section.settings.heading != blank or section.settings.subheading != blank -%}
+      <div class="section-header text-center">
+        {%- if section.settings.subheading != blank -%}
+          <p class="section-header__subheading">{{ section.settings.subheading | escape }}</p>
+        {%- endif -%}
+        
+        {%- if section.settings.heading != blank -%}
+          <h2 class="section-header__heading h2">{{ section.settings.heading | escape }}</h2>
+        {%- endif -%}
+      </div>
+    {%- endif -%}
+
+    <instagram-feed-component
+      class="instagram-feed__wrapper"
+      data-section-id="{{ section.id }}"
+      data-username="{{ section.settings.username }}"
+      data-access-token="{{ section.settings.access_token }}"
+      data-posts-count="{{ section.settings.posts_to_show | default: 6 }}"
+      data-open-in-new-tab="{% if section.settings.open_in_new_tab %}true{% else %}false{% endif %}"
+      data-show-captions="{% if section.settings.show_captions %}true{% else %}false{% endif %}"
+    >
+      {%- if section.settings.access_token != blank and section.settings.username != blank -%}
+        <div class="instagram-feed__loading">
+          <div class="instagram-feed__loading-spinner">
+            <svg viewBox="0 0 20 20">
+              <path fill="currentColor" d="M10,1V3a7,7,0,1,1-7,7H1a9,9,0,1,0,9-9Z"/>
+            </svg>
+          </div>
+          <p>{{ 'general.instagram.loading' | t }}</p>
+        </div>
+      {%- else -%}
+        {%- comment -%} Demo/Placeholder content {%- endcomment -%}
+        <div class="instagram-feed__grid instagram-feed__grid--demo">
+          {%- assign demo_posts = section.settings.posts_to_show | default: 6 -%}
+          {%- for i in (1..demo_posts) -%}
+            <div class="instagram-post instagram-post--demo">
+              <div class="instagram-post__media">
+                <div class="instagram-post__placeholder">
+                  {{ 'lifestyle-' | append: i | placeholder_svg_tag: 'instagram-post__placeholder-svg' }}
+                </div>
+                
+                <div class="instagram-post__overlay">
+                  <div class="instagram-post__stats">
+                    <span class="instagram-post__stat">
+                      {% render 'icon-heart' %}
+                      {{ i | times: 47 | plus: 123 }}
+                    </span>
+                    <span class="instagram-post__stat">
+                      {% render 'icon-message-circle' %}
+                      {{ i | times: 7 | plus: 12 }}
+                    </span>
+                  </div>
+                  
+                  {%- if section.settings.show_captions -%}
+                    <div class="instagram-post__caption">
+                      <p>{{ 'general.instagram.demo_caption' | t: number: i }}</p>
+                    </div>
+                  {%- endif -%}
+                </div>
+              </div>
+              
+              <a 
+                href="https://instagram.com" 
+                class="instagram-post__link"
+                aria-label="{{ 'general.instagram.view_post' | t }}"
+                {%- if section.settings.open_in_new_tab -%}
+                  target="_blank" 
+                  rel="noopener noreferrer"
+                {%- endif -%}
+              ></a>
+            </div>
+          {%- endfor -%}
+        </div>
+        
+        <div class="instagram-feed__setup-notice">
+          <div class="instagram-feed__setup-content">
+            <h3>{{ 'general.instagram.setup_required' | t }}</h3>
+            <p>{{ 'general.instagram.setup_instructions' | t }}</p>
+            <a 
+              href="https://help.shopify.com/en/manual/online-store/themes/theme-structure/integrate-social-media#instagram-feed" 
+              target="_blank" 
+              rel="noopener noreferrer"
+              class="button button--outline button--small"
+            >
+              {{ 'general.instagram.learn_more' | t }}
+            </a>
+          </div>
+        </div>
+      {%- endif -%}
+      
+      <div class="instagram-feed__error" hidden>
+        <div class="instagram-feed__error-content">
+          <h3>{{ 'general.instagram.error_title' | t }}</h3>
+          <p class="instagram-feed__error-message"></p>
+        </div>
+      </div>
+    </instagram-feed-component>
+
+    {%- if section.settings.username != blank -%}
+      <div class="instagram-feed__footer">
+        <a 
+          href="https://instagram.com/{{ section.settings.username }}" 
+          class="instagram-feed__profile-link button button--outline"
+          {%- if section.settings.open_in_new_tab -%}
+            target="_blank" 
+            rel="noopener noreferrer"
+          {%- endif -%}
+        >
+          {% render 'icon-instagram' %}
+          {{ 'general.instagram.follow_us' | t: username: section.settings.username }}
+        </a>
+      </div>
+    {%- endif -%}
+  </div>
+</div>
+
+{% schema %}
+{
+  "name": "Instagram feed",
+  "class": "shopify-section-instagram-feed",
+  "tag": "section",
+  "settings": [
+    {
+      "type": "header",
+      "content": "Content"
+    },
+    {
+      "type": "text",
+      "id": "heading",
+      "label": "Heading",
+      "default": "Follow us on Instagram"
+    },
+    {
+      "type": "text",
+      "id": "subheading",
+      "label": "Subheading",
+      "default": "@your_instagram_handle"
+    },
+    {
+      "type": "header",
+      "content": "Instagram settings"
+    },
+    {
+      "type": "text",
+      "id": "username",
+      "label": "Instagram username",
+      "info": "Enter your Instagram username (without @)"
+    },
+    {
+      "type": "text",
+      "id": "access_token",
+      "label": "Instagram access token",
+      "info": "Required to display real Instagram posts. Learn how to get this token."
+    },
+    {
+      "type": "header",
+      "content": "Layout"
+    },
+    {
+      "type": "range",
+      "id": "posts_to_show",
+      "label": "Posts to show",
+      "min": 4,
+      "max": 12,
+      "step": 2,
+      "default": 6
+    },
+    {
+      "type": "range",
+      "id": "columns_desktop",
+      "label": "Desktop columns",
+      "min": 3,
+      "max": 8,
+      "step": 1,
+      "default": 6
+    },
+    {
+      "type": "select",
+      "id": "columns_mobile",
+      "label": "Mobile columns",
+      "options": [
+        {
+          "value": "2",
+          "label": "2 columns"
+        },
+        {
+          "value": "3",
+          "label": "3 columns"
+        }
+      ],
+      "default": "3"
+    },
+    {
+      "type": "select",
+      "id": "image_ratio",
+      "label": "Image ratio",
+      "options": [
+        {
+          "value": "square",
+          "label": "Square (1:1)"
+        },
+        {
+          "value": "portrait",
+          "label": "Portrait (4:5)"
+        },
+        {
+          "value": "landscape",
+          "label": "Landscape (16:9)"
+        }
+      ],
+      "default": "square"
+    },
+    {
+      "type": "header",
+      "content": "Post display"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_captions",
+      "label": "Show captions on hover",
+      "default": false
+    },
+    {
+      "type": "checkbox",
+      "id": "open_in_new_tab",
+      "label": "Open posts in new tab",
+      "default": true
+    },
+    {
+      "type": "header",
+      "content": "Colors"
+    },
+    {
+      "type": "color",
+      "id": "background_color",
+      "label": "Background color"
+    },
+    {
+      "type": "color",
+      "id": "text_color",
+      "label": "Text color"
+    }
+  ],
+  "presets": [
+    {
+      "name": "Instagram feed",
+      "settings": {
+        "heading": "Follow us on Instagram",
+        "subheading": "@your_instagram_handle",
+        "posts_to_show": 6,
+        "columns_desktop": 6,
+        "columns_mobile": "3",
+        "open_in_new_tab": true
+      }
+    }
+  ]
+}
+{% endschema %}

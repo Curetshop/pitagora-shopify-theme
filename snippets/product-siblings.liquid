@@ -1,0 +1,281 @@
+{%- comment -%}
+  Product Siblings System - Advanced Color/Style Variants
+  
+  Features:
+  - Smart product grouping via metafields
+  - Interactive color swatches with previews
+  - Hover effects with product images
+  - Quick view functionality
+  - Stock status indicators
+  - Price variations display
+  
+  Usage:
+  {% render 'product-siblings', product: product, class: 'custom-class' %}
+{%- endcomment -%}
+
+{%- liquid
+  assign current_product = product
+  assign sibling_class = class | default: ''
+  assign product_group = current_product.metafields.custom.product_group.value
+  
+  # Try alternative metafield structures
+  if product_group == blank
+    assign product_group = current_product.metafields.siblings.group_id.value
+  endif
+  
+  if product_group == blank
+    assign product_group = current_product.metafields.product.group.value
+  endif
+  
+  # Fallback: use product type + vendor as grouping
+  if product_group == blank
+    assign product_group = current_product.type | append: '-' | append: current_product.vendor | handle
+  endif
+-%}
+
+{%- if product_group != blank -%}
+  {%- liquid
+    # Search for sibling products in all collections
+    assign all_siblings = collections.all.products | where: 'metafields.custom.product_group', product_group
+    
+    # Fallback search methods
+    if all_siblings.size <= 1
+      assign all_siblings = collections.all.products | where: 'metafields.siblings.group_id', product_group
+    endif
+    
+    if all_siblings.size <= 1
+      assign all_siblings = collections.all.products | where: 'metafields.product.group', product_group
+    endif
+    
+    # Filter out current product and limit results
+    assign siblings = all_siblings | where_not: 'handle', current_product.handle | slice: 0, 8
+  -%}
+
+  {%- if siblings.size > 0 -%}
+    <div class="product-siblings {{ sibling_class }}" data-product-siblings>
+      <div class="product-siblings__header">
+        <h3 class="product-siblings__title">
+          {% render 'icon-color-palette' %}
+          {{ 'products.product.other_variants' | t }}
+        </h3>
+        <span class="product-siblings__count">({{ siblings.size | plus: 1 }})</span>
+      </div>
+
+      <div class="product-siblings__grid" role="list">
+        {%- comment -%} Current Product {%- endcomment -%}
+        <div class="product-sibling product-sibling--current" role="listitem">
+          <div class="product-sibling__image-wrapper">
+            <img 
+              src="{{ current_product.featured_image | image_url: width: 80 }}" 
+              alt="{{ current_product.title | escape }}"
+              width="80"
+              height="80"
+              class="product-sibling__image"
+              loading="lazy"
+            >
+            <div class="product-sibling__current-indicator" aria-hidden="true">
+              {% render 'icon-checkmark' %}
+            </div>
+          </div>
+          
+          <div class="product-sibling__info">
+            <span class="product-sibling__color">
+              {{ current_product.metafields.custom.color_name.value | default: current_product.title | truncate: 15 }}
+            </span>
+            <span class="product-sibling__price">
+              {% if current_product.compare_at_price > current_product.price %}
+                <span class="product-sibling__price--sale">{{ current_product.price | money }}</span>
+                <span class="product-sibling__price--compare">{{ current_product.compare_at_price | money }}</span>
+              {% else %}
+                {{ current_product.price | money }}
+              {% endif %}
+            </span>
+          </div>
+        </div>
+
+        {%- comment -%} Sibling Products {%- endcomment -%}
+        {%- for sibling in siblings -%}
+          <div class="product-sibling" role="listitem">
+            <a 
+              href="{{ sibling.url }}" 
+              class="product-sibling__link"
+              data-sibling-handle="{{ sibling.handle }}"
+              data-sibling-id="{{ sibling.id }}"
+              data-color="{{ sibling.metafields.custom.color_name.value | default: sibling.title }}"
+              aria-label="{{ 'products.product.view_color_variant' | t: color: sibling.metafields.custom.color_name.value, product: sibling.title }}"
+            >
+              <div class="product-sibling__image-wrapper">
+                <img 
+                  src="{{ sibling.featured_image | image_url: width: 80 }}" 
+                  alt="{{ sibling.title | escape }}"
+                  width="80"
+                  height="80"
+                  class="product-sibling__image product-sibling__image--primary"
+                  loading="lazy"
+                >
+                
+                {%- comment -%} Hover Image {%- endcomment -%}
+                {%- if sibling.images[1] -%}
+                  <img 
+                    src="{{ sibling.images[1] | image_url: width: 80 }}" 
+                    alt="{{ sibling.title | escape }}"
+                    width="80"
+                    height="80"
+                    class="product-sibling__image product-sibling__image--hover"
+                    loading="lazy"
+                  >
+                {%- endif -%}
+
+                {%- comment -%} Stock Status Indicator {%- endcomment -%}
+                {%- unless sibling.available -%}
+                  <div class="product-sibling__stock-indicator product-sibling__stock-indicator--out" aria-hidden="true">
+                    {% render 'icon-close' %}
+                  </div>
+                {%- else -%}
+                  {%- assign total_inventory = 0 -%}
+                  {%- for variant in sibling.variants -%}
+                    {%- if variant.inventory_management == 'shopify' and variant.inventory_quantity -%}
+                      {%- assign total_inventory = total_inventory | plus: variant.inventory_quantity -%}
+                    {%- endif -%}
+                  {%- endfor -%}
+                  
+                  {%- if total_inventory > 0 and total_inventory <= 10 -%}
+                    <div class="product-sibling__stock-indicator product-sibling__stock-indicator--low" aria-hidden="true">
+                      <span class="product-sibling__stock-count">{{ total_inventory }}</span>
+                    </div>
+                  {%- endif -%}
+                {%- endunless -%}
+
+                {%- comment -%} Sale Badge {%- endcomment -%}
+                {%- if sibling.compare_at_price > sibling.price -%}
+                  {%- assign discount_percentage = sibling.compare_at_price | minus: sibling.price | times: 100 | divided_by: sibling.compare_at_price -%}
+                  <div class="product-sibling__sale-badge" aria-hidden="true">
+                    -{{ discount_percentage }}%
+                  </div>
+                {%- endif -%}
+              </div>
+              
+              <div class="product-sibling__info">
+                <span class="product-sibling__color">
+                  {{ sibling.metafields.custom.color_name.value | default: sibling.title | truncate: 15 }}
+                </span>
+                <span class="product-sibling__price">
+                  {% if sibling.compare_at_price > sibling.price %}
+                    <span class="product-sibling__price--sale">{{ sibling.price | money }}</span>
+                    <span class="product-sibling__price--compare">{{ sibling.compare_at_price | money }}</span>
+                  {% else %}
+                    {{ sibling.price | money }}
+                  {% endif %}
+                </span>
+              </div>
+
+              {%- comment -%} Quick Preview Tooltip {%- endcomment -%}
+              <div class="product-sibling__tooltip" role="tooltip">
+                <div class="product-sibling__tooltip-content">
+                  <h4 class="product-sibling__tooltip-title">{{ sibling.title }}</h4>
+                  <p class="product-sibling__tooltip-description">
+                    {{ sibling.description | strip_html | truncate: 100 }}
+                  </p>
+                  <div class="product-sibling__tooltip-details">
+                    <span class="product-sibling__tooltip-price">
+                      {% if sibling.compare_at_price > sibling.price %}
+                        {{ sibling.price | money }} 
+                        <span class="product-sibling__tooltip-compare">{{ sibling.compare_at_price | money }}</span>
+                      {% else %}
+                        {{ sibling.price | money }}
+                      {% endif %}
+                    </span>
+                    <span class="product-sibling__tooltip-availability">
+                      {%- if sibling.available -%}
+                        <span class="product-sibling__tooltip-in-stock">{{ 'products.product.in_stock' | t }}</span>
+                      {%- else -%}
+                        <span class="product-sibling__tooltip-out-stock">{{ 'products.product.out_of_stock' | t }}</span>
+                      {%- endif -%}
+                    </span>
+                  </div>
+                  
+                  <div class="product-sibling__tooltip-actions">
+                    <span class="product-sibling__tooltip-cta">{{ 'products.product.view_product' | t }}</span>
+                    {% render 'icon-arrow-right' %}
+                  </div>
+                </div>
+                
+                {%- comment -%} Tooltip Arrow {%- endcomment -%}
+                <div class="product-sibling__tooltip-arrow" aria-hidden="true"></div>
+              </div>
+            </a>
+          </div>
+        {%- endfor -%}
+      </div>
+
+      {%- comment -%} View All Link {%- endcomment -%}
+      {%- if siblings.size >= 8 -%}
+        {%- liquid
+          # Find the collection that contains the most siblings
+          assign best_collection = null
+          assign best_count = 0
+          
+          for collection in current_product.collections
+            assign collection_siblings = collection.products | where: 'metafields.custom.product_group', product_group
+            if collection_siblings.size > best_count
+              assign best_count = collection_siblings.size
+              assign best_collection = collection
+            endif
+          endfor
+        -%}
+        
+        {%- if best_collection -%}
+          <div class="product-siblings__footer">
+            <a href="{{ best_collection.url }}" class="product-siblings__view-all">
+              {{ 'products.product.view_all_variants' | t }}
+              {% render 'icon-arrow-right' %}
+            </a>
+          </div>
+        {%- endif -%}
+      {%- endif -%}
+    </div>
+
+    {%- comment -%} Enhanced Analytics Tracking {%- endcomment -%}
+    <script>
+      document.addEventListener('DOMContentLoaded', function() {
+        const siblingLinks = document.querySelectorAll('[data-product-siblings] .product-sibling__link');
+        
+        siblingLinks.forEach(function(link) {
+          link.addEventListener('click', function(e) {
+            // Track sibling click
+            if (typeof gtag !== 'undefined') {
+              gtag('event', 'product_sibling_click', {
+                event_category: 'Product Discovery',
+                event_label: this.dataset.color,
+                current_product: '{{ current_product.handle }}',
+                target_product: this.dataset.siblingHandle,
+                sibling_count: {{ siblings.size }}
+              });
+            }
+            
+            // Track for other analytics platforms
+            if (typeof dataLayer !== 'undefined') {
+              dataLayer.push({
+                event: 'product_sibling_interaction',
+                current_product_id: '{{ current_product.id }}',
+                target_product_id: this.dataset.siblingId,
+                interaction_type: 'click'
+              });
+            }
+          });
+          
+          // Track hover events
+          link.addEventListener('mouseenter', function() {
+            if (typeof gtag !== 'undefined') {
+              gtag('event', 'product_sibling_hover', {
+                event_category: 'Product Discovery',
+                event_label: this.dataset.color,
+                current_product: '{{ current_product.handle }}'
+              });
+            }
+          });
+        });
+      });
+    </script>
+  {%- endif -%}
+{%- endif -%}

@@ -1,0 +1,374 @@
+{%- comment -%}
+Image with Text Section - Pitagora Theme
+Sección con imagen + contenido side-by-side responsive
+{%- endcomment -%}
+
+{{ 'image-with-text.css' | asset_url | stylesheet_tag }}
+
+<style>
+  #shopify-section-{{ section.id }} {
+    --image-with-text-bg: {{ section.settings.background_color | default: 'transparent' }};
+    --image-with-text-text: {{ section.settings.text_color | default: 'inherit' }};
+  }
+</style>
+
+<div 
+  class="image-with-text section-padding image-with-text--{{ section.settings.image_position }} image-with-text--{{ section.settings.text_alignment }}"
+  style="background: var(--image-with-text-bg); color: var(--image-with-text-text);"
+>
+  <div class="page-width">
+    <div class="image-with-text__wrapper">
+      <div 
+        class="image-with-text__media"
+        style="--image-width: {{ section.settings.image_width }}%;"
+      >
+        {%- if section.settings.image != blank -%}
+          <div class="image-with-text__image">
+            {%- if section.settings.enable_video and section.settings.video_url != blank -%}
+              <div class="image-with-text__video-wrapper">
+                {%- liquid
+                  assign video_id = section.settings.video_url | split: 'v=' | last | split: '&' | first
+                  if section.settings.video_url contains 'vimeo.com'
+                    assign video_id = section.settings.video_url | split: '/' | last
+                  endif
+                -%}
+                
+                <div class="image-with-text__video">
+                  {%- if section.settings.video_url contains 'youtube.com' or section.settings.video_url contains 'youtu.be' -%}
+                    <iframe
+                      src="https://www.youtube.com/embed/{{ video_id }}?rel=0&modestbranding=1"
+                      frameborder="0"
+                      allow="autoplay; encrypted-media"
+                      allowfullscreen
+                    ></iframe>
+                  {%- elsif section.settings.video_url contains 'vimeo.com' -%}
+                    <iframe
+                      src="https://player.vimeo.com/video/{{ video_id }}?title=0&byline=0&portrait=0"
+                      frameborder="0"
+                      allow="autoplay; fullscreen"
+                      allowfullscreen
+                    ></iframe>
+                  {%- endif -%}
+                </div>
+              </div>
+            {%- else -%}
+              <img
+                src="{{ section.settings.image | image_url: width: 800 }}"
+                alt="{{ section.settings.image.alt | escape | default: section.settings.heading | escape }}"
+                loading="lazy"
+                width="{{ section.settings.image.width }}"
+                height="{{ section.settings.image.height }}"
+                sizes="(max-width: 767px) 100vw, {{ section.settings.image_width }}vw"
+                srcset="
+                  {{ section.settings.image | image_url: width: 400 }} 400w,
+                  {{ section.settings.image | image_url: width: 600 }} 600w,
+                  {{ section.settings.image | image_url: width: 800 }} 800w,
+                  {{ section.settings.image | image_url: width: 1000 }} 1000w,
+                  {{ section.settings.image | image_url: width: 1200 }} 1200w
+                "
+              >
+            {%- endif -%}
+          </div>
+        {%- else -%}
+          <div class="image-with-text__placeholder">
+            {{ 'lifestyle-1' | placeholder_svg_tag: 'image-with-text__placeholder-svg' }}
+          </div>
+        {%- endif -%}
+      </div>
+
+      <div 
+        class="image-with-text__content"
+        style="--content-width: {{ 100 | minus: section.settings.image_width }}%;"
+      >
+        <div class="image-with-text__content-wrapper">
+          {%- if section.settings.subheading != blank -%}
+            <p class="image-with-text__subheading">{{ section.settings.subheading | escape }}</p>
+          {%- endif -%}
+
+          {%- if section.settings.heading != blank -%}
+            <h2 class="image-with-text__heading h2">{{ section.settings.heading | escape }}</h2>
+          {%- endif -%}
+
+          {%- if section.settings.text != blank -%}
+            <div class="image-with-text__text rte">
+              {{ section.settings.text }}
+            </div>
+          {%- endif -%}
+
+          {%- if section.settings.button_text != blank or section.settings.button_2_text != blank -%}
+            <div class="image-with-text__buttons">
+              {%- if section.settings.button_text != blank -%}
+                <a 
+                  href="{{ section.settings.button_url | default: '#' }}" 
+                  class="image-with-text__button button button--{{ section.settings.button_style }}"
+                >
+                  {{ section.settings.button_text | escape }}
+                </a>
+              {%- endif -%}
+
+              {%- if section.settings.button_2_text != blank -%}
+                <a 
+                  href="{{ section.settings.button_2_url | default: '#' }}" 
+                  class="image-with-text__button button button--{{ section.settings.button_2_style }}"
+                >
+                  {{ section.settings.button_2_text | escape }}
+                </a>
+              {%- endif -%}
+            </div>
+          {%- endif -%}
+
+          {%- if section.blocks.size > 0 -%}
+            <div class="image-with-text__features">
+              {%- for block in section.blocks -%}
+                {%- case block.type -%}
+                  {%- when 'feature' -%}
+                    <div class="image-with-text__feature" {{ block.shopify_attributes }}>
+                      {%- if block.settings.icon != blank -%}
+                        <div class="image-with-text__feature-icon">
+                          <img
+                            src="{{ block.settings.icon | image_url: width: 48 }}"
+                            alt="{{ block.settings.icon.alt | escape }}"
+                            loading="lazy"
+                            width="24"
+                            height="24"
+                          >
+                        </div>
+                      {%- endif -%}
+                      
+                      <div class="image-with-text__feature-content">
+                        {%- if block.settings.title != blank -%}
+                          <h3 class="image-with-text__feature-title">{{ block.settings.title | escape }}</h3>
+                        {%- endif -%}
+                        
+                        {%- if block.settings.text != blank -%}
+                          <p class="image-with-text__feature-text">{{ block.settings.text | escape }}</p>
+                        {%- endif -%}
+                      </div>
+                    </div>
+                {%- endcase -%}
+              {%- endfor -%}
+            </div>
+          {%- endif -%}
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+{% schema %}
+{
+  "name": "Image with text",
+  "class": "shopify-section-image-with-text",
+  "tag": "section",
+  "max_blocks": 6,
+  "settings": [
+    {
+      "type": "header",
+      "content": "Image"
+    },
+    {
+      "type": "image_picker",
+      "id": "image",
+      "label": "Image"
+    },
+    {
+      "type": "select",
+      "id": "image_position",
+      "label": "Image position",
+      "options": [
+        {
+          "value": "left",
+          "label": "Left"
+        },
+        {
+          "value": "right",
+          "label": "Right"
+        }
+      ],
+      "default": "right"
+    },
+    {
+      "type": "range",
+      "id": "image_width",
+      "label": "Image width",
+      "min": 30,
+      "max": 70,
+      "step": 5,
+      "unit": "%",
+      "default": "50"
+    },
+    {
+      "type": "header",
+      "content": "Video (optional)"
+    },
+    {
+      "type": "checkbox",
+      "id": "enable_video",
+      "label": "Show video instead of image",
+      "default": false
+    },
+    {
+      "type": "url",
+      "id": "video_url",
+      "label": "Video URL",
+      "info": "YouTube or Vimeo video URL"
+    },
+    {
+      "type": "header",
+      "content": "Content"
+    },
+    {
+      "type": "text",
+      "id": "subheading",
+      "label": "Subheading"
+    },
+    {
+      "type": "text",
+      "id": "heading",
+      "label": "Heading",
+      "default": "Image with text"
+    },
+    {
+      "type": "richtext",
+      "id": "text",
+      "label": "Text",
+      "default": "<p>Pair large text with an image or full-width video to showcase your brand's lifestyle to describe and showcase an important detail of your products.</p>"
+    },
+    {
+      "type": "select",
+      "id": "text_alignment",
+      "label": "Text alignment",
+      "options": [
+        {
+          "value": "left",
+          "label": "Left"
+        },
+        {
+          "value": "center",
+          "label": "Center"
+        },
+        {
+          "value": "right",
+          "label": "Right"
+        }
+      ],
+      "default": "left"
+    },
+    {
+      "type": "header",
+      "content": "Buttons"
+    },
+    {
+      "type": "text",
+      "id": "button_text",
+      "label": "Button text"
+    },
+    {
+      "type": "url",
+      "id": "button_url",
+      "label": "Button URL"
+    },
+    {
+      "type": "select",
+      "id": "button_style",
+      "label": "Button style",
+      "options": [
+        {
+          "value": "primary",
+          "label": "Primary"
+        },
+        {
+          "value": "secondary",
+          "label": "Secondary"
+        },
+        {
+          "value": "outline",
+          "label": "Outline"
+        }
+      ],
+      "default": "primary"
+    },
+    {
+      "type": "text",
+      "id": "button_2_text",
+      "label": "Second button text"
+    },
+    {
+      "type": "url",
+      "id": "button_2_url",
+      "label": "Second button URL"
+    },
+    {
+      "type": "select",
+      "id": "button_2_style",
+      "label": "Second button style",
+      "options": [
+        {
+          "value": "primary",
+          "label": "Primary"
+        },
+        {
+          "value": "secondary",
+          "label": "Secondary"
+        },
+        {
+          "value": "outline",
+          "label": "Outline"
+        }
+      ],
+      "default": "outline"
+    },
+    {
+      "type": "header",
+      "content": "Colors"
+    },
+    {
+      "type": "color",
+      "id": "background_color",
+      "label": "Background color"
+    },
+    {
+      "type": "color",
+      "id": "text_color",
+      "label": "Text color"
+    }
+  ],
+  "blocks": [
+    {
+      "type": "feature",
+      "name": "Feature",
+      "settings": [
+        {
+          "type": "image_picker",
+          "id": "icon",
+          "label": "Icon",
+          "info": "24x24px recommended"
+        },
+        {
+          "type": "text",
+          "id": "title",
+          "label": "Title",
+          "default": "Feature title"
+        },
+        {
+          "type": "textarea",
+          "id": "text",
+          "label": "Text",
+          "default": "Feature description text goes here."
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "Image with text",
+      "settings": {
+        "heading": "Image with text",
+        "text": "<p>Pair large text with an image or full-width video to showcase your brand's lifestyle to describe and showcase an important detail of your products.</p>",
+        "image_position": "right",
+        "text_alignment": "left"
+      }
+    }
+  ]
+}
+{% endschema %}

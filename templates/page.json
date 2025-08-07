@@ -1,0 +1,85 @@
+{
+  "sections": {
+    "main": {
+      "type": "main-page",
+      "settings": {
+        "show_title": true,
+        "title_alignment": "left", 
+        "content_width": "medium",
+        "enable_sidebar": false,
+        "show_breadcrumbs": true,
+        "show_updated_date": false,
+        "enable_social_sharing": true
+      }
+    },
+    "page_content": {
+      "type": "page-content-blocks",
+      "blocks": {
+        "rich_text_1": {
+          "type": "rich_text",
+          "settings": {
+            "heading": "",
+            "text": "",
+            "text_alignment": "left",
+            "content_width": "full"
+          }
+        },
+        "image_with_text_1": {
+          "type": "image_with_text", 
+          "settings": {
+            "image": "",
+            "image_position": "left",
+            "heading": "",
+            "text": "",
+            "button_text": "",
+            "button_url": ""
+          }
+        },
+        "video_1": {
+          "type": "video",
+          "settings": {
+            "video_url": "",
+            "heading": "",
+            "description": "",
+            "cover_image": ""
+          }
+        }
+      },
+      "block_order": [
+        "rich_text_1",
+        "image_with_text_1", 
+        "video_1"
+      ]
+    },
+    "contact_form": {
+      "type": "contact-form",
+      "settings": {
+        "heading": "Contact us",
+        "subheading": "Get in touch",
+        "show_phone": true,
+        "show_company": false,
+        "success_message": "Thank you for contacting us. We'll get back to you as soon as possible.",
+        "background_color": "",
+        "text_color": ""
+      }
+    },
+    "newsletter_signup": {
+      "type": "newsletter",
+      "settings": {
+        "heading": "Stay updated",
+        "subheading": "Subscribe to our newsletter",
+        "text": "<p>Get the latest news and updates delivered to your inbox.</p>",
+        "show_name_field": false,
+        "button_text": "Subscribe",
+        "background_type": "color",
+        "background_color": "#f8fafc"
+      }
+    }
+  },
+  "order": [
+    "main",
+    "page_content",
+    "contact_form",
+    "newsletter_signup"
+  ]
+}

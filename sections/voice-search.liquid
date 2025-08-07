@@ -1,0 +1,543 @@
+{%- comment -%}
+  🎤 PITAGORA VOICE SEARCH SECTION
+  First-ever voice-activated search for Shopify themes
+  
+  Features:
+  - Speech Recognition API integration
+  - Natural language processing
+  - Multi-language support
+  - Intent recognition
+  - Smart product matching
+  - Voice feedback
+  - Accessibility optimized
+  
+  Usage:
+  This section can be added to any template or used as a global element.
+{%- endcomment -%}
+
+{%- liquid
+  assign enable_voice_search = section.settings.enable_voice_search
+  assign search_language = section.settings.language | default: 'es-ES'
+  assign show_transcript = section.settings.show_transcript
+  assign show_commands = section.settings.show_commands
+  assign enable_voice_feedback = section.settings.enable_voice_feedback
+  assign widget_position = section.settings.position | default: 'fixed'
+  assign widget_style = section.settings.style | default: 'normal'
+-%}
+
+{%- if enable_voice_search -%}
+  
+  {%- comment -%} Load Voice Search Assets {%- endcomment -%}
+  {{ 'voice-search.css' | asset_url | stylesheet_tag }}
+  
+  <section class="voice-search-section section-{{ section.id }}" data-section-id="{{ section.id }}">
+    
+    {%- comment -%} Voice Search Widget Container {%- endcomment -%}
+    <div 
+      id="voice-search-widget-{{ section.id }}" 
+      class="voice-search-container"
+      data-voice-search
+      data-language="{{ search_language }}"
+      data-show-transcript="{{ show_transcript }}"
+      data-show-commands="{{ show_commands }}"
+      data-voice-feedback="{{ enable_voice_feedback }}"
+      data-position="{{ widget_position }}"
+      data-style="{{ widget_style }}"
+      data-section-id="{{ section.id }}"
+    >
+      
+      {%- comment -%} Loading State {%- endcomment -%}
+      <div class="voice-search-loading">
+        <div class="voice-search-widget voice-search-widget--{{ widget_position }}">
+          <button 
+            type="button" 
+            class="voice-search-widget__trigger"
+            disabled
+            aria-label="{{ 'voice_search.initializing' | t }}"
+          >
+            <span class="voice-search-widget__icon">
+              <svg class="voice-search-widget__mic-icon" viewBox="0 0 24 24" fill="none">
+                <path d="M12 2a3 3 0 0 0-3 3v6a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3z" fill="currentColor"/>
+                <path d="M19 10v1a7 7 0 0 1-14 0v-1M12 18v4M8 22h8" stroke="currentColor" stroke-width="2"/>
+              </svg>
+              <div class="loading-spinner"></div>
+            </span>
+            {%- unless widget_style == 'compact' -%}
+              <span class="voice-search-widget__text">{{ 'voice_search.initializing' | t }}</span>
+            {%- endunless -%}
+          </button>
+        </div>
+      </div>
+      
+    </div>
+    
+    {%- comment -%} Browser Support Detection {%- endcomment -%}
+    <noscript>
+      <div class="voice-search-fallback">
+        <p>{{ 'voice_search.javascript_required' | t }}</p>
+        <a href="{{ routes.search_url }}" class="btn btn--secondary">
+          {{ 'general.search.search' | t }}
+        </a>
+      </div>
+    </noscript>
+    
+    {%- comment -%} Microphone Permission Prompt {%- endcomment -%}
+    <div id="voice-permission-prompt-{{ section.id }}" class="voice-permission-prompt" style="display: none;" role="dialog" aria-modal="true">
+      <div class="voice-permission-prompt__content">
+        <div class="voice-permission-prompt__icon">🎤</div>
+        <h3 class="voice-permission-prompt__title">{{ 'voice_search.permission_title' | t }}</h3>
+        <p class="voice-permission-prompt__text">{{ 'voice_search.permission_message' | t }}</p>
+        <div class="voice-permission-prompt__buttons">
+          <button type="button" class="voice-permission-prompt__button voice-permission-prompt__button--primary" data-action="allow">
+            {{ 'voice_search.allow_microphone' | t }}
+          </button>
+          <button type="button" class="voice-permission-prompt__button voice-permission-prompt__button--secondary" data-action="deny">
+            {{ 'voice_search.maybe_later' | t }}
+          </button>
+        </div>
+      </div>
+    </div>
+    
+  </section>
+  
+  {%- comment -%} Load Voice Search Engine {%- endcomment -%}
+  <script src="{{ 'voice-search.js' | asset_url }}" defer></script>
+  
+  {%- comment -%} Section-specific Initialization {%- endcomment -%}
+  <script>
+    document.addEventListener('DOMContentLoaded', function() {
+      const container = document.getElementById('voice-search-widget-{{ section.id }}');
+      const permissionPrompt = document.getElementById('voice-permission-prompt-{{ section.id }}');
+      
+      if (!container) return;
+      
+      // Check browser support first
+      const hasWebkitSpeechRecognition = 'webkitSpeechRecognition' in window;
+      const hasSpeechRecognition = 'SpeechRecognition' in window;
+      const hasSpeechSynthesis = 'speechSynthesis' in window;
+      const isSupported = (hasWebkitSpeechRecognition || hasSpeechRecognition) && hasSpeechSynthesis;
+      
+      if (!isSupported) {
+        container.innerHTML = `
+          <div class="voice-search-unsupported">
+            <p>{{ 'voice_search.browser_not_supported' | t }}</p>
+            <a href="{{ routes.search_url }}" class="btn btn--secondary">
+              {{ 'general.search.search' | t }}
+            </a>
+          </div>
+        `;
+        return;
+      }
+      
+      // Initialize voice search when ready
+      document.addEventListener('voice:search:ready', function(event) {
+        const voiceEngine = event.detail.engine;
+        
+        // Create widget with section settings
+        const widget = new window.PitagoraVoice.SearchWidget(container, voiceEngine, {
+          showTranscript: {{ show_transcript | json }},
+          showCommands: {{ show_commands | json }},
+          position: {{ widget_position | json }},
+          compact: {{ widget_style | json }} === 'compact',
+          language: {{ search_language | json }},
+          enableVoiceFeedback: {{ enable_voice_feedback | json }},
+          sectionId: '{{ section.id }}',
+          
+          // Shopify-specific configuration
+          searchEndpoint: {{ routes.search_url | json }},
+          
+          // Context from Liquid
+          context: {
+            templateName: {{ template.name | json }},
+            customerId: {{ customer.id | json }},
+            storeName: {{ shop.name | json }},
+            currency: {{ cart.currency.iso_code | json }},
+            locale: {{ localization.language.iso_code | json }}
+          }
+        });
+        
+        // Handle permission prompt
+        const showPermissionPrompt = () => {
+          permissionPrompt.style.display = 'flex';
+          document.body.style.overflow = 'hidden';
+        };
+        
+        const hidePermissionPrompt = () => {
+          permissionPrompt.style.display = 'none';
+          document.body.style.overflow = '';
+        };
+        
+        // Permission prompt event listeners
+        permissionPrompt.addEventListener('click', (e) => {
+          if (e.target.dataset.action === 'allow') {
+            hidePermissionPrompt();
+            voiceEngine.startListening();
+          } else if (e.target.dataset.action === 'deny') {
+            hidePermissionPrompt();
+          }
+        });
+        
+        // Show permission prompt on first use
+        let hasShownPermission = localStorage.getItem('pitagora_voice_permission_shown');
+        
+        document.addEventListener('voice:permission:required', () => {
+          if (!hasShownPermission) {
+            showPermissionPrompt();
+            localStorage.setItem('pitagora_voice_permission_shown', 'true');
+          }
+        });
+        
+        // Track voice search usage
+        voiceEngine.trackVoiceEvent('voice_section_initialized', {
+          sectionId: '{{ section.id }}',
+          settings: {
+            language: {{ search_language | json }},
+            showTranscript: {{ show_transcript | json }},
+            showCommands: {{ show_commands | json }},
+            position: {{ widget_position | json }},
+            style: {{ widget_style | json }}
+          },
+          templateName: {{ template.name | json }}
+        });
+      });
+      
+      // Initialize voice search engine with custom options
+      window.PitagoraVoice.init({
+        language: {{ search_language | json }},
+        enableVoiceFeedback: {{ enable_voice_feedback | json }},
+        searchEndpoint: {{ routes.search_url | json }},
+        
+        // Shopify-specific intents and entities
+        customIntents: {
+          shopify_navigation: {
+            patterns: [
+              /ir\s+a\s+mi\s+cuenta/i,
+              /ir\s+al\s+carrito/i,
+              /ver\s+mis\s+pedidos/i,
+              /página\s+de\s+contacto/i
+            ],
+            handler: function(intent) {
+              const navigationMap = {
+                'mi cuenta': '{{ routes.account_url }}',
+                'carrito': '{{ routes.cart_url }}',
+                'mis pedidos': '{{ routes.account_url }}/orders',
+                'contacto': '/pages/contact'
+              };
+              
+              for (const [key, url] of Object.entries(navigationMap)) {
+                if (intent.entities.query.includes(key)) {
+                  window.location.href = url;
+                  return;
+                }
+              }
+            }
+          }
+        },
+        
+        // Enhanced product matching for Shopify
+        productMatching: {
+          useCollections: true,
+          useVendors: true,
+          useProductTypes: true,
+          useTags: true
+        }
+      });
+      
+      // Fallback timeout
+      setTimeout(function() {
+        if (!window.PitagoraVoice.engine) {
+          console.warn('Voice search engine failed to initialize');
+          container.innerHTML = `
+            <div class="voice-search-error">
+              <p>{{ 'voice_search.initialization_failed' | t }}</p>
+              <a href="{{ routes.search_url }}" class="btn btn--secondary">
+                {{ 'general.search.search' | t }}
+              </a>
+            </div>
+          `;
+        }
+      }, 5000);
+    });
+  </script>
+  
+  {%- comment -%} Enhanced Analytics Integration {%- endcomment -%}
+  <script>
+    // Track voice search interactions
+    document.addEventListener('DOMContentLoaded', function() {
+      // Track when voice search widget is displayed
+      const observer = new IntersectionObserver(function(entries) {
+        entries.forEach(function(entry) {
+          if (entry.isIntersecting) {
+            // Track impression
+            if (typeof gtag !== 'undefined') {
+              gtag('event', 'voice_search_widget_impression', {
+                event_category: 'Voice Search',
+                event_label: '{{ section.id }}',
+                widget_position: {{ widget_position | json }},
+                template_name: {{ template.name | json }}
+              });
+            }
+            
+            // Track for other analytics platforms
+            if (typeof dataLayer !== 'undefined') {
+              dataLayer.push({
+                event: 'voice_search_widget_impression',
+                section_id: '{{ section.id }}',
+                widget_position: {{ widget_position | json }},
+                template_name: {{ template.name | json }},
+                language: {{ search_language | json }}
+              });
+            }
+            
+            observer.unobserve(entry.target);
+          }
+        });
+      }, {
+        threshold: 0.1,
+        rootMargin: '0px 0px -10% 0px'
+      });
+      
+      const section = document.querySelector('.section-{{ section.id }}');
+      if (section) {
+        observer.observe(section);
+      }
+    });
+    
+    // Track voice search errors globally
+    document.addEventListener('voice:error', function(event) {
+      if (typeof gtag !== 'undefined') {
+        gtag('event', 'voice_search_error', {
+          event_category: 'Voice Search',
+          event_label: 'error',
+          error_type: typeof event.detail.error === 'string' ? event.detail.error : event.detail.error.message
+        });
+      }
+    });
+    
+    // Track successful voice searches
+    document.addEventListener('voice:search:executed', function(event) {
+      if (typeof gtag !== 'undefined') {
+        gtag('event', 'voice_search_success', {
+          event_category: 'Voice Search',
+          event_label: 'search_executed',
+          search_query: event.detail.query,
+          voice_confidence: event.detail.confidence
+        });
+      }
+    });
+  </script>
+  
+  {%- comment -%} Structured Data for Voice Search {%- endcomment -%}
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "SoftwareApplication",
+    "name": "Pitagora Voice Search",
+    "description": "AI-powered voice search for e-commerce",
+    "applicationCategory": "Voice Search",
+    "operatingSystem": "Web Browser",
+    "offers": {
+      "@type": "Offer",
+      "price": "0",
+      "priceCurrency": "USD"
+    },
+    "featureList": [
+      "Speech Recognition",
+      "Natural Language Processing",
+      "Multi-language Support",
+      "Intent Recognition",
+      "Voice Feedback",
+      "Product Search",
+      "Navigation Commands"
+    ],
+    "supportedLanguage": [
+      "es", "en", "pt", "fr", "de", "it", "ja", "ko", "zh"
+    ]
+  }
+  </script>
+
+{%- endif -%}
+
+{%- comment -%} Schema Configuration {%- endcomment -%}
+{% schema %}
+{
+  "name": "🎤 Voice Search",
+  "tag": "section",
+  "class": "section",
+  "settings": [
+    {
+      "type": "checkbox",
+      "id": "enable_voice_search",
+      "label": "Enable voice search",
+      "default": true,
+      "info": "Enable voice-activated product search"
+    },
+    {
+      "type": "select",
+      "id": "language",
+      "label": "Voice recognition language",
+      "options": [
+        {
+          "value": "es-ES",
+          "label": "Español (España)"
+        },
+        {
+          "value": "es-MX",
+          "label": "Español (México)"
+        },
+        {
+          "value": "es-AR",
+          "label": "Español (Argentina)"
+        },
+        {
+          "value": "en-US",
+          "label": "English (US)"
+        },
+        {
+          "value": "en-GB",
+          "label": "English (UK)"
+        },
+        {
+          "value": "pt-BR",
+          "label": "Português (Brasil)"
+        },
+        {
+          "value": "fr-FR",
+          "label": "Français"
+        },
+        {
+          "value": "de-DE",
+          "label": "Deutsch"
+        },
+        {
+          "value": "it-IT",
+          "label": "Italiano"
+        }
+      ],
+      "default": "es-ES",
+      "info": "Primary language for voice recognition"
+    },
+    {
+      "type": "select",
+      "id": "position",
+      "label": "Widget position",
+      "options": [
+        {
+          "value": "fixed",
+          "label": "Fixed (floating button)"
+        },
+        {
+          "value": "inline",
+          "label": "Inline (embedded in page)"
+        }
+      ],
+      "default": "fixed",
+      "info": "How to display the voice search widget"
+    },
+    {
+      "type": "select",
+      "id": "style",
+      "label": "Widget style",
+      "options": [
+        {
+          "value": "normal",
+          "label": "Normal (with text)"
+        },
+        {
+          "value": "compact",
+          "label": "Compact (icon only)"
+        }
+      ],
+      "default": "normal",
+      "info": "Visual style of the widget"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_transcript",
+      "label": "Show voice transcript",
+      "default": true,
+      "info": "Display what the user is saying in real-time"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_commands",
+      "label": "Show voice commands help",
+      "default": true,
+      "info": "Show examples of voice commands on hover"
+    },
+    {
+      "type": "checkbox",
+      "id": "enable_voice_feedback",
+      "label": "Enable voice responses",
+      "default": true,
+      "info": "Provide spoken feedback to user voice commands"
+    },
+    {
+      "type": "header",
+      "content": "Advanced Voice Settings"
+    },
+    {
+      "type": "range",
+      "id": "confidence_threshold",
+      "min": 10,
+      "max": 90,
+      "step": 5,
+      "unit": "%",
+      "label": "Minimum confidence for voice recognition",
+      "default": 70,
+      "info": "Higher values require clearer speech"
+    },
+    {
+      "type": "range",
+      "id": "listening_timeout",
+      "min": 5,
+      "max": 30,
+      "step": 1,
+      "unit": "s",
+      "label": "Listening timeout",
+      "default": 10,
+      "info": "How long to listen for voice input"
+    },
+    {
+      "type": "checkbox",
+      "id": "auto_submit_search",
+      "label": "Auto-submit search results",
+      "default": true,
+      "info": "Automatically navigate to search results"
+    },
+    {
+      "type": "checkbox",
+      "id": "enable_navigation_commands",
+      "label": "Enable navigation commands",
+      "default": true,
+      "info": "Allow voice commands to navigate the site"
+    },
+    {
+      "type": "checkbox",
+      "id": "enable_cart_commands",
+      "label": "Enable cart commands",
+      "default": true,
+      "info": "Allow voice commands to manage the cart"
+    }
+  ],
+  "presets": [
+    {
+      "name": "🎤 Voice Search",
+      "settings": {
+        "enable_voice_search": true,
+        "language": "es-ES",
+        "position": "fixed",
+        "style": "normal",
+        "show_transcript": true,
+        "show_commands": true,
+        "enable_voice_feedback": true,
+        "confidence_threshold": 70,
+        "listening_timeout": 10,
+        "auto_submit_search": true,
+        "enable_navigation_commands": true,
+        "enable_cart_commands": true
+      }
+    }
+  ]
+}
+{% endschema %}

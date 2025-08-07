@@ -201,6 +201,9 @@
     });
   </script>
 
+  {%- comment -%} WhatsApp Floating Button - Global {%- endcomment -%}
+  {%- sections 'whatsapp-group' -%}
+
   {%- comment -%} Theme editor support {%- endcomment -%}
   {%- if request.design_mode -%}
     {{ 'theme-editor.js' | asset_url | script_tag: defer: 'defer' }}

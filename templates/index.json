@@ -1,0 +1,327 @@
+{
+  "sections": {
+    "hero": {
+      "type": "hero-banner",
+      "settings": {
+        "layout": "full_screen",
+        "enable_autoplay": true,
+        "autoplay_duration": 5,
+        "show_navigation": true,
+        "show_pagination": true,
+        "mobile_height": "screen",
+        "desktop_height": "screen"
+      },
+      "blocks": {
+        "hero_slide_1": {
+          "type": "slide",
+          "settings": {
+            "image": "",
+            "mobile_image": "",
+            "video_url": "",
+            "heading": "Bienvenido a Pitagora",
+            "subheading": "Descubre una nueva experiencia de compra",
+            "text": "Encuentra los mejores productos con la mejor experiencia de usuario",
+            "button_1_text": "Explorar productos",
+            "button_1_url": "/collections/all",
+            "button_1_style": "primary",
+            "button_2_text": "Conoce más",
+            "button_2_url": "/pages/about",
+            "button_2_style": "secondary",
+            "text_position": "center_center",
+            "text_alignment": "center",
+            "overlay_opacity": 40,
+            "overlay_color": "#000000",
+            "text_color": "#ffffff"
+          }
+        },
+        "hero_slide_2": {
+          "type": "slide",
+          "settings": {
+            "image": "",
+            "mobile_image": "",
+            "video_url": "",
+            "heading": "Calidad Premium",
+            "subheading": "Para quienes buscan lo mejor",
+            "text": "Productos cuidadosamente seleccionados para garantizar la máxima calidad",
+            "button_1_text": "Ver colección premium",
+            "button_1_url": "/collections/premium",
+            "button_1_style": "primary",
+            "button_2_text": "",
+            "button_2_url": "",
+            "button_2_style": "secondary",
+            "text_position": "center_left",
+            "text_alignment": "left",
+            "overlay_opacity": 30,
+            "overlay_color": "#000000",
+            "text_color": "#ffffff"
+          }
+        }
+      },
+      "block_order": [
+        "hero_slide_1",
+        "hero_slide_2"
+      ]
+    },
+    "announcement": {
+      "type": "announcement-bar",
+      "settings": {
+        "enable_bar": true,
+        "text": "🚚 Envío gratis en pedidos superiores a $75 | 📞 Soporte 24/7",
+        "link": "/pages/shipping",
+        "background_color": "#1f2937",
+        "text_color": "#ffffff",
+        "show_close": true
+      }
+    },
+    "featured_collections": {
+      "type": "featured-collections",
+      "settings": {
+        "heading": "Colecciones destacadas",
+        "subheading": "Explora nuestras categorías más populares",
+        "layout": "grid",
+        "collections_to_show": 4,
+        "columns_desktop": 2,
+        "columns_mobile": 1,
+        "show_collection_image": true,
+        "show_collection_description": false,
+        "show_product_count": true,
+        "image_ratio": "square",
+        "enable_quick_shop": true,
+        "background_color": "",
+        "text_color": ""
+      },
+      "blocks": {
+        "collection_1": {
+          "type": "collection",
+          "settings": {
+            "collection": "",
+            "custom_image": "",
+            "heading_override": "",
+            "description_override": "",
+            "button_text": "Ver colección",
+            "button_style": "primary"
+          }
+        },
+        "collection_2": {
+          "type": "collection",
+          "settings": {
+            "collection": "",
+            "custom_image": "",
+            "heading_override": "",
+            "description_override": "",
+            "button_text": "Ver colección",
+            "button_style": "primary"
+          }
+        },
+        "collection_3": {
+          "type": "collection",
+          "settings": {
+            "collection": "",
+            "custom_image": "",
+            "heading_override": "",
+            "description_override": "",
+            "button_text": "Ver colección",
+            "button_style": "primary"
+          }
+        },
+        "collection_4": {
+          "type": "collection",
+          "settings": {
+            "collection": "",
+            "custom_image": "",
+            "heading_override": "",
+            "description_override": "",
+            "button_text": "Ver colección",
+            "button_style": "primary"
+          }
+        }
+      },
+      "block_order": [
+        "collection_1",
+        "collection_2",
+        "collection_3",
+        "collection_4"
+      ]
+    },
+    "featured_products": {
+      "type": "featured-products",
+      "settings": {
+        "heading": "Productos destacados",
+        "subheading": "Los favoritos de nuestros clientes",
+        "collection": "",
+        "products_to_show": 8,
+        "columns_desktop": 4,
+        "columns_tablet": 3,
+        "columns_mobile": 2,
+        "show_quick_add": true,
+        "show_quick_view": true,
+        "show_vendor": false,
+        "show_rating": true,
+        "show_price": true,
+        "image_ratio": "square",
+        "enable_filtering": false,
+        "enable_sorting": false,
+        "show_view_all": true,
+        "view_all_text": "Ver todos los productos",
+        "view_all_url": "/collections/all",
+        "background_color": "",
+        "text_color": ""
+      }
+    },
+    "newsletter": {
+      "type": "newsletter",
+      "settings": {
+        "heading": "Mantente al día",
+        "subheading": "Suscríbete para recibir ofertas exclusivas y novedades",
+        "text": "Sé el primero en conocer nuestros nuevos productos, ofertas especiales y contenido exclusivo.",
+        "show_name_field": false,
+        "button_text": "Suscribirse",
+        "success_message": "¡Gracias por suscribirte! Te mantendremos informado.",
+        "background_type": "color",
+        "background_color": "#f8fafc",
+        "text_color": "#1f2937",
+        "button_background": "#3b82f6",
+        "button_text_color": "#ffffff"
+      }
+    },
+    "testimonials": {
+      "type": "testimonials",
+      "settings": {
+        "heading": "Lo que dicen nuestros clientes",
+        "subheading": "Experiencias reales de compradores satisfechos",
+        "layout": "carousel",
+        "testimonials_to_show": 6,
+        "autoplay": true,
+        "autoplay_duration": 5,
+        "show_ratings": true,
+        "show_author_image": true,
+        "background_color": "",
+        "text_color": ""
+      },
+      "blocks": {
+        "testimonial_1": {
+          "type": "testimonial",
+          "settings": {
+            "quote": "Excelente calidad y servicio al cliente. Definitivamente volvería a comprar aquí.",
+            "author": "María González",
+            "author_title": "Cliente verificada",
+            "author_image": "",
+            "rating": 5,
+            "product": ""
+          }
+        },
+        "testimonial_2": {
+          "type": "testimonial",
+          "settings": {
+            "quote": "Los productos superaron mis expectativas. El envío fue rápido y el packaging impecable.",
+            "author": "Carlos Martínez",
+            "author_title": "Comprador frecuente",
+            "author_image": "",
+            "rating": 5,
+            "product": ""
+          }
+        },
+        "testimonial_3": {
+          "type": "testimonial",
+          "settings": {
+            "quote": "Una experiencia de compra excepcional. La atención al detalle es notable.",
+            "author": "Ana López",
+            "author_title": "Primera compra",
+            "author_image": "",
+            "rating": 5,
+            "product": ""
+          }
+        }
+      },
+      "block_order": [
+        "testimonial_1",
+        "testimonial_2",
+        "testimonial_3"
+      ]
+    },
+    "rich_text": {
+      "type": "rich-text",
+      "settings": {
+        "heading": "¿Por qué elegirnos?",
+        "subheading": "Comprometidos con la excelencia",
+        "text": "<p>En Pitagora nos dedicamos a ofrecer productos de la más alta calidad, con un servicio al cliente excepcional y una experiencia de compra sin igual.</p><p>Cada producto es cuidadosamente seleccionado para garantizar que cumpla con nuestros estándares de excelencia.</p>",
+        "button_text": "Conoce más sobre nosotros",
+        "button_url": "/pages/about",
+        "button_style": "primary",
+        "text_alignment": "center",
+        "content_width": "medium",
+        "background_type": "none",
+        "background_color": "",
+        "text_color": ""
+      }
+    },
+    "image_with_text": {
+      "type": "image-with-text",
+      "settings": {
+        "image": "",
+        "image_position": "right",
+        "image_width": "50",
+        "heading": "Calidad que perdura",
+        "subheading": "Productos diseñados para durar",
+        "text": "<p>Utilizamos únicamente materiales de primera calidad y trabajamos con proveedores que comparten nuestra visión de excelencia.</p><p>Cada producto pasa por rigurosos controles de calidad antes de llegar a tus manos.</p>",
+        "button_text": "Descubre nuestro proceso",
+        "button_url": "/pages/quality",
+        "button_style": "primary",
+        "text_alignment": "left",
+        "enable_video": false,
+        "video_url": "",
+        "background_color": "",
+        "text_color": ""
+      }
+    },
+    "blog_posts": {
+      "type": "blog-posts",
+      "settings": {
+        "heading": "Últimas noticias",
+        "subheading": "Mantente informado con nuestro blog",
+        "blog": "",
+        "posts_to_show": 3,
+        "columns_desktop": 3,
+        "columns_mobile": 1,
+        "show_excerpt": true,
+        "show_date": true,
+        "show_author": false,
+        "show_tags": true,
+        "excerpt_length": 150,
+        "show_view_all": true,
+        "view_all_text": "Ver todos los artículos",
+        "background_color": "",
+        "text_color": ""
+      }
+    },
+    "instagram_feed": {
+      "type": "instagram-feed",
+      "settings": {
+        "heading": "Síguenos en Instagram",
+        "subheading": "@pitagora_store",
+        "username": "",
+        "access_token": "",
+        "posts_to_show": 6,
+        "columns_desktop": 6,
+        "columns_mobile": 3,
+        "image_ratio": "square",
+        "show_captions": false,
+        "open_in_new_tab": true,
+        "background_color": "",
+        "text_color": ""
+      }
+    }
+  },
+  "order": [
+    "announcement",
+    "hero",
+    "featured_collections",
+    "featured_products",
+    "image_with_text",
+    "rich_text",
+    "testimonials",
+    "newsletter",
+    "blog_posts",
+    "instagram_feed"
+  ]
+}

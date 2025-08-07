@@ -1,0 +1,342 @@
+{%- comment -%}
+Product Card - Pitagora Theme
+Componente híbrido optimizado basado en Vettro + mejoras modernas
+Parámetros:
+- product: objeto del producto (requerido)
+- show_quick_buy: mostrar botón de compra rápida (opcional)
+- show_color_swatch: mostrar selector de colores (opcional)
+- show_vendor: mostrar marca del producto (opcional)
+- show_rating: mostrar calificación (opcional)
+- image_aspect_ratio: ratio de imagen (opcional)
+- collection: contexto de colección (opcional)
+- loading: lazy loading (opcional, default: lazy)
+- sizes: sizes attribute para responsive (opcional)
+{%- endcomment -%}
+
+{%- unless product -%}
+  {%- assign product = product_card_product -%}
+{%- endunless -%}
+
+{%- if product and product != empty -%}
+  {%- liquid
+    comment 'Image configuration'
+    assign featured_image = product.featured_media
+    assign image_aspect_ratio = image_aspect_ratio | default: 'natural'
+    assign loading = loading | default: 'lazy'
+    assign sizes = sizes | default: '(max-width: 767px) 50vw, (max-width: 1023px) 33vw, 25vw'
+    
+    comment 'Aspect ratio calculation'
+    assign ratio = 1
+    case image_aspect_ratio
+      when 'square'
+        assign ratio = 1
+      when 'portrait'
+        assign ratio = 0.8
+      when 'landscape'  
+        assign ratio = 1.25
+      when 'natural'
+        if featured_image
+          assign ratio = featured_image.aspect_ratio
+        endif
+    endcase
+    
+    comment 'Product state'
+    assign on_sale = false
+    assign sold_out = false
+    assign coming_soon = false
+    
+    if product.compare_at_price > product.price
+      assign on_sale = true
+    endif
+    
+    unless product.available
+      assign sold_out = true
+    endunless
+    
+    comment 'Check for coming soon tag'
+    if product.tags contains 'coming-soon'
+      assign coming_soon = true
+    endif
+    
+    comment 'Quick buy availability'
+    assign quick_buyable = false
+    if product.available and product.variants.size == 1 and show_quick_buy
+      assign quick_buyable = true
+    endif
+    
+    comment 'Color swatch setup'
+    assign color_option = null
+    assign first_color = null
+    for option in product.options_with_values
+      assign option_name_downcase = option.name | downcase
+      if option_name_downcase contains 'color' or option_name_downcase contains 'colour'
+        assign color_option = option
+        assign first_color = option.values.first
+        break
+      endif
+    endfor
+  -%}
+
+  <product-card 
+    class="product-card product-card--{{ image_aspect_ratio }}{% if on_sale %} product-card--on-sale{% endif %}{% if sold_out %} product-card--sold-out{% endif %}{% if coming_soon %} product-card--coming-soon{% endif %}" 
+    data-product-id="{{ product.id }}"
+    data-product-handle="{{ product.handle }}"
+  >
+    <div class="product-card__media">
+      {%- comment -%} Product Badge {%- endcomment -%}
+      {%- if on_sale or sold_out or coming_soon -%}
+        <div class="product-card__badges">
+          {%- if sold_out -%}
+            <span class="product-card__badge product-card__badge--sold-out">
+              {{ 'products.product.sold_out' | t }}
+            </span>
+          {%- elsif coming_soon -%}
+            <span class="product-card__badge product-card__badge--coming-soon">
+              {{ 'products.product.coming_soon' | t }}
+            </span>
+          {%- elsif on_sale -%}
+            {%- assign savings = product.compare_at_price | minus: product.price -%}
+            {%- assign savings_percentage = savings | times: 100 | divided_by: product.compare_at_price -%}
+            <span class="product-card__badge product-card__badge--sale">
+              -{{ savings_percentage | round }}%
+            </span>
+          {%- endif -%}
+        </div>
+      {%- endif -%}
+
+      {%- comment -%} Product Link {%- endcomment -%}
+      <a 
+        href="{{ product.url | within: collection }}" 
+        class="product-card__link"
+        aria-label="{{ product.title | escape }}"
+      >
+        <div class="product-card__image-wrapper">
+          <div 
+            class="product-card__image-container aspect-ratio" 
+            style="--aspect-ratio: {{ ratio }};"
+          >
+            {%- if featured_image -%}
+              <img
+                class="product-card__image product-card__image--primary"
+                src="{{ featured_image | image_url: width: 400 }}"
+                alt="{{ featured_image.alt | escape | default: product.title | escape }}"
+                width="{{ featured_image.width }}"
+                height="{{ featured_image.height }}"
+                loading="{{ loading }}"
+                sizes="{{ sizes }}"
+                srcset="
+                  {{ featured_image | image_url: width: 200 }} 200w,
+                  {{ featured_image | image_url: width: 300 }} 300w,
+                  {{ featured_image | image_url: width: 400 }} 400w,
+                  {{ featured_image | image_url: width: 500 }} 500w,
+                  {{ featured_image | image_url: width: 600 }} 600w,
+                  {{ featured_image | image_url: width: 700 }} 700w,
+                  {{ featured_image | image_url: width: 800 }} 800w
+                "
+              >
+              
+              {%- comment -%} Hover Image {%- endcomment -%}
+              {%- if product.media.size > 1 -%}
+                <img
+                  class="product-card__image product-card__image--secondary"
+                  src="{{ product.media[1] | image_url: width: 400 }}"
+                  alt="{{ product.media[1].alt | escape | default: product.title | escape }}"
+                  width="{{ product.media[1].width }}"
+                  height="{{ product.media[1].height }}"
+                  loading="lazy"
+                  sizes="{{ sizes }}"
+                  srcset="
+                    {{ product.media[1] | image_url: width: 200 }} 200w,
+                    {{ product.media[1] | image_url: width: 300 }} 300w,
+                    {{ product.media[1] | image_url: width: 400 }} 400w,
+                    {{ product.media[1] | image_url: width: 500 }} 500w,
+                    {{ product.media[1] | image_url: width: 600 }} 600w,
+                    {{ product.media[1] | image_url: width: 700 }} 700w,
+                    {{ product.media[1] | image_url: width: 800 }} 800w
+                  "
+                >
+              {%- endif -%}
+            {%- else -%}
+              <div class="product-card__image-placeholder">
+                {{ 'product-1' | placeholder_svg_tag: 'product-card__placeholder-svg' }}
+              </div>
+            {%- endif -%}
+          </div>
+        </div>
+      </a>
+
+      {%- comment -%} Quick Actions {%- endcomment -%}
+      <div class="product-card__actions">
+        {%- comment -%} Wishlist Button {%- endcomment -%}
+        <button 
+          class="product-card__wishlist" 
+          type="button"
+          aria-label="{{ 'products.product.add_to_wishlist' | t: product: product.title }}"
+          data-product-id="{{ product.id }}"
+        >
+          {% render 'icon-heart' %}
+        </button>
+
+        {%- comment -%} Quick View Button {%- endcomment -%}
+        <button 
+          class="product-card__quick-view" 
+          type="button"
+          aria-label="{{ 'products.product.quick_view' | t: product: product.title }}"
+          data-product-handle="{{ product.handle }}"
+          data-quick-view
+        >
+          {% render 'icon-eye' %}
+        </button>
+
+        {%- comment -%} Quick Buy Button {%- endcomment -%}
+        {%- if quick_buyable -%}
+          <product-form class="product-card__quick-buy-form">
+            <form action="{{ routes.cart_add_url }}" method="post" enctype="multipart/form-data">
+              <input type="hidden" name="id" value="{{ product.selected_or_first_available_variant.id }}">
+              <button 
+                class="product-card__quick-buy" 
+                type="submit"
+                name="add"
+                aria-label="{{ 'products.product.quick_add_to_cart' | t: product: product.title }}"
+              >
+                {% render 'icon-cart-plus' %}
+              </button>
+            </form>
+          </product-form>
+        {%- elsif show_quick_buy -%}
+          <button 
+            class="product-card__quick-buy product-card__quick-buy--variants" 
+            type="button"
+            aria-label="{{ 'products.product.quick_view' | t: product: product.title }}"
+            data-product-handle="{{ product.handle }}"
+            data-quick-view
+          >
+            {% render 'icon-cart-plus' %}
+          </button>
+        {%- endif -%}
+      </div>
+    </div>
+
+    {%- comment -%} Product Information {%- endcomment -%}
+    <div class="product-card__info">
+      {%- if show_vendor and product.vendor != blank -%}
+        <div class="product-card__vendor">
+          <a href="{{ product.vendor | url_for_vendor }}" class="product-card__vendor-link">
+            {{ product.vendor }}
+          </a>
+        </div>
+      {%- endif -%}
+
+      <h3 class="product-card__title">
+        <a href="{{ product.url | within: collection }}" class="product-card__title-link">
+          {{ product.title | escape }}
+        </a>
+      </h3>
+
+      {%- comment -%} Product Rating {%- endcomment -%}
+      {%- if show_rating and product.metafields.reviews.rating.value != blank -%}
+        <div class="product-card__rating">
+          <div 
+            class="product-card__stars" 
+            role="img" 
+            aria-label="{{ 'accessibility.star_reviews_info' | t: rating_value: product.metafields.reviews.rating.value, rating_max: product.metafields.reviews.rating.value.scale_max }}"
+          >
+            <span 
+              class="product-card__stars-fill" 
+              style="--rating: {{ product.metafields.reviews.rating.value.rating | divided_by: product.metafields.reviews.rating.value.scale_max | times: 100 }}%"
+            ></span>
+          </div>
+          <span class="product-card__rating-count">
+            ({{ product.metafields.reviews.rating_count | default: 0 }})
+          </span>
+        </div>
+      {%- endif -%}
+
+      {%- comment -%} Product Price {%- endcomment -%}
+      <div class="product-card__price">
+        {%- if on_sale -%}
+          <span class="product-card__price-sale">{{ product.price | money }}</span>
+          <span class="product-card__price-compare">{{ product.compare_at_price | money }}</span>
+        {%- else -%}
+          <span class="product-card__price-regular">
+            {%- if product.price_varies -%}
+              {{ 'products.product.price.from_price_html' | t: price: product.price_min | money }}
+            {%- else -%}
+              {{ product.price | money }}
+            {%- endif -%}
+          </span>
+        {%- endif -%}
+      </div>
+
+      {%- comment -%} Color Swatches {%- endcomment -%}
+      {%- if show_color_swatch and color_option and color_option.values.size > 1 -%}
+        <div class="product-card__color-swatches">
+          <product-color-swatches 
+            class="color-swatches color-swatches--small" 
+            data-product-handle="{{ product.handle }}"
+          >
+            {%- for color_value in color_option.values limit: 4 -%}
+              {%- liquid
+                assign color_variant = null
+                for variant in product.variants
+                  if variant.option1 == color_value or variant.option2 == color_value or variant.option3 == color_value
+                    assign color_variant = variant
+                    break
+                  endif
+                endfor
+                
+                assign color_image = color_variant.featured_media | default: product.featured_media
+                assign swatch_color = color_value | handle
+              -%}
+              
+              <button 
+                class="color-swatch color-swatch--small{% if color_value == first_color %} color-swatch--active{% endif %}"
+                type="button"
+                data-color="{{ color_value | escape }}"
+                data-variant-id="{{ color_variant.id }}"
+                data-image-src="{{ color_image | image_url: width: 400 }}"
+                aria-label="{{ 'products.product.color_swatch_label' | t: color: color_value }}"
+                style="background-color: {{ swatch_color }}; background-image: url('{{ color_value | handle | append: '.png' | asset_url }}');"
+              >
+                <span class="visually-hidden">{{ color_value }}</span>
+              </button>
+            {%- endfor -%}
+            
+            {%- if color_option.values.size > 4 -%}
+              <span class="color-swatches__more">+{{ color_option.values.size | minus: 4 }}</span>
+            {%- endif -%}
+          </product-color-swatches>
+        </div>
+      {%- endif -%}
+
+      {%- comment -%} Product Description Preview {%- endcomment -%}
+      {%- if product.description != blank and template contains 'list' -%}
+        <div class="product-card__description">
+          {{ product.description | strip_html | truncate: 100 }}
+        </div>
+      {%- endif -%}
+    </div>
+  </product-card>
+
+{%- else -%}
+  {%- comment -%} Fallback for empty product {%- endcomment -%}
+  <product-card class="product-card product-card--placeholder">
+    <div class="product-card__media">
+      <div class="product-card__image-wrapper">
+        <div class="product-card__image-container aspect-ratio">
+          <div class="product-card__image-placeholder">
+            {{ 'product-1' | placeholder_svg_tag: 'product-card__placeholder-svg' }}
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="product-card__info">
+      <h3 class="product-card__title">
+        {{ 'onboarding.product_title' | t }}
+      </h3>
+      <div class="product-card__price">
+        <span class="product-card__price-regular">{{ 1999 | money }}</span>
+      </div>
+    </div>
+  </product-card>
+{%- endif -%}

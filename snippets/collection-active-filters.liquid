@@ -1,0 +1,58 @@
+{%- comment -%}
+Collection Active Filters - Pitagora Theme
+Muestra los filtros activos con opción de remover individualmente
+{%- endcomment -%}
+
+{%- assign has_active_filters = false -%}
+{%- for filter in filters -%}
+  {%- if filter.type == 'list' and filter.active_values.size > 0 -%}
+    {%- assign has_active_filters = true -%}
+  {%- elsif filter.type == 'price_range' and filter.min_value.value or filter.max_value.value -%}
+    {%- assign has_active_filters = true -%}
+  {%- endif -%}
+{%- endfor -%}
+
+{%- if has_active_filters -%}
+  <div class="collection-active-filters">
+    <div class="collection-active-filters__list">
+      {%- for filter in filters -%}
+        {%- if filter.type == 'list' -%}
+          {%- for filter_value in filter.active_values -%}
+            <div class="collection-active-filter">
+              <span class="collection-active-filter__text">
+                {{ filter.label }}: {{ filter_value.label }}
+              </span>
+              <a 
+                href="{{ filter_value.url_to_remove }}" 
+                class="collection-active-filter__remove"
+                aria-label="{{ 'collections.filters.remove_filter' | t: filter: filter.label, value: filter_value.label }}"
+              >
+                {% render 'icon-close' %}
+              </a>
+            </div>
+          {%- endfor -%}
+        {%- elsif filter.type == 'price_range' -%}
+          {%- if filter.min_value.value or filter.max_value.value -%}
+            {%- liquid
+              assign min_value = filter.min_value.value | default: 0 | money_without_currency
+              assign max_value = filter.max_value.value | money_without_currency
+              assign currency_symbol = cart.currency.symbol | default: '$'
+            -%}
+            <div class="collection-active-filter collection-active-filter--price">
+              <span class="collection-active-filter__text">
+                {{ filter.label }}: {{ currency_symbol }}{{ min_value }} - {{ currency_symbol }}{{ max_value }}
+              </span>
+              <a 
+                href="{{ filter.url_to_remove }}" 
+                class="collection-active-filter__remove"
+                aria-label="{{ 'collections.filters.remove_filter' | t: filter: filter.label, value: 'price range' }}"
+              >
+                {% render 'icon-close' %}
+              </a>
+            </div>
+          {%- endif -%}
+        {%- endif -%}
+      {%- endfor -%}
+    </div>
+  </div>
+{%- endif -%}

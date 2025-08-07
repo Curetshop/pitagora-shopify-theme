@@ -1,0 +1,317 @@
+{%- comment -%}
+Blog Posts Section - Pitagora Theme
+Grid de posts de blog con excerpts, tags y metadata
+{%- endcomment -%}
+
+{{ 'blog-posts.css' | asset_url | stylesheet_tag }}
+
+<style>
+  #shopify-section-{{ section.id }} {
+    --blog-posts-bg: {{ section.settings.background_color | default: 'transparent' }};
+    --blog-posts-text: {{ section.settings.text_color | default: 'inherit' }};
+    --columns-desktop: {{ section.settings.columns_desktop | default: 3 }};
+    --columns-mobile: {{ section.settings.columns_mobile | default: 1 }};
+  }
+</style>
+
+<div 
+  class="blog-posts section-padding"
+  style="background: var(--blog-posts-bg); color: var(--blog-posts-text);"
+>
+  <div class="page-width">
+    {%- if section.settings.heading != blank or section.settings.subheading != blank -%}
+      <div class="section-header text-center">
+        {%- if section.settings.subheading != blank -%}
+          <p class="section-header__subheading">{{ section.settings.subheading | escape }}</p>
+        {%- endif -%}
+        
+        {%- if section.settings.heading != blank -%}
+          <h2 class="section-header__heading h2">{{ section.settings.heading | escape }}</h2>
+        {%- endif -%}
+      </div>
+    {%- endif -%}
+
+    {%- liquid
+      assign blog = blogs[section.settings.blog]
+      assign posts_to_show = section.settings.posts_to_show | default: 3
+      
+      if blog == empty
+        assign blog = blogs.first[1]
+      endif
+    -%}
+
+    <div class="blog-posts__wrapper">
+      {%- if blog.articles.size > 0 -%}
+        <div class="blog-posts__grid">
+          {%- for article in blog.articles limit: posts_to_show -%}
+            <article class="blog-post-card">
+              {%- if article.image -%}
+                <div class="blog-post-card__media">
+                  <a href="{{ article.url }}" class="blog-post-card__media-link">
+                    <img
+                      src="{{ article.image | image_url: width: 600 }}"
+                      alt="{{ article.image.alt | escape | default: article.title | escape }}"
+                      loading="lazy"
+                      width="{{ article.image.width }}"
+                      height="{{ article.image.height }}"
+                      sizes="(max-width: 767px) 100vw, (max-width: 1023px) 50vw, 33vw"
+                      srcset="
+                        {{ article.image | image_url: width: 300 }} 300w,
+                        {{ article.image | image_url: width: 400 }} 400w,
+                        {{ article.image | image_url: width: 600 }} 600w,
+                        {{ article.image | image_url: width: 800 }} 800w
+                      "
+                    >
+                  </a>
+                  
+                  {%- if section.settings.show_date -%}
+                    <div class="blog-post-card__date">
+                      <time datetime="{{ article.published_at | date: '%Y-%m-%d' }}">
+                        {{ article.published_at | date: '%b %d, %Y' }}
+                      </time>
+                    </div>
+                  {%- endif -%}
+                </div>
+              {%- endif -%}
+
+              <div class="blog-post-card__content">
+                {%- if section.settings.show_tags and article.tags.size > 0 -%}
+                  <div class="blog-post-card__tags">
+                    {%- for tag in article.tags limit: 3 -%}
+                      <span class="blog-post-card__tag">{{ tag | escape }}</span>
+                    {%- endfor -%}
+                  </div>
+                {%- endif -%}
+
+                <h3 class="blog-post-card__title">
+                  <a href="{{ article.url }}">{{ article.title | escape }}</a>
+                </h3>
+
+                {%- if section.settings.show_author -%}
+                  <div class="blog-post-card__author">
+                    <span>{{ 'blogs.article.by_author' | t: author: article.author | escape }}</span>
+                  </div>
+                {%- endif -%}
+
+                {%- if section.settings.show_excerpt and article.excerpt != blank -%}
+                  <div class="blog-post-card__excerpt">
+                    {%- liquid
+                      assign excerpt_length = section.settings.excerpt_length | default: 150
+                      assign excerpt_text = article.excerpt | strip_html | truncate: excerpt_length
+                    -%}
+                    <p>{{ excerpt_text }}</p>
+                  </div>
+                {%- elsif section.settings.show_excerpt and article.content != blank -%}
+                  <div class="blog-post-card__excerpt">
+                    {%- liquid
+                      assign excerpt_length = section.settings.excerpt_length | default: 150
+                      assign excerpt_text = article.content | strip_html | truncate: excerpt_length
+                    -%}
+                    <p>{{ excerpt_text }}</p>
+                  </div>
+                {%- endif -%}
+
+                <div class="blog-post-card__footer">
+                  {%- unless article.image -%}
+                    {%- if section.settings.show_date -%}
+                      <time 
+                        class="blog-post-card__date blog-post-card__date--inline"
+                        datetime="{{ article.published_at | date: '%Y-%m-%d' }}"
+                      >
+                        {{ article.published_at | date: '%b %d, %Y' }}
+                      </time>
+                    {%- endif -%}
+                  {%- endunless -%}
+
+                  <a 
+                    href="{{ article.url }}" 
+                    class="blog-post-card__read-more"
+                    aria-label="{{ 'blogs.article.read_more_title' | t: title: article.title }}"
+                  >
+                    {{ 'blogs.article.read_more' | t }}
+                    {% render 'icon-arrow-right' %}
+                  </a>
+                </div>
+              </div>
+            </article>
+          {%- endfor -%}
+        </div>
+
+        {%- if section.settings.show_view_all -%}
+          <div class="blog-posts__view-all">
+            <a 
+              href="{{ blog.url }}" 
+              class="button button--outline button--large"
+            >
+              {{ section.settings.view_all_text | default: 'View all articles' | escape }}
+            </a>
+          </div>
+        {%- endif -%}
+      {%- else -%}
+        <div class="blog-posts__empty">
+          <div class="blog-posts__empty-content">
+            <h3>{{ 'blogs.general.no_articles' | t }}</h3>
+            <p>{{ 'blogs.general.no_articles_description' | t }}</p>
+            {%- if blog.url -%}
+              <a href="{{ blog.url }}" class="button button--primary">
+                {{ 'blogs.general.visit_blog' | t }}
+              </a>
+            {%- endif -%}
+          </div>
+        </div>
+      {%- endif -%}
+    </div>
+  </div>
+</div>
+
+{% schema %}
+{
+  "name": "Blog posts",
+  "class": "shopify-section-blog-posts",
+  "tag": "section",
+  "settings": [
+    {
+      "type": "header",
+      "content": "Content"
+    },
+    {
+      "type": "text",
+      "id": "heading",
+      "label": "Heading",
+      "default": "Latest news"
+    },
+    {
+      "type": "text",
+      "id": "subheading",
+      "label": "Subheading",
+      "default": "Stay informed with our blog"
+    },
+    {
+      "type": "blog",
+      "id": "blog",
+      "label": "Blog",
+      "info": "Leave empty to use the first available blog"
+    },
+    {
+      "type": "header",
+      "content": "Layout"
+    },
+    {
+      "type": "range",
+      "id": "posts_to_show",
+      "label": "Posts to show",
+      "min": 2,
+      "max": 12,
+      "step": 1,
+      "default": 3
+    },
+    {
+      "type": "range",
+      "id": "columns_desktop",
+      "label": "Desktop columns",
+      "min": 1,
+      "max": 4,
+      "step": 1,
+      "default": 3
+    },
+    {
+      "type": "select",
+      "id": "columns_mobile",
+      "label": "Mobile columns",
+      "options": [
+        {
+          "value": "1",
+          "label": "1 column"
+        },
+        {
+          "value": "2",
+          "label": "2 columns"
+        }
+      ],
+      "default": "1"
+    },
+    {
+      "type": "header",
+      "content": "Article cards"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_excerpt",
+      "label": "Show excerpts",
+      "default": true
+    },
+    {
+      "type": "range",
+      "id": "excerpt_length",
+      "label": "Excerpt length",
+      "min": 50,
+      "max": 300,
+      "step": 10,
+      "default": 150,
+      "info": "Characters to show in excerpt"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_date",
+      "label": "Show published date",
+      "default": true
+    },
+    {
+      "type": "checkbox",
+      "id": "show_author",
+      "label": "Show author",
+      "default": false
+    },
+    {
+      "type": "checkbox",
+      "id": "show_tags",
+      "label": "Show tags",
+      "default": true
+    },
+    {
+      "type": "header",
+      "content": "View all"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_view_all",
+      "label": "Show 'View all' button",
+      "default": true
+    },
+    {
+      "type": "text",
+      "id": "view_all_text",
+      "label": "Button text",
+      "default": "View all articles"
+    },
+    {
+      "type": "header",
+      "content": "Colors"
+    },
+    {
+      "type": "color",
+      "id": "background_color",
+      "label": "Background color"
+    },
+    {
+      "type": "color",
+      "id": "text_color",
+      "label": "Text color"
+    }
+  ],
+  "presets": [
+    {
+      "name": "Blog posts",
+      "settings": {
+        "heading": "Latest news",
+        "subheading": "Stay informed with our blog",
+        "posts_to_show": 3,
+        "show_excerpt": true,
+        "show_date": true,
+        "show_tags": true,
+        "show_view_all": true
+      }
+    }
+  ]
+}
+{% endschema %}

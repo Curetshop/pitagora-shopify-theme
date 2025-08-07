@@ -1,0 +1,126 @@
+{
+  "sections": {
+    "main": {
+      "type": "main-product",
+      "settings": {
+        "layout": "grid",
+        "media_aspect_ratio": "square",
+        "media_layout": "slider", 
+        "enable_zoom": true,
+        "hide_variants": true,
+        "show_vendor": true,
+        "show_dynamic_checkout": false,
+        "enable_reviews": false,
+        "enable_social_sharing": true,
+        "show_product_features": true,
+        "show_additional_info": true,
+        "update_url": true
+      },
+      "blocks": {
+        "preorder_badge": {
+          "type": "feature",
+          "settings": {
+            "icon": "clock",
+            "text": "Disponible en pre-orden"
+          }
+        },
+        "early_bird": {
+          "type": "feature",
+          "settings": {
+            "icon": "percent",
+            "text": "Descuento especial por pre-orden"
+          }
+        },
+        "delivery_date": {
+          "type": "feature",
+          "settings": {
+            "icon": "calendar",
+            "text": "Entrega estimada: [Fecha]"
+          }
+        },
+        "reserve_now": {
+          "type": "feature",
+          "settings": {
+            "icon": "lock",
+            "text": "Reserva ahora, paga después"
+          }
+        },
+        "preorder_info": {
+          "type": "collapsible_tab",
+          "settings": {
+            "heading": "Información de pre-orden",
+            "content": "<p>Este producto está disponible en pre-orden. Tu tarjeta será cargada cuando el producto se envíe.</p><p><strong>Fecha estimada de envío:</strong> [Fecha]</p><p><strong>Política de pre-orden:</strong> Puedes cancelar tu pre-orden en cualquier momento antes del envío.</p>"
+          }
+        },
+        "whats_included": {
+          "type": "collapsible_tab",
+          "settings": {
+            "heading": "¿Qué incluye?",
+            "content": "<p>Tu pre-orden incluye el producto principal más beneficios exclusivos para compradores anticipados.</p>"
+          }
+        },
+        "preorder_terms": {
+          "type": "collapsible_tab",
+          "settings": {
+            "heading": "Términos de pre-orden",
+            "content": "<p>Al realizar una pre-orden, aceptas nuestros términos y condiciones específicos para productos en pre-venta.</p>"
+          }
+        }
+      },
+      "block_order": [
+        "preorder_badge",
+        "early_bird", 
+        "delivery_date",
+        "reserve_now",
+        "preorder_info",
+        "whats_included",
+        "preorder_terms"
+      ]
+    },
+    "preorder-countdown": {
+      "type": "countdown-timer",
+      "settings": {
+        "heading": "Oferta de pre-orden limitada",
+        "end_date": "",
+        "show_days": true,
+        "show_hours": true,
+        "show_minutes": true
+      }
+    },
+    "preorder-faq": {
+      "type": "faq",
+      "settings": {
+        "heading": "Preguntas frecuentes sobre pre-órdenes"
+      },
+      "blocks": {
+        "faq1": {
+          "type": "faq",
+          "settings": {
+            "question": "¿Cuándo se cobrará mi tarjeta?",
+            "answer": "Tu tarjeta será cargada únicamente cuando el producto esté listo para enviar."
+          }
+        },
+        "faq2": {
+          "type": "faq",
+          "settings": {
+            "question": "¿Puedo cancelar mi pre-orden?",
+            "answer": "Sí, puedes cancelar tu pre-orden en cualquier momento antes del envío sin costo alguno."
+          }
+        },
+        "faq3": {
+          "type": "faq",
+          "settings": {
+            "question": "¿Qué pasa si hay retrasos?",
+            "answer": "Te notificaremos inmediatamente sobre cualquier cambio en la fecha de envío estimada."
+          }
+        }
+      },
+      "block_order": ["faq1", "faq2", "faq3"]
+    }
+  },
+  "order": [
+    "main",
+    "preorder-countdown",
+    "preorder-faq"
+  ]
+}

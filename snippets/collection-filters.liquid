@@ -1,0 +1,99 @@
+{%- comment -%}
+Collection Filters - Pitagora Theme
+Sistema avanzado de filtros facetados basado en Shopify Filters API
+Parámetros:
+- filters: collection.filters (requerido)
+- active_filters_count: número de filtros activos (opcional)
+- show_color_swatch: mostrar color swatches (opcional)
+- open_first_filter_group: abrir primer grupo por defecto (opcional)
+- is_drawer: estilo para drawer móvil (opcional)
+{%- endcomment -%}
+
+{%- if filters != empty -%}
+  <collection-filters-form class="collection-filters-form">
+    <form 
+      id="collection-filters-form" 
+      class="collection-filters-form__form"
+      data-collection-filters-form
+    >
+      <div class="collection-filters-list">
+        {%- for filter in filters -%}
+          {%- liquid
+            assign filter_index = forloop.index
+            assign is_first_filter = forloop.first
+            assign should_open = false
+            
+            if open_first_filter_group and is_first_filter
+              assign should_open = true
+            endif
+            
+            comment 'Check if filter has active values'
+            assign has_active_values = false
+            if filter.type == 'list' and filter.active_values.size > 0
+              assign has_active_values = true
+            elsif filter.type == 'price_range' and filter.min_value.value or filter.max_value.value
+              assign has_active_values = true
+            endif
+            
+            if has_active_values
+              assign should_open = true
+            endif
+          -%}
+
+          <details 
+            class="collection-filter collection-filter--{{ filter.type }}{% if has_active_values %} collection-filter--active{% endif %}"
+            {% if should_open %}open{% endif %}
+            data-filter-index="{{ filter_index }}"
+          >
+            <summary class="collection-filter__summary">
+              <span class="collection-filter__title">{{ filter.label }}</span>
+              {%- if has_active_values -%}
+                <span class="collection-filter__active-count">
+                  {%- if filter.type == 'list' -%}
+                    {{ filter.active_values.size }}
+                  {%- elsif filter.type == 'price_range' -%}
+                    1
+                  {%- endif -%}
+                </span>
+              {%- endif -%}
+              <span class="collection-filter__icon">
+                {% render 'icon-chevron-down' %}
+              </span>
+            </summary>
+
+            <div class="collection-filter__content">
+              {%- case filter.type -%}
+                {%- when 'list' -%}
+                  {%- render 'collection-filter-list', 
+                    filter: filter, 
+                    show_color_swatch: show_color_swatch,
+                    is_drawer: is_drawer
+                  -%}
+                  
+                {%- when 'price_range' -%}
+                  {%- render 'collection-filter-price-range', 
+                    filter: filter,
+                    is_drawer: is_drawer
+                  -%}
+              {%- endcase -%}
+            </div>
+          </details>
+        {%- endfor -%}
+      </div>
+
+      {%- comment -%} Clear All Filters {%- endcomment -%}
+      {%- if active_filters_count and active_filters_count > 0 -%}
+        <div class="collection-filters-form__clear">
+          <button 
+            type="button" 
+            class="collection-filters-clear-all" 
+            data-clear-all-filters
+          >
+            {% render 'icon-close' %}
+            <span>{{ 'collections.filters.clear_all' | t }} ({{ active_filters_count }})</span>
+          </button>
+        </div>
+      {%- endif -%}
+    </form>
+  </collection-filters-form>
+{%- endif -%}

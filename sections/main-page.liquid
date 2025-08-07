@@ -1,0 +1,233 @@
+{%- comment -%}
+Main Page Section - Pitagora Theme
+Página estática con contenido + opciones de layout
+{%- endcomment -%}
+
+{{ 'page.css' | asset_url | stylesheet_tag }}
+
+<div class="page-template">
+  <div class="page-width">
+    {%- if section.settings.show_breadcrumbs -%}
+      <nav class="page-breadcrumbs" aria-label="{{ 'general.breadcrumbs.label' | t }}">
+        <ol class="page-breadcrumbs__list">
+          <li class="page-breadcrumbs__item">
+            <a href="{{ routes.root_url }}" class="page-breadcrumbs__link">
+              {{ 'general.breadcrumbs.home' | t }}
+            </a>
+          </li>
+          <li class="page-breadcrumbs__item">
+            <span class="page-breadcrumbs__separator" aria-hidden="true">{% render 'icon-chevron-right' %}</span>
+            <span class="page-breadcrumbs__current" aria-current="page">
+              {{ page.title | escape }}
+            </span>
+          </li>
+        </ol>
+      </nav>
+    {%- endif -%}
+
+    <div class="page-container{% if section.settings.enable_sidebar %} page-container--has-sidebar{% endif %}">
+      <main class="page-main" role="main">
+        <article class="page-article">
+          {%- if section.settings.show_title -%}
+            <header class="page-header page-header--{{ section.settings.title_alignment }}">
+              <h1 class="page-title">{{ page.title | escape }}</h1>
+              
+              {%- if section.settings.show_updated_date and page.updated_at -%}
+                <div class="page-meta">
+                  <time datetime="{{ page.updated_at | date: '%Y-%m-%d' }}" class="page-updated">
+                    {{ 'pages.page.updated_at' | t: date: page.updated_at | date: '%B %d, %Y' }}
+                  </time>
+                </div>
+              {%- endif -%}
+            </header>
+          {%- endif -%}
+
+          <div class="page-content page-content--{{ section.settings.content_width }}">
+            {%- if page.content != blank -%}
+              <div class="page-content__text rte">
+                {{ page.content }}
+              </div>
+            {%- else -%}
+              <div class="page-content__empty">
+                <p>{{ 'pages.page.empty_content' | t }}</p>
+                {%- if shop.admin_url -%}
+                  <a href="{{ shop.admin_url }}/pages/{{ page.id }}" class="button button--outline">
+                    {{ 'pages.page.edit_page' | t }}
+                  </a>
+                {%- endif -%}
+              </div>
+            {%- endif -%}
+          </div>
+
+          {%- if section.settings.enable_social_sharing -%}
+            <div class="page-social-sharing">
+              <h3 class="page-social-sharing__title">{{ 'general.social.share' | t }}</h3>
+              {% render 'social-sharing', share_title: page.title, share_permalink: page.url, share_image: page.image %}
+            </div>
+          {%- endif -%}
+        </article>
+      </main>
+
+      {%- if section.settings.enable_sidebar -%}
+        <aside class="page-sidebar" role="complementary">
+          {%- comment -%} Page Navigation {%- endcomment -%}
+          <div class="page-sidebar__section">
+            <h3 class="page-sidebar__title">{{ 'pages.page.navigation' | t }}</h3>
+            <nav class="page-navigation">
+              <ul class="page-navigation__list">
+                {%- for link in linklists.footer.links -%}
+                  {%- if link.type == 'page_link' -%}
+                    <li class="page-navigation__item{% if page.id == link.object.id %} page-navigation__item--current{% endif %}">
+                      <a 
+                        href="{{ link.url }}" 
+                        class="page-navigation__link"
+                        {% if page.id == link.object.id %}aria-current="page"{% endif %}
+                      >
+                        {{ link.title | escape }}
+                      </a>
+                    </li>
+                  {%- endif -%}
+                {%- endfor -%}
+              </ul>
+            </nav>
+          </div>
+
+          {%- comment -%} Contact Information {%- endcomment -%}
+          {%- if settings.contact_page_info != blank -%}
+            <div class="page-sidebar__section">
+              <h3 class="page-sidebar__title">{{ 'pages.contact.info' | t }}</h3>
+              <div class="page-contact-info rte">
+                {{ settings.contact_page_info }}
+              </div>
+            </div>
+          {%- endif -%}
+
+          {%- comment -%} Recent Blog Posts {%- endcomment -%}
+          {%- if blog.articles.size > 0 -%}
+            <div class="page-sidebar__section">
+              <h3 class="page-sidebar__title">{{ 'blogs.general.recent_posts' | t }}</h3>
+              <div class="page-recent-posts">
+                {%- for article in blog.articles limit: 3 -%}
+                  <article class="page-recent-post">
+                    {%- if article.image -%}
+                      <a href="{{ article.url }}" class="page-recent-post__image">
+                        <img
+                          src="{{ article.image | image_url: width: 120 }}"
+                          alt="{{ article.image.alt | escape | default: article.title | escape }}"
+                          loading="lazy"
+                          width="60"
+                          height="60"
+                        >
+                      </a>
+                    {%- endif -%}
+                    
+                    <div class="page-recent-post__content">
+                      <h4 class="page-recent-post__title">
+                        <a href="{{ article.url }}">{{ article.title | escape }}</a>
+                      </h4>
+                      <time datetime="{{ article.published_at | date: '%Y-%m-%d' }}" class="page-recent-post__date">
+                        {{ article.published_at | date: '%b %d, %Y' }}
+                      </time>
+                    </div>
+                  </article>
+                {%- endfor -%}
+              </div>
+            </div>
+          {%- endif -%}
+        </aside>
+      {%- endif -%}
+    </div>
+  </div>
+</div>
+
+{% schema %}
+{
+  "name": "Page",
+  "class": "shopify-section-main-page",
+  "settings": [
+    {
+      "type": "header",
+      "content": "Page layout"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_title",
+      "label": "Show page title",
+      "default": true
+    },
+    {
+      "type": "select",
+      "id": "title_alignment",
+      "label": "Title alignment",
+      "options": [
+        {
+          "value": "left",
+          "label": "Left"
+        },
+        {
+          "value": "center", 
+          "label": "Center"
+        },
+        {
+          "value": "right",
+          "label": "Right"
+        }
+      ],
+      "default": "left"
+    },
+    {
+      "type": "select",
+      "id": "content_width",
+      "label": "Content width",
+      "options": [
+        {
+          "value": "small",
+          "label": "Small"
+        },
+        {
+          "value": "medium",
+          "label": "Medium"
+        },
+        {
+          "value": "large",
+          "label": "Large"
+        },
+        {
+          "value": "full",
+          "label": "Full width"
+        }
+      ],
+      "default": "medium"
+    },
+    {
+      "type": "checkbox",
+      "id": "enable_sidebar",
+      "label": "Enable sidebar",
+      "default": false,
+      "info": "Shows page navigation and additional content"
+    },
+    {
+      "type": "header",
+      "content": "Page features"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_breadcrumbs",
+      "label": "Show breadcrumbs",
+      "default": true
+    },
+    {
+      "type": "checkbox",
+      "id": "show_updated_date",
+      "label": "Show last updated date",
+      "default": false
+    },
+    {
+      "type": "checkbox",
+      "id": "enable_social_sharing",
+      "label": "Enable social sharing",
+      "default": true
+    }
+  ]
+}
+{% endschema %}

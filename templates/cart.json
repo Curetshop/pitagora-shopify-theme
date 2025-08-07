@@ -1,0 +1,88 @@
+{
+  "sections": {
+    "cart_header": {
+      "type": "rich-text",
+      "settings": {
+        "desktop_content_position": "center",
+        "content_alignment": "center",
+        "color_scheme": "",
+        "full_width": false,
+        "padding_top": 60,
+        "padding_bottom": 20,
+        "heading": "Your shopping cart",
+        "text": "<p>Review your items before checkout</p>"
+      }
+    },
+    "main": {
+      "type": "main-cart",
+      "settings": {
+        "show_vendor": false,
+        "show_cart_note": true,
+        "cart_notes_enable": true,
+        "enable_cart_savings": true,
+        "show_cart_recommendations": true,
+        "cart_recommendations_heading": "You might also like",
+        "cart_recommendations_count": 4,
+        "enable_shipping_calculator": true,
+        "enable_terms_and_conditions": false,
+        "terms_and_conditions_page": "",
+        "enable_gift_wrapping": false
+      }
+    },
+    "cart_benefits": {
+      "type": "rich-text",
+      "settings": {
+        "desktop_content_position": "center",
+        "content_alignment": "center",
+        "color_scheme": "background-2",
+        "full_width": true,
+        "padding_top": 40,
+        "padding_bottom": 40,
+        "heading": "Why shop with us?",
+        "text": "<div class=\"benefits-grid\"><div class=\"benefit\"><h4>🚚 Free Shipping</h4><p>On orders over $75</p></div><div class=\"benefit\"><h4>🔒 Secure Checkout</h4><p>SSL encrypted payments</p></div><div class=\"benefit\"><h4>↩️ Easy Returns</h4><p>30-day return policy</p></div><div class=\"benefit\"><h4>💬 24/7 Support</h4><p>Customer service available</p></div></div>"
+      }
+    },
+    "cart_newsletter": {
+      "type": "newsletter",
+      "settings": {
+        "heading": "Get exclusive offers",
+        "subheading": "Subscribe while you shop",
+        "text": "<p>Join our newsletter for special discounts and early access to new products.</p>",
+        "show_name_field": false,
+        "button_text": "Subscribe & Save",
+        "success_message": "Thanks! Check your email for your discount code.",
+        "background_type": "color",
+        "background_color": "#f3f4f6",
+        "text_color": "#1f2937"
+      }
+    },
+    "recently_viewed": {
+      "type": "featured-products",
+      "settings": {
+        "heading": "Recently viewed",
+        "subheading": "Items you've been looking at",
+        "collection": "",
+        "products_to_show": 4,
+        "columns_desktop": 4,
+        "columns_tablet": 2,
+        "columns_mobile": 2,
+        "show_quick_add": true,
+        "show_quick_view": false,
+        "show_vendor": false,
+        "show_rating": true,
+        "show_price": true,
+        "image_ratio": "square",
+        "show_view_all": false,
+        "background_color": "",
+        "text_color": ""
+      }
+    }
+  },
+  "order": [
+    "cart_header",
+    "main",
+    "cart_benefits",
+    "cart_newsletter",
+    "recently_viewed"
+  ]
+}
