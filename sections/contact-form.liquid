@@ -35,7 +35,7 @@ Customizable contact form with validation and submission handling
           </div>
         {%- endif -%}
 
-        {%- form 'contact', class: 'contact-form__form', id: 'contact-form-' | append: section.id -%}
+        {%- form 'contact', class: 'contact-form__form' -%}
           {%- if form.posted_successfully? -%}
             <div class="contact-form__success" role="status">
               <h3 class="contact-form__success-title">{{ 'templates.contact.form.post_success' | t }}</h3>
