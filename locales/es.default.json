@@ -252,7 +252,9 @@
     },
     "general": {
       "previous": "Anterior",
-      "next": "Siguiente", 
+      "next": "Siguiente",
+      "no_articles": "No hay artículos en este blog",
+      "no_articles_description": "Vuelve a consultar pronto para ver nuevas entradas del blog.",
       "comments": {
         "one": "{{ count }} comentario",
         "other": "{{ count }} comentarios"
