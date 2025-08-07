@@ -50,7 +50,7 @@ Display frequently asked questions with collapsible accordion interface
                 {%- assign end_index = start_index | plus: items_per_column | minus: 1 -%}
                 
                 {%- for block in section.blocks limit: items_per_column offset: start_index -%}
-                  {% render 'faq-item', block: block, index: forloop.index | plus: start_index %}
+                  {%- render 'faq-item', block: block, index: forloop.index | plus: start_index -%}
                 {%- endfor -%}
               </div>
             {%- endfor -%}
@@ -68,7 +68,7 @@ Display frequently asked questions with collapsible accordion interface
                 >
                   <span class="faq__question-text">{{ block.settings.question | escape }}</span>
                   <span class="faq__question-icon" aria-hidden="true">
-                    {% render 'icon-chevron-down' %}
+                    {%- render 'icon-chevron-down' -%}
                   </span>
                 </button>
                 

@@ -49,7 +49,7 @@ Display recommended products based on current product or collection
       {%- if template.name == 'product' and product.id != blank -%}
         <div class="product-recommendations__loading">
           <div class="product-recommendations__loading-spinner">
-            {% render 'icon-spinner' %}
+            {%- render 'icon-spinner' -%}
           </div>
           <p>{{ 'products.recommendations.loading' | t }}</p>
         </div>
@@ -72,7 +72,7 @@ Display recommended products based on current product or collection
         {%- if fallback_products.size > 0 -%}
           <div class="product-recommendations__grid">
             {%- for product in fallback_products limit: recommendations_count -%}
-              {% render 'product-card',
+              {%- render 'product-card',
                 product: product,
                 show_quick_add: section.settings.show_quick_add,
                 show_quick_view: section.settings.show_quick_view,
@@ -82,7 +82,7 @@ Display recommended products based on current product or collection
                 image_ratio: section.settings.image_ratio,
                 card_style: 'standard',
                 loading: forloop.index
-              %}
+              -%}
             {%- endfor -%}
           </div>
         {%- else -%}

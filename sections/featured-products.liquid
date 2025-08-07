@@ -82,7 +82,7 @@ Grid de productos destacados con filtros básicos y sorting
       {%- if products.size > 0 -%}
         <div class="featured-products__grid" id="featured-products-grid-{{ section.id }}">
           {%- for product in products limit: products_to_show -%}
-            {% render 'product-card',
+            {%- render 'product-card',
               product: product,
               show_quick_add: section.settings.show_quick_add,
               show_quick_view: section.settings.show_quick_view,
@@ -92,7 +92,7 @@ Grid de productos destacados con filtros básicos y sorting
               image_ratio: section.settings.image_ratio,
               card_style: 'standard',
               loading: forloop.index
-            %}
+            -%}
           {%- endfor -%}
         </div>
       {%- else -%}

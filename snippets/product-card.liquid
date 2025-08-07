@@ -174,7 +174,7 @@ Parámetros:
           aria-label="{{ 'products.product.add_to_wishlist' | t: product: product.title }}"
           data-product-id="{{ product.id }}"
         >
-          {% render 'icon-heart' %}
+          {%- render 'icon-heart' -%}
         </button>
 
         {%- comment -%} Quick View Button {%- endcomment -%}
@@ -185,7 +185,7 @@ Parámetros:
           data-product-handle="{{ product.handle }}"
           data-quick-view
         >
-          {% render 'icon-eye' %}
+          {%- render 'icon-eye' -%}
         </button>
 
         {%- comment -%} Quick Buy Button {%- endcomment -%}
@@ -199,7 +199,7 @@ Parámetros:
                 name="add"
                 aria-label="{{ 'products.product.quick_add_to_cart' | t: product: product.title }}"
               >
-                {% render 'icon-cart-plus' %}
+                {%- render 'icon-cart-plus' -%}
               </button>
             </form>
           </product-form>
@@ -211,7 +211,7 @@ Parámetros:
             data-product-handle="{{ product.handle }}"
             data-quick-view
           >
-            {% render 'icon-cart-plus' %}
+            {%- render 'icon-cart-plus' -%}
           </button>
         {%- endif -%}
       </div>

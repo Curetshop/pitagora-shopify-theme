@@ -126,7 +126,7 @@ Newsletter signup con validación y success states
             aria-live="polite"
             hidden
           >
-            {% render 'icon-checkmark' %}
+            {%- render 'icon-checkmark' -%}
             <span>{{ section.settings.success_message | default: 'Thanks for subscribing!' | escape }}</span>
           </div>
 

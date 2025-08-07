@@ -23,7 +23,7 @@ Maneja filtros tipo lista (Size, Brand, Color, etc.)
         data-filter-search="{{ filter_id }}"
       >
       <span class="collection-filter-search__icon">
-        {% render 'icon-search' %}
+        {%- render 'icon-search' -%}
       </span>
     </div>
   {%- endif -%}
@@ -91,7 +91,7 @@ Maneja filtros tipo lista (Size, Brand, Color, etc.)
       <span class="collection-filter-show-more__text-hide" style="display: none;">
         {{ 'collections.filters.show_less' | t }}
       </span>
-      {% render 'icon-chevron-down' %}
+      {%- render 'icon-chevron-down' -%}
     </button>
   {%- endif -%}
 </div>

@@ -22,7 +22,7 @@ Individual testimonial with rating, quote, and author info
       <div class="testimonial-card__rating">
         {%- for i in (1..5) -%}
           <span class="testimonial-card__star{% if i <= rating %} testimonial-card__star--filled{% endif %}">
-            {% render 'icon-star' %}
+            {%- render 'icon-star' -%}
           </span>
         {%- endfor -%}
         <span class="visually-hidden">{{ rating }} {{ 'general.accessibility.star_reviews_info' | t }}</span>
@@ -53,7 +53,7 @@ Individual testimonial with rating, quote, and author info
         </div>
       {%- elsif show_author_image -%}
         <div class="testimonial-card__author-image testimonial-card__author-image--placeholder">
-          {% render 'icon-person' %}
+          {%- render 'icon-person' -%}
         </div>
       {%- endif -%}
 

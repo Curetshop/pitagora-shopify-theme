@@ -90,12 +90,12 @@ Incluye faceted search, sorting, pagination y promociones
                 </div>
 
                 <div class="collection-filters__content">
-                  {% render 'collection-filters', 
+                  {%- render 'collection-filters', 
                     filters: collection.filters, 
                     active_filters_count: active_filters_count,
                     show_color_swatch: section.settings.show_color_swatch,
                     open_first_filter_group: section.settings.open_first_filter_group
-                  %}
+                  -%}
                 </div>
               </div>
             </div>
@@ -117,7 +117,7 @@ Incluye faceted search, sorting, pagination y promociones
                   aria-expanded="false"
                   aria-controls="collection-filters-drawer"
                 >
-                  {% render 'icon-filter' %}
+                  {%- render 'icon-filter' -%}
                   <span>{{ 'collections.filters.title' | t }}</span>
                   {%- if active_filters_count > 0 -%}
                     <span class="collection-toolbar__filter-count">{{ active_filters_count }}</span>
@@ -127,7 +127,7 @@ Incluye faceted search, sorting, pagination y promociones
 
               {%- if section.settings.show_active_filters and active_filters_count > 0 -%}
                 <div class="collection-toolbar__active-filters">
-                  {% render 'collection-active-filters', filters: collection.filters %}
+                  {%- render 'collection-active-filters', filters: collection.filters -%}
                 </div>
               {%- endif -%}
             </div>
@@ -149,7 +149,7 @@ Incluye faceted search, sorting, pagination y promociones
                       </option>
                     {%- endfor -%}
                   </select>
-                  {% render 'icon-chevron-down' %}
+                  {%- render 'icon-chevron-down' -%}
                 </collection-sort>
               {%- endif -%}
 
@@ -161,7 +161,7 @@ Incluye faceted search, sorting, pagination y promociones
                     data-view="grid"
                     aria-label="{{ 'collections.view.grid' | t }}"
                   >
-                    {% render 'icon-grid' %}
+                    {%- render 'icon-grid' -%}
                   </button>
                   <button 
                     class="collection-view-switcher__button collection-view-switcher__button--list{% if section.settings.default_view == 'list' %} collection-view-switcher__button--active{% endif %}"
@@ -169,7 +169,7 @@ Incluye faceted search, sorting, pagination y promociones
                     data-view="list"
                     aria-label="{{ 'collections.view.list' | t }}"
                   >
-                    {% render 'icon-list' %}
+                    {%- render 'icon-list' -%}
                   </button>
                 </collection-view-switcher>
               {%- endif -%}
@@ -180,7 +180,7 @@ Incluye faceted search, sorting, pagination y promociones
         {%- comment -%} Promotion Blocks {%- endcomment -%}
         {%- if section.blocks.size > 0 and section.settings.promotion_position == 'top' -%}
           <div class="collection-promotions collection-promotions--top">
-            {% render 'collection-promotion-blocks', blocks: section.blocks, section: section %}
+            {%- render 'collection-promotion-blocks', blocks: section.blocks, section: section -%}
           </div>
         {%- endif -%}
 
@@ -202,7 +202,7 @@ Incluye faceted search, sorting, pagination y promociones
 
               {%- for product in collection.products limit: products_to_show -%}
                 <div class="product-grid__item" role="gridcell">
-                  {% render 'product-card', 
+                  {%- render 'product-card', 
                     product: product, 
                     show_quick_buy: section.settings.show_quick_buy,
                     show_color_swatch: section.settings.show_color_swatch,
@@ -210,13 +210,13 @@ Incluye faceted search, sorting, pagination y promociones
                     show_rating: section.settings.show_rating,
                     image_aspect_ratio: section.settings.image_aspect_ratio,
                     collection: collection
-                  %}
+                  -%}
                 </div>
 
                 {%- comment -%} Insert promotion block after specific product {%- endcomment -%}
                 {%- if section.blocks.size > 0 and section.settings.promotion_position == 'inline' and forloop.index == promotion_after_product -%}
                   <div class="product-grid__item product-grid__item--promotion">
-                    {% render 'collection-promotion-blocks', blocks: section.blocks, section: section %}
+                    {%- render 'collection-promotion-blocks', blocks: section.blocks, section: section -%}
                   </div>
                 {%- endif -%}
               {%- endfor -%}
@@ -226,7 +226,7 @@ Incluye faceted search, sorting, pagination y promociones
             <div class="collection-empty" {% unless collection.products_count == 0 %}style="display: none;"{% endunless %}>
               <div class="collection-empty__content">
                 <div class="collection-empty__icon">
-                  {% render 'icon-search' %}
+                  {%- render 'icon-search' -%}
                 </div>
                 <h3 class="collection-empty__title">{{ 'collections.general.no_products' | t }}</h3>
                 <p class="collection-empty__message">{{ 'collections.general.no_products_message' | t }}</p>
@@ -242,7 +242,7 @@ Incluye faceted search, sorting, pagination y promociones
           <div class="collection-empty">
             <div class="collection-empty__content">
               <div class="collection-empty__icon">
-                {% render 'icon-collection' %}
+                {%- render 'icon-collection' -%}
               </div>
               <h3 class="collection-empty__title">{{ 'collections.general.empty' | t }}</h3>
               <p class="collection-empty__message">{{ 'collections.general.empty_message' | t }}</p>
@@ -256,14 +256,14 @@ Incluye faceted search, sorting, pagination y promociones
         {%- comment -%} Promotion Blocks Bottom {%- endcomment -%}
         {%- if section.blocks.size > 0 and section.settings.promotion_position == 'bottom' -%}
           <div class="collection-promotions collection-promotions--bottom">
-            {% render 'collection-promotion-blocks', blocks: section.blocks, section: section %}
+            {%- render 'collection-promotion-blocks', blocks: section.blocks, section: section -%}
           </div>
         {%- endif -%}
 
         {%- comment -%} Pagination {%- endcomment -%}
         {%- if collection.products_count > section.settings.products_per_page -%}
           <collection-pagination class="collection-pagination">
-            {% render 'collection-pagination', paginate: paginate %}
+            {%- render 'collection-pagination', paginate: paginate -%}
           </collection-pagination>
         {%- endif -%}
 
@@ -297,18 +297,18 @@ Incluye faceted search, sorting, pagination y promociones
             type="button"
             aria-label="{{ 'accessibility.close' | t }}"
           >
-            {% render 'icon-close' %}
+            {%- render 'icon-close' -%}
           </button>
         </div>
         
         <div class="collection-filters-drawer__body">
-          {% render 'collection-filters', 
+          {%- render 'collection-filters', 
             filters: collection.filters, 
             active_filters_count: active_filters_count,
             show_color_swatch: section.settings.show_color_swatch,
             open_first_filter_group: section.settings.open_first_filter_group,
             is_drawer: true
-          %}
+          -%}
         </div>
 
         <div class="collection-filters-drawer__footer">
