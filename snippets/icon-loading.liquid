@@ -1,0 +1,64 @@
+{%- comment -%}
+Loading Icon - Pitagora Theme  
+Animated loading spinner icon
+
+Parameters:
+- size: icon size in pixels (optional, default: 20)
+- class: additional CSS classes (optional)
+- color: icon color (optional, default: currentColor)
+{%- endcomment -%}
+
+{%- liquid
+  assign icon_size = size | default: 20
+  assign icon_color = color | default: 'currentColor'
+  assign icon_class = 'icon-loading'
+  if class != blank
+    assign icon_class = icon_class | append: ' ' | append: class
+  endif
+-%}
+
+<svg 
+  class="{{ icon_class }}" 
+  width="{{ icon_size }}" 
+  height="{{ icon_size }}" 
+  viewBox="0 0 24 24" 
+  fill="none"
+  stroke="{{ icon_color }}"
+  stroke-width="2"
+  stroke-linecap="round" 
+  stroke-linejoin="round"
+>
+  <path d="M21 12a9 9 0 11-6.219-8.56"/>
+</svg>
+
+<style>
+  .icon-loading {
+    animation: icon-loading-spin 1s linear infinite;
+    display: inline-block;
+  }
+  
+  @keyframes icon-loading-spin {
+    from {
+      transform: rotate(0deg);
+    }
+    to {
+      transform: rotate(360deg);
+    }
+  }
+  
+  /* Respect user's motion preferences */
+  @media (prefers-reduced-motion: reduce) {
+    .icon-loading {
+      animation: icon-loading-pulse 1.5s ease-in-out infinite;
+    }
+    
+    @keyframes icon-loading-pulse {
+      0%, 100% {
+        opacity: 1;
+      }
+      50% {
+        opacity: 0.5;
+      }
+    }
+  }
+</style>
