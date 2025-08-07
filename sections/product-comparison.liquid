@@ -1,0 +1,283 @@
+{{ 'product-comparison.css' | asset_url | stylesheet_tag }}
+
+{%- liquid
+  assign max_products = section.settings.max_products | default: 4
+  assign show_sticky_bar = section.settings.show_sticky_bar
+  assign color_scheme = section.settings.color_scheme
+-%}
+
+<div class="product-comparison color-{{ color_scheme }}" 
+     data-section-id="{{ section.id }}"
+     data-max-products="{{ max_products }}">
+  
+  {%- comment -%} Comparison Header {%- endcomment -%}
+  <div class="product-comparison__header">
+    <div class="page-width">
+      <h2 class="product-comparison__title">{{ section.settings.title | default: 'Compare Products' }}</h2>
+      <p class="product-comparison__subtitle">{{ section.settings.subtitle }}</p>
+      
+      <div class="product-comparison__controls">
+        <button class="product-comparison__clear button button--secondary"
+                data-comparison-clear
+                aria-label="{{ 'products.comparison.clear_all' | t }}">
+          <svg class="icon icon--trash" viewBox="0 0 24 24" aria-hidden="true">
+            <path fill="currentColor" d="M19,4H15.5L14.5,3H9.5L8.5,4H5V6H19M6,19A2,2 0 0,0 8,21H16A2,2 0 0,0 18,19V7H6V19Z"/>
+          </svg>
+          {{ 'products.comparison.clear_all' | t }}
+        </button>
+      </div>
+    </div>
+  </div>
+
+  {%- comment -%} Comparison Table {%- endcomment -%}
+  <div class="product-comparison__container page-width">
+    
+    {%- comment -%} Empty State {%- endcomment -%}
+    <div class="product-comparison__empty" data-comparison-empty>
+      <div class="product-comparison__empty-icon">
+        <svg viewBox="0 0 24 24" aria-hidden="true">
+          <path fill="currentColor" d="M13,2.03C17.73,2.5 21.5,6.25 21.95,11C22.5,16.5 18.5,21.38 13,21.93V19.93C16.64,19.5 19.5,16.61 19.96,12.97C20.5,8.58 17.39,4.59 13,4.05V2.05L13,2.03M11,2.06V4.06C9.57,4.26 8.22,4.84 7.1,5.74L5.67,4.26C7.19,3 9.05,2.25 11,2.06M4.26,5.67L5.69,7.1C4.8,8.23 4.24,9.58 4.05,11H2.05C2.25,9.04 3,7.19 4.26,5.67M2.06,13H4.06C4.24,14.42 4.81,15.77 5.69,16.9L4.27,18.33C3.03,16.81 2.26,14.96 2.06,13M7.1,18.37C8.23,19.25 9.58,19.82 11,20V22C9.04,21.79 7.18,21.03 5.67,19.76L7.1,18.37M12,16.5L7.5,12L12,7.5L16.5,12L12,16.5M12,9.5L10,11.5L12,13.5L14,11.5L12,9.5Z"/>
+        </svg>
+      </div>
+      <h3 class="product-comparison__empty-title">{{ 'products.comparison.empty_title' | t }}</h3>
+      <p class="product-comparison__empty-text">{{ 'products.comparison.empty_text' | t }}</p>
+      <a href="{{ routes.all_products_collection_url }}" class="product-comparison__empty-button button button--primary">
+        {{ 'products.comparison.browse_products' | t }}
+      </a>
+    </div>
+
+    {%- comment -%} Comparison Table Wrapper {%- endcomment -%}
+    <div class="product-comparison__table-wrapper" data-comparison-table style="display: none;">
+      <table class="product-comparison__table">
+        <thead>
+          <tr class="product-comparison__row product-comparison__row--header">
+            <th class="product-comparison__cell product-comparison__cell--feature">
+              <span class="visually-hidden">{{ 'products.comparison.features' | t }}</span>
+            </th>
+            {%- comment -%} Product headers will be dynamically inserted here {%- endcomment -%}
+          </tr>
+        </thead>
+        <tbody>
+          {%- comment -%} Product images row {%- endcomment -%}
+          <tr class="product-comparison__row product-comparison__row--images" data-comparison-row="images">
+            <td class="product-comparison__cell product-comparison__cell--feature">
+              {{ 'products.comparison.product' | t }}
+            </td>
+          </tr>
+
+          {%- comment -%} Price row {%- endcomment -%}
+          <tr class="product-comparison__row" data-comparison-row="price">
+            <td class="product-comparison__cell product-comparison__cell--feature">
+              {{ 'products.comparison.price' | t }}
+            </td>
+          </tr>
+
+          {%- comment -%} Rating row {%- endcomment -%}
+          <tr class="product-comparison__row" data-comparison-row="rating">
+            <td class="product-comparison__cell product-comparison__cell--feature">
+              {{ 'products.comparison.rating' | t }}
+            </td>
+          </tr>
+
+          {%- comment -%} Availability row {%- endcomment -%}
+          <tr class="product-comparison__row" data-comparison-row="availability">
+            <td class="product-comparison__cell product-comparison__cell--feature">
+              {{ 'products.comparison.availability' | t }}
+            </td>
+          </tr>
+
+          {%- comment -%} Description row {%- endcomment -%}
+          <tr class="product-comparison__row" data-comparison-row="description">
+            <td class="product-comparison__cell product-comparison__cell--feature">
+              {{ 'products.comparison.description' | t }}
+            </td>
+          </tr>
+
+          {%- comment -%} Dynamic metafield rows will be inserted here {%- endcomment -%}
+          
+          {%- comment -%} Add to cart row {%- endcomment -%}
+          <tr class="product-comparison__row product-comparison__row--actions" data-comparison-row="actions">
+            <td class="product-comparison__cell product-comparison__cell--feature">
+              <span class="visually-hidden">{{ 'products.comparison.actions' | t }}</span>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  {%- comment -%} Sticky Comparison Bar {%- endcomment -%}
+  {%- if show_sticky_bar -%}
+    <div class="product-comparison__sticky-bar" data-comparison-sticky-bar style="display: none;">
+      <div class="page-width">
+        <div class="product-comparison__sticky-content">
+          <div class="product-comparison__sticky-info">
+            <span class="product-comparison__sticky-count" data-comparison-count>0</span>
+            <span class="product-comparison__sticky-text">{{ 'products.comparison.products_selected' | t }}</span>
+          </div>
+          
+          <div class="product-comparison__sticky-products" data-comparison-sticky-products>
+            {%- comment -%} Sticky product items will be dynamically inserted here {%- endcomment -%}
+          </div>
+          
+          <div class="product-comparison__sticky-actions">
+            <button class="product-comparison__sticky-compare button button--primary"
+                    data-comparison-view
+                    aria-label="{{ 'products.comparison.view_comparison' | t }}">
+              {{ 'products.comparison.compare_now' | t }}
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  {%- endif -%}
+</div>
+
+{%- comment -%} Product Cell Template {%- endcomment -%}
+<template data-comparison-product-template>
+  <td class="product-comparison__cell product-comparison__cell--product" data-product-id="">
+    <div class="product-comparison__product">
+      <button class="product-comparison__remove"
+              aria-label="{{ 'products.comparison.remove_product' | t }}"
+              data-comparison-remove>
+        <svg class="icon icon--close" viewBox="0 0 24 24" aria-hidden="true">
+          <path fill="currentColor" d="M19,6.41L17.59,5L12,10.59L6.41,5L5,6.41L10.59,12L5,17.59L6.41,19L12,13.41L17.59,19L19,17.59L13.41,12L19,6.41Z"/>
+        </svg>
+      </button>
+    </div>
+  </td>
+</template>
+
+{%- comment -%} Image Cell Template {%- endcomment -%}
+<template data-comparison-image-template>
+  <td class="product-comparison__cell product-comparison__cell--product">
+    <div class="product-comparison__image-wrapper">
+      <a href="" class="product-comparison__image-link">
+        <img class="product-comparison__image" src="" alt="" loading="lazy">
+      </a>
+      <h3 class="product-comparison__product-title">
+        <a href="" class="product-comparison__product-link"></a>
+      </h3>
+    </div>
+  </td>
+</template>
+
+{%- comment -%} Price Cell Template {%- endcomment -%}
+<template data-comparison-price-template>
+  <td class="product-comparison__cell product-comparison__cell--product">
+    <div class="product-comparison__price-wrapper">
+      <div class="product-comparison__price"></div>
+      <div class="product-comparison__compare-price"></div>
+    </div>
+  </td>
+</template>
+
+{%- comment -%} Rating Cell Template {%- endcomment -%}
+<template data-comparison-rating-template>
+  <td class="product-comparison__cell product-comparison__cell--product">
+    <div class="product-comparison__rating">
+      <div class="product-comparison__stars" aria-label="">
+        {%- for i in (1..5) -%}
+          <svg class="product-comparison__star" viewBox="0 0 24 24" aria-hidden="true">
+            <path fill="currentColor" d="M12,17.27L18.18,21L16.54,13.97L22,9.24L14.81,8.62L12,2L9.19,8.62L2,9.24L7.45,13.97L5.82,21L12,17.27Z"/>
+          </svg>
+        {%- endfor -%}
+      </div>
+      <span class="product-comparison__rating-count"></span>
+    </div>
+  </td>
+</template>
+
+{%- comment -%} Availability Cell Template {%- endcomment -%}
+<template data-comparison-availability-template>
+  <td class="product-comparison__cell product-comparison__cell--product">
+    <div class="product-comparison__availability">
+      <span class="product-comparison__availability-badge"></span>
+    </div>
+  </td>
+</template>
+
+{%- comment -%} Description Cell Template {%- endcomment -%}
+<template data-comparison-description-template>
+  <td class="product-comparison__cell product-comparison__cell--product">
+    <div class="product-comparison__description"></div>
+  </td>
+</template>
+
+{%- comment -%} Action Cell Template {%- endcomment -%}
+<template data-comparison-action-template>
+  <td class="product-comparison__cell product-comparison__cell--product">
+    <form class="product-comparison__form" data-product-form>
+      <input type="hidden" name="id" value="">
+      <button type="submit" class="product-comparison__add-button button button--primary"
+              data-add-to-cart>
+        {{ 'products.product.add_to_cart' | t }}
+      </button>
+    </form>
+  </td>
+</template>
+
+{%- comment -%} Sticky Product Template {%- endcomment -%}
+<template data-comparison-sticky-product-template>
+  <div class="product-comparison__sticky-product" data-product-id="">
+    <img class="product-comparison__sticky-image" src="" alt="">
+    <button class="product-comparison__sticky-remove"
+            aria-label="{{ 'products.comparison.remove_product' | t }}"
+            data-comparison-remove>
+      <svg class="icon icon--close-small" viewBox="0 0 24 24" aria-hidden="true">
+        <path fill="currentColor" d="M19,6.41L17.59,5L12,10.59L6.41,5L5,6.41L10.59,12L5,17.59L6.41,19L12,13.41L17.59,19L19,17.59L13.41,12L19,6.41Z"/>
+      </svg>
+    </button>
+  </div>
+</template>
+
+<script src="{{ 'product-comparison.js' | asset_url }}" defer></script>
+
+{% schema %}
+{
+  "name": "Product Comparison",
+  "tag": "section",
+  "class": "section-product-comparison",
+  "settings": [
+    {
+      "type": "text",
+      "id": "title",
+      "label": "Title",
+      "default": "Compare Products"
+    },
+    {
+      "type": "text",
+      "id": "subtitle",
+      "label": "Subtitle",
+      "default": "Select up to 4 products to compare their features side by side"
+    },
+    {
+      "type": "range",
+      "id": "max_products",
+      "min": 2,
+      "max": 6,
+      "step": 1,
+      "label": "Maximum products to compare",
+      "default": 4
+    },
+    {
+      "type": "checkbox",
+      "id": "show_sticky_bar",
+      "label": "Show sticky comparison bar",
+      "default": true,
+      "info": "Shows a sticky bar at the bottom when products are selected"
+    },
+    {
+      "type": "color_scheme",
+      "id": "color_scheme",
+      "label": "Color scheme",
+      "default": "background-1"
+    }
+  ],
+  "presets": [
+    {
+      "name": "Product Comparison"
+    }
+  ]
+}
+{% endschema %}
