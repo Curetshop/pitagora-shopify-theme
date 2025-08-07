@@ -1,0 +1,289 @@
+/* Color Scheme System - Apply color schemes to all elements */
+
+/* Default color scheme variables that work with our themes */
+:root {
+  /* Button colors */
+  --color-button-primary: rgb(var(--color-base-accent-1));
+  --color-button-primary-text: rgb(var(--color-base-solid-button-labels));
+  --color-button-secondary: transparent;
+  --color-button-secondary-text: rgb(var(--color-base-outline-button-labels));
+  --color-button-secondary-border: rgb(var(--color-base-outline-button-labels));
+
+  /* Text colors */
+  --color-text: rgb(var(--color-base-text));
+  --color-text-secondary: rgba(var(--color-base-text), 0.7);
+  --color-text-muted: rgba(var(--color-base-text), 0.5);
+
+  /* Background colors */
+  --color-background: rgb(var(--color-base-background-1));
+  --color-background-secondary: rgb(var(--color-base-background-2));
+
+  /* Accent colors */
+  --color-accent-primary: rgb(var(--color-base-accent-1));
+  --color-accent-secondary: rgb(var(--color-base-accent-2));
+
+  /* Border colors */
+  --color-border: rgba(var(--color-base-text), 0.1);
+  --color-border-light: rgba(var(--color-base-text), 0.05);
+}
+
+/* Color scheme application */
+.color-background-1 {
+  --color-background: rgb(var(--color-base-background-1));
+  --color-text: rgb(var(--color-base-text));
+  --color-border: rgba(var(--color-base-text), 0.1);
+  
+  background: var(--gradient-base-background-1, var(--color-background));
+  color: var(--color-text);
+}
+
+.color-background-2 {
+  --color-background: rgb(var(--color-base-background-2));
+  --color-text: rgb(var(--color-base-text));
+  --color-border: rgba(var(--color-base-text), 0.1);
+  
+  background: var(--gradient-base-background-2, var(--color-background));
+  color: var(--color-text);
+}
+
+.color-accent-1 {
+  --color-background: rgb(var(--color-base-accent-1));
+  --color-text: rgb(var(--color-base-solid-button-labels));
+  --color-border: rgba(var(--color-base-solid-button-labels), 0.2);
+  
+  background: var(--gradient-base-accent-1, var(--color-background));
+  color: var(--color-text);
+}
+
+.color-accent-2 {
+  --color-background: rgb(var(--color-base-accent-2));
+  --color-text: rgb(var(--color-base-solid-button-labels));
+  --color-border: rgba(var(--color-base-solid-button-labels), 0.2);
+  
+  background: var(--gradient-base-accent-2, var(--color-background));
+  color: var(--color-text);
+}
+
+.color-inverse {
+  --color-background: rgb(var(--color-base-text));
+  --color-text: rgb(var(--color-base-background-1));
+  --color-border: rgba(var(--color-base-background-1), 0.2);
+  
+  background: var(--color-background);
+  color: var(--color-text);
+}
+
+/* Apply to buttons */
+.btn,
+.button,
+.shopify-payment-button__button {
+  --color-button-bg: var(--color-button-primary);
+  --color-button-text: var(--color-button-primary-text);
+  --color-button-border: var(--color-button-primary);
+  
+  background-color: var(--color-button-bg) !important;
+  color: var(--color-button-text) !important;
+  border-color: var(--color-button-border) !important;
+  
+  border-radius: var(--buttons-radius);
+  border-width: var(--buttons-border-width);
+  border-style: solid;
+  
+  padding: 1rem 2rem;
+  font-weight: 600;
+  text-decoration: none;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  transition: all var(--transition-base);
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+}
+
+.btn:hover,
+.button:hover {
+  opacity: 0.9;
+  transform: translateY(-1px);
+}
+
+.btn--secondary,
+.button--secondary {
+  --color-button-bg: var(--color-button-secondary);
+  --color-button-text: var(--color-button-secondary-text);
+  --color-button-border: var(--color-button-secondary-border);
+}
+
+.btn--outline,
+.button--outline {
+  background-color: transparent !important;
+  color: var(--color-button-secondary-text) !important;
+  border-color: var(--color-button-secondary-border) !important;
+  border-width: 2px;
+}
+
+/* Apply to forms */
+.form-control,
+.input,
+input[type="text"],
+input[type="email"],
+input[type="tel"],
+input[type="password"],
+input[type="number"],
+select,
+textarea {
+  background-color: var(--color-background);
+  color: var(--color-text);
+  border: var(--inputs-border-width) solid rgba(var(--color-base-text), var(--inputs-border-opacity));
+  border-radius: var(--inputs-radius);
+  padding: 0.75rem 1rem;
+  font-size: 1rem;
+  line-height: 1.5;
+  transition: all var(--transition-base);
+}
+
+.form-control:focus,
+.input:focus,
+input:focus,
+select:focus,
+textarea:focus {
+  outline: none;
+  border-color: var(--color-accent-primary);
+  box-shadow: 0 0 0 2px rgba(var(--color-base-accent-1), 0.1);
+}
+
+/* Apply to cards */
+.card,
+.product-card,
+.collection-card {
+  background-color: var(--color-background);
+  color: var(--color-text);
+  border: var(--card-border-width) solid rgba(var(--color-base-text), var(--card-border-opacity));
+  border-radius: var(--card-corner-radius);
+  box-shadow: 
+    0 0 0 0 transparent,
+    0 0 0 0 rgba(var(--color-base-text), var(--card-shadow-opacity));
+  transition: all var(--transition-base);
+}
+
+.card:hover,
+.product-card:hover,
+.collection-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 
+    0 4px 12px rgba(var(--color-base-text), 0.1),
+    0 2px 4px rgba(var(--color-base-text), 0.08);
+}
+
+/* Typography using color scheme */
+h1, h2, h3, h4, h5, h6,
+.h1, .h2, .h3, .h4, .h5, .h6 {
+  color: var(--color-text);
+  font-family: var(--font-heading);
+  font-weight: var(--font-heading-weight);
+  line-height: 1.2;
+  margin-bottom: 1rem;
+}
+
+h1, .h1 { font-size: var(--font-size-4xl); }
+h2, .h2 { font-size: var(--font-size-3xl); }
+h3, .h3 { font-size: var(--font-size-2xl); }
+h4, .h4 { font-size: var(--font-size-xl); }
+h5, .h5 { font-size: var(--font-size-lg); }
+h6, .h6 { font-size: var(--font-size-base); }
+
+p, .text-base {
+  color: var(--color-text);
+  font-family: var(--font-body);
+  font-weight: var(--font-body-weight);
+  line-height: 1.6;
+  margin-bottom: 1rem;
+}
+
+.text-secondary {
+  color: var(--color-text-secondary);
+}
+
+.text-muted {
+  color: var(--color-text-muted);
+}
+
+/* Links */
+a {
+  color: var(--color-accent-primary);
+  text-decoration: none;
+  transition: all var(--transition-fast);
+}
+
+a:hover {
+  color: var(--color-accent-secondary);
+  text-decoration: underline;
+}
+
+/* Sections with proper color scheme inheritance */
+.section {
+  padding: var(--spacing-sections) 0;
+}
+
+.section-padding {
+  padding-top: var(--spacing-2xl);
+  padding-bottom: var(--spacing-2xl);
+}
+
+/* Grid system with proper spacing */
+.grid {
+  display: grid;
+  gap: var(--grid-gutter);
+}
+
+.grid--1-col { grid-template-columns: 1fr; }
+.grid--2-col { grid-template-columns: repeat(2, 1fr); }
+.grid--3-col { grid-template-columns: repeat(3, 1fr); }
+.grid--4-col { grid-template-columns: repeat(4, 1fr); }
+.grid--5-col { grid-template-columns: repeat(5, 1fr); }
+.grid--6-col { grid-template-columns: repeat(6, 1fr); }
+
+/* Responsive grid */
+.grid--1-col-mobile { grid-template-columns: 1fr; }
+.grid--2-col-mobile { grid-template-columns: repeat(2, 1fr); }
+
+@media (min-width: 768px) {
+  .grid--2-col-tablet { grid-template-columns: repeat(2, 1fr); }
+  .grid--3-col-tablet { grid-template-columns: repeat(3, 1fr); }
+  .grid--4-col-tablet { grid-template-columns: repeat(4, 1fr); }
+}
+
+@media (min-width: 1024px) {
+  .grid--2-col-desktop { grid-template-columns: repeat(2, 1fr); }
+  .grid--3-col-desktop { grid-template-columns: repeat(3, 1fr); }
+  .grid--4-col-desktop { grid-template-columns: repeat(4, 1fr); }
+  .grid--5-col-desktop { grid-template-columns: repeat(5, 1fr); }
+  .grid--6-col-desktop { grid-template-columns: repeat(6, 1fr); }
+}
+
+/* Page width container */
+.page-width {
+  max-width: var(--page-width);
+  margin: 0 auto;
+  padding: 0 var(--spacing-md);
+}
+
+/* Utility classes */
+.text-center { text-align: center; }
+.text-left { text-align: left; }
+.text-right { text-align: right; }
+
+.mb-0 { margin-bottom: 0; }
+.mb-1 { margin-bottom: var(--spacing-xs); }
+.mb-2 { margin-bottom: var(--spacing-sm); }
+.mb-3 { margin-bottom: var(--spacing-md); }
+.mb-4 { margin-bottom: var(--spacing-lg); }
+.mb-5 { margin-bottom: var(--spacing-xl); }
+
+.mt-0 { margin-top: 0; }
+.mt-1 { margin-top: var(--spacing-xs); }
+.mt-2 { margin-top: var(--spacing-sm); }
+.mt-3 { margin-top: var(--spacing-md); }
+.mt-4 { margin-top: var(--spacing-lg); }
+.mt-5 { margin-top: var(--spacing-xl); }

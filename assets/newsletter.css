@@ -1,9 +1,16 @@
+/* Premium Newsletter Section */
 .newsletter {
-  padding: var(--section-padding-y, 6rem) 0;
-  background: var(--newsletter-bg, var(--color-background));
-  color: var(--newsletter-text, var(--color-foreground));
+  padding: calc(var(--spacing-3xl) * 1.5) 0;
+  background: linear-gradient(
+    135deg,
+    rgba(var(--color-base-background-1), 1) 0%,
+    rgba(var(--color-base-background-2), 0.8) 100%
+  );
+  color: rgb(var(--color-base-text));
   position: relative;
   overflow: hidden;
+  border-top: 1px solid rgba(var(--color-base-text), 0.08);
+  border-bottom: 1px solid rgba(var(--color-base-text), 0.08);
 }
 
 .newsletter--has-bg-image {
@@ -45,17 +52,29 @@
 }
 
 .newsletter__heading {
-  margin: 0 0 1.5rem;
-  font-size: clamp(2.4rem, 4vw, 3.6rem);
-  font-weight: 600;
-  line-height: 1.2;
+  margin: 0 0 2rem;
+  font-family: var(--font-heading);
+  font-size: clamp(2.8rem, 5vw, 4.8rem);
+  font-weight: var(--font-heading-weight);
+  line-height: 1.1;
+  letter-spacing: -0.02em;
+  background: linear-gradient(
+    135deg, 
+    rgb(var(--color-base-text)), 
+    rgb(var(--color-base-accent-1))
+  );
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
 }
 
 .newsletter__subheading {
-  margin: 0 0 2rem;
-  font-size: 1.8rem;
-  opacity: 0.9;
+  margin: 0 0 2.5rem;
+  font-family: var(--font-body);
+  font-size: clamp(1.8rem, 3vw, 2.2rem);
+  opacity: 0.85;
   font-weight: 500;
+  color: rgba(var(--color-base-text), 0.8);
 }
 
 .newsletter__text {
@@ -97,7 +116,26 @@
 
 .newsletter__input {
   width: 100%;
-  padding: 1.4rem 1.6rem;
+  padding: 1.8rem 2rem;
+  font-family: var(--font-body);
+  font-size: 1.6rem;
+  background: rgba(var(--color-base-background-1), 0.8);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  border: 2px solid rgba(var(--color-base-text), 0.1);
+  border-radius: var(--inputs-radius, 1.2rem);
+  color: rgb(var(--color-base-text));
+  transition: all 0.4s cubic-bezier(0.4, 0.0, 0.2, 1);
+  box-shadow: 0 4px 16px rgba(var(--color-base-text), 0.08);
+}
+
+.newsletter__input:focus {
+  outline: none;
+  border-color: rgb(var(--color-base-accent-1));
+  box-shadow: 
+    0 0 0 4px rgba(var(--color-base-accent-1), 0.1),
+    0 8px 32px rgba(var(--color-base-accent-1), 0.15);
+  transform: translateY(-2px);
   border: 2px solid var(--color-border);
   border-radius: var(--border-radius);
   font-size: 1.6rem;

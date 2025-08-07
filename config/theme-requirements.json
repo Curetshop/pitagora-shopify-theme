@@ -1,0 +1,42 @@
+{
+  "theme_requirements": {
+    "online_store_2_0": true,
+    "color_schemes_required": true,
+    "sections_everywhere": true,
+    "app_blocks": true,
+    "dynamic_rendering": true,
+    "required_schemas": [
+      "color_scheme_group",
+      "font_picker",
+      "range",
+      "select",
+      "checkbox",
+      "text",
+      "textarea",
+      "image_picker",
+      "url",
+      "color",
+      "color_background"
+    ],
+    "required_color_schemes": [
+      "background-1",
+      "background-2", 
+      "accent-1",
+      "accent-2",
+      "inverse"
+    ],
+    "required_settings": [
+      "colors_solid_button_labels",
+      "colors_accent_1",
+      "colors_accent_2", 
+      "colors_text",
+      "colors_outline_button_labels",
+      "colors_background_1",
+      "colors_background_2",
+      "gradient_accent_1",
+      "gradient_accent_2",
+      "gradient_background_1",
+      "gradient_background_2"
+    ]
+  }
+} 

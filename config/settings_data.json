@@ -14,6 +14,11 @@
     "show_vendor": false,
     "ai_recommendation_algorithm": "collaborative",
     "voice_search_language": "es-ES",
+    "color_schemes": "background-1",
+    "type_header_font": "assistant_n4",
+    "heading_scale": 100,
+    "type_body_font": "assistant_n4",
+    "body_scale": 100,
     "colors_solid_button_labels": "#ffffff",
     "colors_accent_1": "#121212",
     "gradient_accent_1": "",
@@ -224,6 +229,7 @@
   },
   "color_schemes": {
     "background-1": {
+      "name": "Background 1",
       "settings": {
         "colors_solid_button_labels": "#ffffff",
         "colors_accent_1": "#121212", 
@@ -239,6 +245,7 @@
       }
     },
     "background-2": {
+      "name": "Background 2",
       "settings": {
         "colors_solid_button_labels": "#121212",
         "colors_accent_1": "#334fb4",
@@ -254,6 +261,7 @@
       }
     },
     "inverse": {
+      "name": "Inverse",
       "settings": {
         "colors_solid_button_labels": "#121212",
         "colors_accent_1": "#ffffff",
@@ -269,6 +277,7 @@
       }
     },
     "accent-1": {
+      "name": "Accent 1",
       "settings": {
         "colors_solid_button_labels": "#ffffff",
         "colors_accent_1": "#121212",
@@ -284,6 +293,7 @@
       }
     },
     "accent-2": {
+      "name": "Accent 2",
       "settings": {
         "colors_solid_button_labels": "#ffffff",
         "colors_accent_1": "#334fb4",
@@ -293,6 +303,22 @@
         "colors_text": "#ffffff",
         "colors_outline_button_labels": "#ffffff",
         "colors_background_1": "#334fb4",
+        "gradient_background_1": "",
+        "colors_background_2": "#121212",
+        "gradient_background_2": ""
+      }
+    },
+    "accent-3": {
+      "name": "Accent 3",
+      "settings": {
+        "colors_solid_button_labels": "#ffffff",
+        "colors_accent_1": "#e11d48",
+        "gradient_accent_1": "",
+        "colors_accent_2": "#121212",
+        "gradient_accent_2": "",
+        "colors_text": "#ffffff",
+        "colors_outline_button_labels": "#ffffff",
+        "colors_background_1": "#e11d48",
         "gradient_background_1": "",
         "colors_background_2": "#121212",
         "gradient_background_2": ""
