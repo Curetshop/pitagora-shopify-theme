@@ -219,7 +219,7 @@
   {{ 'custom-elements.js' | asset_url | script_tag }}
   
   {%- comment -%} Main JavaScript - Deferred for performance {%- endcomment -%}
-  {{ 'app.js' | asset_url | script_tag: defer: 'defer' }}
+  <script src="{{ 'app.js' | asset_url }}" defer></script>
 
   {%- comment -%} Remove no-js class {%- endcomment -%}
   <script>
@@ -243,7 +243,7 @@
 
   {%- comment -%} Theme editor support {%- endcomment -%}
   {%- if request.design_mode -%}
-    {{ 'theme-editor.js' | asset_url | script_tag: defer: 'defer' }}
+    <script src="{{ 'theme-editor.js' | asset_url }}" defer></script>
   {%- endif -%}
 
 </body>
