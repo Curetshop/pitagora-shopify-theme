@@ -50,6 +50,93 @@
     ]
   },
   {
+    "name": "Color schemes",
+    "settings": [
+      {
+        "type": "paragraph",
+        "content": "Choose from predefined color schemes or customize your own color palette."
+      },
+      {
+        "type": "color_scheme_group",
+        "id": "color_schemes",
+        "definition": [
+          {
+            "type": "color",
+            "id": "background",
+            "label": "Background",
+            "default": "#ffffff"
+          },
+          {
+            "type": "color",
+            "id": "background_2",
+            "label": "Secondary background", 
+            "default": "#f8fafc"
+          },
+          {
+            "type": "color",
+            "id": "text",
+            "label": "Text",
+            "default": "#1f2937"
+          },
+          {
+            "type": "color",
+            "id": "secondary_text",
+            "label": "Secondary text",
+            "default": "#6b7280"
+          },
+          {
+            "type": "color",
+            "id": "accent",
+            "label": "Accent",
+            "default": "#3b82f6"
+          },
+          {
+            "type": "color",
+            "id": "accent_2",
+            "label": "Secondary accent",
+            "default": "#10b981"
+          },
+          {
+            "type": "color",
+            "id": "button",
+            "label": "Button background",
+            "default": "#1f2937"
+          },
+          {
+            "type": "color",
+            "id": "button_text",
+            "label": "Button text",
+            "default": "#ffffff"
+          },
+          {
+            "type": "color",
+            "id": "button_secondary",
+            "label": "Secondary button background",
+            "default": "#ffffff"
+          },
+          {
+            "type": "color",
+            "id": "button_secondary_text",
+            "label": "Secondary button text",
+            "default": "#1f2937"
+          }
+        ],
+        "role": {
+          "background": "background",
+          "background_2": "background",
+          "text": "text", 
+          "secondary_text": "text",
+          "accent": "accent",
+          "accent_2": "accent",
+          "button": "accent",
+          "button_text": "text",
+          "button_secondary": "accent",
+          "button_secondary_text": "text"
+        }
+      }
+    ]
+  },
+  {
     "name": "Typography", 
     "settings": [
       {

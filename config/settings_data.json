@@ -135,6 +135,83 @@
     "cart_type": "notification",
     "show_cart_note": false,
     "cart_drawer_collection": "",
+    "color_scheme_definitions": [
+      {
+        "name": "Background 1",
+        "colors": {
+          "background": "#FFFFFF",
+          "background_2": "#F8FAFC",
+          "text": "#1F2937",
+          "secondary_text": "#6B7280",
+          "accent": "#3B82F6",
+          "accent_2": "#10B981",
+          "button": "#1F2937",
+          "button_text": "#FFFFFF",
+          "button_secondary": "#FFFFFF",
+          "button_secondary_text": "#1F2937"
+        }
+      },
+      {
+        "name": "Background 2",
+        "colors": {
+          "background": "#F8FAFC",
+          "background_2": "#F1F5F9",
+          "text": "#1F2937",
+          "secondary_text": "#64748B",
+          "accent": "#3B82F6",
+          "accent_2": "#10B981",
+          "button": "#3B82F6",
+          "button_text": "#FFFFFF",
+          "button_secondary": "#FFFFFF",
+          "button_secondary_text": "#3B82F6"
+        }
+      },
+      {
+        "name": "Inverse",
+        "colors": {
+          "background": "#1F2937",
+          "background_2": "#111827",
+          "text": "#FFFFFF",
+          "secondary_text": "#D1D5DB",
+          "accent": "#60A5FA",
+          "accent_2": "#34D399",
+          "button": "#3B82F6",
+          "button_text": "#FFFFFF",
+          "button_secondary": "#374151",
+          "button_secondary_text": "#FFFFFF"
+        }
+      },
+      {
+        "name": "Accent 1",
+        "colors": {
+          "background": "#EFF6FF",
+          "background_2": "#DBEAFE",
+          "text": "#1E3A8A",
+          "secondary_text": "#3730A3",
+          "accent": "#3B82F6",
+          "accent_2": "#1D4ED8",
+          "button": "#3B82F6",
+          "button_text": "#FFFFFF",
+          "button_secondary": "#DBEAFE",
+          "button_secondary_text": "#1E3A8A"
+        }
+      },
+      {
+        "name": "Accent 2",
+        "colors": {
+          "background": "#F0FDF4",
+          "background_2": "#DCFCE7",
+          "text": "#14532D",
+          "secondary_text": "#166534",
+          "accent": "#10B981",
+          "accent_2": "#059669",
+          "button": "#10B981",
+          "button_text": "#FFFFFF",
+          "button_secondary": "#DCFCE7",
+          "button_secondary_text": "#14532D"
+        }
+      }
+    ],
     "sections": {
       "header": {
         "type": "header",
@@ -201,15 +278,78 @@
       "logo_width": 90,
       "color_scheme_definitions": [
         {
-          "name": "Default",
+          "name": "Background 1",
           "colors": {
             "background": "#FFFFFF",
-            "background_gradient": "",
-            "text": "#121212",
-            "button": "#121212",
-            "button_label": "#FFFFFF",
-            "secondary_button_label": "#121212",
-            "shadow": "#121212"
+            "background_2": "#F8FAFC",
+            "text": "#1F2937",
+            "secondary_text": "#6B7280",
+            "accent": "#3B82F6",
+            "accent_2": "#10B981",
+            "button": "#1F2937",
+            "button_text": "#FFFFFF",
+            "button_secondary": "#FFFFFF",
+            "button_secondary_text": "#1F2937"
+          }
+        },
+        {
+          "name": "Background 2",
+          "colors": {
+            "background": "#F8FAFC",
+            "background_2": "#F1F5F9",
+            "text": "#1F2937",
+            "secondary_text": "#64748B",
+            "accent": "#3B82F6",
+            "accent_2": "#10B981",
+            "button": "#3B82F6",
+            "button_text": "#FFFFFF",
+            "button_secondary": "#FFFFFF",
+            "button_secondary_text": "#3B82F6"
+          }
+        },
+        {
+          "name": "Inverse",
+          "colors": {
+            "background": "#1F2937",
+            "background_2": "#111827",
+            "text": "#FFFFFF",
+            "secondary_text": "#D1D5DB",
+            "accent": "#60A5FA",
+            "accent_2": "#34D399",
+            "button": "#3B82F6",
+            "button_text": "#FFFFFF",
+            "button_secondary": "#374151",
+            "button_secondary_text": "#FFFFFF"
+          }
+        },
+        {
+          "name": "Accent 1",
+          "colors": {
+            "background": "#EFF6FF",
+            "background_2": "#DBEAFE",
+            "text": "#1E3A8A",
+            "secondary_text": "#3730A3",
+            "accent": "#3B82F6",
+            "accent_2": "#1D4ED8",
+            "button": "#3B82F6",
+            "button_text": "#FFFFFF",
+            "button_secondary": "#DBEAFE",
+            "button_secondary_text": "#1E3A8A"
+          }
+        },
+        {
+          "name": "Accent 2",
+          "colors": {
+            "background": "#F0FDF4",
+            "background_2": "#DCFCE7",
+            "text": "#14532D",
+            "secondary_text": "#166534",
+            "accent": "#10B981",
+            "accent_2": "#059669",
+            "button": "#10B981",
+            "button_text": "#FFFFFF",
+            "button_secondary": "#DCFCE7",
+            "button_secondary_text": "#14532D"
           }
         }
       ],
