@@ -1,0 +1,359 @@
+{%- comment -%}
+  Main Activate Account Section
+  Handles customer account activation functionality
+{%- endcomment -%}
+
+<div class="customer-activate-account section-{{ section.id }}-padding">
+  <div class="page-width{% if section.settings.show_form_wrapper %} form-wrapper{% endif %}">
+    
+    {%- if section.settings.show_divider -%}
+      <hr class="account-divider">
+    {%- endif -%}
+
+    <div class="activate-account-container">
+      
+      {%- comment -%} Header {%- endcomment -%}
+      <div class="activate-account-header">
+        <h1 class="activate-account-title">
+          {{ 'customer.activate_account.title' | t }}
+        </h1>
+        <p class="activate-account-subtitle">
+          {{ 'customer.activate_account.subtext' | t: email: customer.email }}
+        </p>
+      </div>
+
+      {%- comment -%} Activation Form {%- endcomment -%}
+      <div class="activate-account-form-wrapper">
+        {%- form 'activate_customer_password', class: 'activate-account-form' -%}
+          
+          {%- if form.errors -%}
+            <div class="form-status form-status--error" tabindex="-1" autofocus>
+              {{ form.errors | default_errors }}
+            </div>
+          {%- endif -%}
+
+          {%- if form.posted_successfully? -%}
+            <div class="form-status form-status--success">
+              <h3 class="form-status__title">{{ 'customer.activate_account.success' | t }}</h3>
+              <p>{{ 'customer.activate_account.success_text' | t }}</p>
+              <a href="{{ routes.account_url }}" class="button button--primary">
+                {{ 'customer.activate_account.submit_login' | t }}
+              </a>
+            </div>
+          {%- else -%}
+            
+            <div class="activate-form-fields">
+              <div class="field">
+                <input 
+                  type="password"
+                  name="customer[password]"
+                  id="ActivatePassword"
+                  class="field__input"
+                  autocomplete="new-password"
+                  placeholder="{{ 'customer.activate_account.password' | t }}"
+                  required
+                  {% if form.errors contains 'password' %}aria-invalid="true" aria-describedby="ActivatePassword-error"{% endif %}
+                >
+                <label class="field__label" for="ActivatePassword">
+                  {{ 'customer.activate_account.password' | t }}
+                </label>
+                {%- if form.errors contains 'password' -%}
+                  <small class="field__error" id="ActivatePassword-error">
+                    <span class="visually-hidden">{{ 'accessibility.error' | t }}</span>
+                    {{ form.errors.translated_fields.password | capitalize }}
+                    {{ form.errors.messages.password }}.
+                  </small>
+                {%- endif -%}
+              </div>
+
+              <div class="field">
+                <input 
+                  type="password"
+                  name="customer[password_confirmation]"
+                  id="ActivatePasswordConfirmation"
+                  class="field__input"
+                  autocomplete="new-password"
+                  placeholder="{{ 'customer.activate_account.password_confirm' | t }}"
+                  required
+                  {% if form.errors contains 'password_confirmation' %}aria-invalid="true" aria-describedby="ActivatePasswordConfirmation-error"{% endif %}
+                >
+                <label class="field__label" for="ActivatePasswordConfirmation">
+                  {{ 'customer.activate_account.password_confirm' | t }}
+                </label>
+                {%- if form.errors contains 'password_confirmation' -%}
+                  <small class="field__error" id="ActivatePasswordConfirmation-error">
+                    <span class="visually-hidden">{{ 'accessibility.error' | t }}</span>
+                    {{ form.errors.translated_fields.password_confirmation | capitalize }}
+                    {{ form.errors.messages.password_confirmation }}.
+                  </small>
+                {%- endif -%}
+              </div>
+            </div>
+
+            <div class="activate-form-actions">
+              <input 
+                type="submit" 
+                class="button button--primary activate-submit-button" 
+                value="{{ 'customer.activate_account.submit' | t }}"
+              >
+              <a href="{{ routes.account_login_url }}" class="activate-cancel-link">
+                {{ 'customer.activate_account.cancel' | t }}
+              </a>
+            </div>
+          {%- endif -%}
+
+        {%- endform -%}
+      </div>
+
+      {%- comment -%} Help Text {%- endcomment -%}
+      <div class="activate-account-help">
+        <p class="activate-help-text">
+          {{ 'customer.activate_account.password_requirements' | t }}
+        </p>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<style>
+  .customer-activate-account {
+    padding: var(--spacing-lg) 0;
+    background: rgb(var(--color-base-background-1));
+  }
+
+  .form-wrapper {
+    max-width: 50rem;
+    margin: 0 auto;
+  }
+
+  .account-divider {
+    border: none;
+    height: 1px;
+    background: rgba(var(--color-base-text), 0.1);
+    margin-bottom: var(--spacing-lg);
+  }
+
+  .activate-account-container {
+    background: rgba(var(--color-base-background-2), 0.3);
+    border-radius: 2rem;
+    padding: 4rem;
+    border: 1px solid rgba(var(--color-base-text), 0.08);
+  }
+
+  .activate-account-header {
+    text-align: center;
+    margin-bottom: 3rem;
+  }
+
+  .activate-account-title {
+    font-size: 2.8rem;
+    font-weight: 600;
+    color: rgb(var(--color-base-text));
+    margin-bottom: 1rem;
+  }
+
+  .activate-account-subtitle {
+    color: rgba(var(--color-base-text), 0.7);
+    font-size: 1.6rem;
+    line-height: 1.5;
+    margin: 0;
+  }
+
+  .activate-account-form-wrapper {
+    margin-bottom: 2rem;
+  }
+
+  .activate-form-fields {
+    margin-bottom: 2rem;
+  }
+
+  .field {
+    position: relative;
+    margin-bottom: 2rem;
+  }
+
+  .field__input {
+    width: 100%;
+    padding: 1.5rem;
+    border: 2px solid rgba(var(--color-base-text), 0.1);
+    border-radius: 1rem;
+    font-size: 1.6rem;
+    background: rgba(var(--color-base-background-1), 0.8);
+    color: rgb(var(--color-base-text));
+    transition: all 0.3s ease;
+  }
+
+  .field__input:focus {
+    outline: none;
+    border-color: rgb(var(--color-base-accent-1));
+    box-shadow: 0 0 0 4px rgba(var(--color-base-accent-1), 0.1);
+  }
+
+  .field__input[aria-invalid="true"] {
+    border-color: #e11d48;
+  }
+
+  .field__label {
+    position: absolute;
+    top: 50%;
+    left: 1.5rem;
+    transform: translateY(-50%);
+    color: rgba(var(--color-base-text), 0.5);
+    pointer-events: none;
+    transition: all 0.3s ease;
+    font-size: 1.4rem;
+  }
+
+  .field__input:focus + .field__label,
+  .field__input:not(:placeholder-shown) + .field__label {
+    top: -0.5rem;
+    left: 1rem;
+    font-size: 1.2rem;
+    background: rgb(var(--color-base-background-1));
+    padding: 0 0.5rem;
+    color: rgb(var(--color-base-accent-1));
+  }
+
+  .field__error {
+    display: block;
+    color: #e11d48;
+    font-size: 1.3rem;
+    margin-top: 0.5rem;
+  }
+
+  .activate-form-actions {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 1.5rem;
+  }
+
+  .activate-submit-button {
+    width: 100%;
+    padding: 1.5rem;
+    background: rgb(var(--color-base-accent-1));
+    color: rgb(var(--color-base-solid-button-labels));
+    border: none;
+    border-radius: 1rem;
+    font-size: 1.6rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+  }
+
+  .activate-submit-button:hover {
+    background: rgba(var(--color-base-accent-1), 0.9);
+    transform: translateY(-2px);
+    box-shadow: 0 8px 24px rgba(var(--color-base-accent-1), 0.3);
+  }
+
+  .activate-cancel-link {
+    color: rgba(var(--color-base-text), 0.6);
+    text-decoration: none;
+    font-size: 1.4rem;
+    transition: color 0.3s ease;
+  }
+
+  .activate-cancel-link:hover {
+    color: rgb(var(--color-base-accent-1));
+  }
+
+  .activate-account-help {
+    text-align: center;
+    border-top: 1px solid rgba(var(--color-base-text), 0.1);
+    padding-top: 2rem;
+  }
+
+  .activate-help-text {
+    color: rgba(var(--color-base-text), 0.6);
+    font-size: 1.3rem;
+    line-height: 1.5;
+    margin: 0;
+  }
+
+  .form-status {
+    padding: 1.5rem;
+    border-radius: 1rem;
+    margin-bottom: 2rem;
+    text-align: center;
+  }
+
+  .form-status--error {
+    background: rgba(225, 29, 72, 0.1);
+    color: #e11d48;
+    border: 1px solid rgba(225, 29, 72, 0.2);
+  }
+
+  .form-status--success {
+    background: rgba(16, 185, 129, 0.1);
+    color: #10b981;
+    border: 1px solid rgba(16, 185, 129, 0.2);
+  }
+
+  .form-status__title {
+    font-size: 1.8rem;
+    font-weight: 600;
+    margin-bottom: 1rem;
+  }
+
+  @media (max-width: 768px) {
+    .activate-account-container {
+      padding: 2rem;
+    }
+
+    .activate-account-title {
+      font-size: 2.4rem;
+    }
+
+    .activate-account-subtitle {
+      font-size: 1.4rem;
+    }
+  }
+</style>
+
+{% schema %}
+{
+  "name": "t:sections.main-activate-account.name",
+  "tag": "section",
+  "class": "section",
+  "settings": [
+    {
+      "type": "checkbox",
+      "id": "show_form_wrapper",
+      "default": true,
+      "label": "t:sections.main-activate-account.settings.show_form_wrapper.label"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_divider",
+      "default": true,
+      "label": "t:sections.main-activate-account.settings.show_divider.label"
+    },
+    {
+      "type": "header",
+      "content": "t:sections.all.padding.section_padding_heading"
+    },
+    {
+      "type": "range",
+      "id": "padding_top",
+      "min": 0,
+      "max": 100,
+      "step": 4,
+      "unit": "px",
+      "label": "t:sections.all.padding.padding_top",
+      "default": 36
+    },
+    {
+      "type": "range",
+      "id": "padding_bottom",
+      "min": 0,
+      "max": 100,
+      "step": 4,
+      "unit": "px",
+      "label": "t:sections.all.padding.padding_bottom",
+      "default": 36
+    }
+  ]
+}
+{% endschema %}

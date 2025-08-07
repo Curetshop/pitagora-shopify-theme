@@ -1,0 +1,103 @@
+User-agent: *
+
+{%- comment -%}
+Shopify Robots.txt Template - Enterprise SEO Configuration
+This file controls search engine crawling behavior for your Shopify store
+{%- endcomment -%}
+
+{%- comment -%} Block access during password protection {%- endcomment -%}
+{%- if shop.password_enabled -%}
+Disallow: /
+{%- else -%}
+
+{%- comment -%} Allow most content but protect sensitive areas {%- endcomment -%}
+Disallow: /admin
+Disallow: /cart
+Disallow: /orders
+Disallow: /checkouts/
+Disallow: /checkout
+Disallow: /carts
+Disallow: /account
+Disallow: /services/
+Disallow: /*.json$
+Disallow: /*?*sort_by*
+Disallow: /*?*page*
+Disallow: /search?*
+Disallow: /apple-app-site-association
+
+{%- comment -%} Block search and filter parameters {%- endcomment -%}
+Disallow: /*?*q=*
+Disallow: /*?*tag*
+Disallow: /*?*filter*
+Disallow: /*?*utm_*
+Disallow: /*?*ref*
+Disallow: /*?*fbclid*
+
+{%- comment -%} Block duplicate content from collections {%- endcomment -%}
+Disallow: /collections/*+*
+Disallow: /collections/*/products.json
+Disallow: /collections/*?*vendor*
+Disallow: /collections/*?*type*
+
+{%- comment -%} Block Shopify system files {%- endcomment -%}
+Disallow: /a/downloads/-/*
+Disallow: /admin
+Disallow: /analytics
+Disallow: /cart.js
+Disallow: /cart.json
+Disallow: /cart/add
+Disallow: /cart/add.js
+Disallow: /cart/update
+Disallow: /cart/update.js
+Disallow: /cart/change
+Disallow: /cart/change.js
+Disallow: /cart/clear
+Disallow: /cart/clear.js
+
+{%- comment -%} Block theme assets {%- endcomment -%}
+Disallow: /cdn/
+Disallow: /services/
+Disallow: /.well-known/
+Disallow: /wpm/
+Disallow: /cdn/
+Disallow: /s/javascripts/
+Disallow: /services/
+Disallow: /digital_wallets/
+
+{%- comment -%} Block tracking and analytics {%- endcomment -%}
+Disallow: /*?*_ke=*
+Disallow: /*?*_kx=*
+Disallow: /*?*klaviyo*
+Disallow: /*?*mc_*
+Disallow: /*?*utm_*
+Disallow: /*?*gclid*
+Disallow: /*?*gclsrc*
+
+{%- comment -%} Block preview and design mode {%- endcomment -%}
+Disallow: /*preview_theme_id*
+Disallow: /*?*preview_theme_id*
+Disallow: /*?*pb=*
+
+{%- comment -%} Allow important sections {%- endcomment -%}
+Allow: /products
+Allow: /collections
+Allow: /pages
+Allow: /blogs
+Allow: /policies
+
+{%- comment -%} Crawl delay for respectful crawling {%- endcomment -%}
+Crawl-delay: 1
+
+{%- endif -%}
+
+{%- comment -%} Sitemap reference {%- endcomment -%}
+Sitemap: https://{{ shop.domain }}/sitemap.xml
+
+{%- comment -%}
+Additional SEO considerations:
+- This robots.txt follows SEO best practices for Shopify stores
+- Blocks duplicate content and sensitive pages
+- Allows important content to be crawled
+- Includes sitemap reference for better indexing
+- Respects crawl rate limits
+{%- endcomment -%}
