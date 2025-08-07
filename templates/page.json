@@ -16,7 +16,7 @@
       "type": "page-content-blocks",
       "blocks": {
         "rich_text_1": {
-          "type": "rich_text",
+          "type": "text_block",
           "settings": {
             "heading": "",
             "text": "",
@@ -25,7 +25,7 @@
           }
         },
         "image_with_text_1": {
-          "type": "image_with_text", 
+          "type": "image_block", 
           "settings": {
             "image": "",
             "image_position": "left",
@@ -36,7 +36,7 @@
           }
         },
         "video_1": {
-          "type": "video",
+          "type": "video_block",
           "settings": {
             "video_url": "",
             "heading": "",

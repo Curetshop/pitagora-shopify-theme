@@ -140,7 +140,10 @@ Display search suggestions, popular searches, and trending products
                       <div class="search-suggestions__collection-list">
                         {%- assign collection_handles = block.settings.collection_list | split: ',' -%}
                         {%- for handle in collection_handles -%}
-                          {%- assign collection = collections[handle | strip] -%}
+                          {%- liquid
+                            assign handle_clean = handle | strip
+                            assign collection = collections[handle_clean]
+                          -%}
                           {%- if collection != blank -%}
                             <a href="{{ collection.url }}" class="search-suggestions__collection">
                               {%- if collection.featured_image -%}
