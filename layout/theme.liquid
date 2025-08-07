@@ -197,16 +197,17 @@
     <div class="loading-spinner"></div>
   </div>
 
-  {%- comment -%} Header group - Focal v4 pattern {%- endcomment -%}
-  {%- sections 'header-group' -%}
+  {%- comment -%} Header section {%- endcomment -%}
+  {%- section 'announcement-bar' -%}
+  {%- section 'header' -%}
 
   {%- comment -%} Main content area {%- endcomment -%}
   <main id="MainContent" class="main-content" role="main" tabindex="-1">
     {{ content_for_layout }}
   </main>
 
-  {%- comment -%} Footer group {%- endcomment -%}
-  {%- sections 'footer-group' -%}
+  {%- comment -%} Footer section {%- endcomment -%}
+  {%- section 'footer' -%}
 
   {%- comment -%} Drawer/Modal containers - Custom elements ready {%- endcomment -%}
   <div id="drawer-container"></div>
