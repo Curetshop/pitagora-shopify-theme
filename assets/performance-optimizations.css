@@ -1,0 +1,466 @@
+/* Performance Optimizations - Premium Theme Enhancements */
+
+/* ==========================================
+   CRITICAL CSS OPTIMIZATIONS
+   ========================================== */
+
+/* Hardware Acceleration for Animations */
+.mega-menu__panel,
+.video-hero__content,
+.cart-upsells__card,
+.product-bundles__item,
+.store-card,
+.product-comparison__row,
+.header,
+.cart-drawer,
+.modal {
+  will-change: transform;
+  transform: translateZ(0);
+}
+
+/* Optimize Backdrop Filters */
+.header,
+.mega-menu__panel,
+.cart-upsells__card,
+.product-bundles__summary,
+.store-locator__search-section,
+.video-hero__play-button,
+.cart-drawer {
+  -webkit-backdrop-filter: blur(20px) saturate(180%);
+  backdrop-filter: blur(20px) saturate(180%);
+  transform: translate3d(0, 0, 0);
+}
+
+/* ==========================================
+   ANIMATION PERFORMANCE
+   ========================================== */
+
+/* High-Performance Transforms */
+@keyframes optimizedSlideIn {
+  from {
+    opacity: 0;
+    transform: translate3d(0, 30px, 0);
+  }
+  to {
+    opacity: 1;
+    transform: translate3d(0, 0, 0);
+  }
+}
+
+@keyframes optimizedFadeIn {
+  from {
+    opacity: 0;
+    transform: translate3d(0, 0, 0) scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: translate3d(0, 0, 0) scale(1);
+  }
+}
+
+@keyframes optimizedSpin {
+  from {
+    transform: translate3d(0, 0, 0) rotate(0deg);
+  }
+  to {
+    transform: translate3d(0, 0, 0) rotate(360deg);
+  }
+}
+
+/* Replace existing animations with optimized versions */
+.cart-upsells__card,
+.product-bundles__item,
+.store-card,
+.product-comparison__cell--product {
+  animation: optimizedSlideIn 0.6s cubic-bezier(0.4, 0.0, 0.2, 1) forwards;
+}
+
+.modal-content,
+.cart-drawer__content,
+.mega-menu__panel {
+  animation: optimizedFadeIn 0.4s cubic-bezier(0.4, 0.0, 0.2, 1) forwards;
+}
+
+.spinner,
+.loading-spinner,
+.cart-upsells__add-spinner,
+.product-bundles__spinner,
+.store-locator__spinner {
+  animation: optimizedSpin 1s linear infinite;
+}
+
+/* ==========================================
+   LAYOUT OPTIMIZATIONS
+   ========================================== */
+
+/* Contain Layout Shifts */
+.product-grid,
+.cart-upsells__grid,
+.product-bundles__products,
+.store-locator__stores {
+  contain: layout style paint;
+}
+
+/* Optimize Grid Layouts */
+.product-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 2rem;
+  contain: layout;
+}
+
+@supports (display: subgrid) {
+  .product-grid {
+    display: subgrid;
+  }
+}
+
+/* Image Loading Optimizations */
+.product-image,
+.cart-upsells__image,
+.store-card__image,
+.video-hero__image {
+  object-fit: cover;
+  object-position: center;
+  image-rendering: optimizeQuality;
+  image-rendering: -webkit-optimize-contrast;
+}
+
+/* ==========================================
+   SCROLL OPTIMIZATIONS
+   ========================================== */
+
+/* Smooth Scrolling with Performance */
+html {
+  scroll-behavior: smooth;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+}
+
+/* Optimize Scrollable Areas */
+.cart-drawer__items,
+.mega-menu__panel-content,
+.store-locator__stores,
+.product-comparison__table-wrapper {
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: thin;
+  scrollbar-color: rgba(var(--color-base-text), 0.2) transparent;
+  overscroll-behavior: contain;
+}
+
+/* Custom Scrollbar for Webkit */
+.cart-drawer__items::-webkit-scrollbar,
+.store-locator__stores::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+.cart-drawer__items::-webkit-scrollbar-track,
+.store-locator__stores::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.cart-drawer__items::-webkit-scrollbar-thumb,
+.store-locator__stores::-webkit-scrollbar-thumb {
+  background: rgba(var(--color-base-text), 0.2);
+  border-radius: 3px;
+}
+
+.cart-drawer__items::-webkit-scrollbar-thumb:hover,
+.store-locator__stores::-webkit-scrollbar-thumb:hover {
+  background: rgba(var(--color-base-text), 0.3);
+}
+
+/* ==========================================
+   LOADING OPTIMIZATIONS
+   ========================================== */
+
+/* Critical Resource Hints */
+.preload-fonts {
+  font-display: swap;
+}
+
+/* Image Lazy Loading Enhancements */
+.lazy-image {
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+.lazy-image.loaded {
+  opacity: 1;
+}
+
+/* Progressive Enhancement Loading States */
+.loading-skeleton {
+  background: linear-gradient(90deg, 
+    rgba(var(--color-base-text), 0.05) 25%, 
+    rgba(var(--color-base-text), 0.1) 50%, 
+    rgba(var(--color-base-text), 0.05) 75%
+  );
+  background-size: 200% 100%;
+  animation: skeleton-loading 1.5s ease-in-out infinite;
+}
+
+@keyframes skeleton-loading {
+  0% {
+    background-position: 200% 0;
+  }
+  100% {
+    background-position: -200% 0;
+  }
+}
+
+/* ==========================================
+   INTERACTION OPTIMIZATIONS
+   ========================================== */
+
+/* Touch Target Optimization */
+.touch-target {
+  min-height: 44px;
+  min-width: 44px;
+  padding: 0.8rem;
+  touch-action: manipulation;
+}
+
+/* Button Interaction States */
+.button,
+.cart-upsells__add-button,
+.product-bundles__add-button,
+.store-card__action-button {
+  touch-action: manipulation;
+  user-select: none;
+  -webkit-user-select: none;
+  -webkit-touch-callout: none;
+  -webkit-tap-highlight-color: transparent;
+}
+
+/* Focus Optimization */
+.focus-visible,
+.button:focus-visible,
+.form-input:focus-visible {
+  outline: 2px solid rgb(var(--color-base-accent-1));
+  outline-offset: 2px;
+  transition: outline 0.15s ease;
+}
+
+/* ==========================================
+   MEMORY OPTIMIZATIONS
+   ========================================== */
+
+/* Limit DOM Complexity */
+.complex-section {
+  contain: layout style paint;
+}
+
+/* Optimize Video Elements */
+.video-hero__video {
+  preload: metadata;
+  poster: attr(data-poster);
+}
+
+@media (max-width: 768px) {
+  .video-hero__video {
+    preload: none;
+  }
+}
+
+/* ==========================================
+   CRITICAL PATH OPTIMIZATIONS
+   ========================================== */
+
+/* Above-the-fold optimizations */
+.hero-section,
+.header,
+.main-navigation {
+  contain: layout style;
+}
+
+/* Below-the-fold lazy loading */
+.footer,
+.newsletter-section,
+.testimonials {
+  content-visibility: auto;
+  contain-intrinsic-size: 0 400px;
+}
+
+/* ==========================================
+   RESPONSIVE PERFORMANCE
+   ========================================== */
+
+/* Mobile Performance Optimizations */
+@media (max-width: 768px) {
+  /* Reduce animation complexity on mobile */
+  .complex-animation {
+    animation-duration: 0.3s;
+    animation-timing-function: ease-out;
+  }
+  
+  /* Simplify shadows on mobile */
+  .card-shadow {
+    box-shadow: 0 2px 8px rgba(var(--color-base-text), 0.1);
+  }
+  
+  /* Optimize backdrop filters on mobile */
+  .mobile-backdrop {
+    -webkit-backdrop-filter: blur(10px);
+    backdrop-filter: blur(10px);
+  }
+}
+
+/* High DPI Display Optimizations */
+@media (-webkit-min-device-pixel-ratio: 2), (min-resolution: 192dpi) {
+  .high-dpi-optimized {
+    image-rendering: -webkit-optimize-contrast;
+    image-rendering: optimizeQuality;
+  }
+}
+
+/* ==========================================
+   ACCESSIBILITY PERFORMANCE
+   ========================================== */
+
+/* Reduced Motion Preferences */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+  
+  /* Keep essential loading animations */
+  .essential-spinner {
+    animation-duration: 1s !important;
+  }
+}
+
+/* High Contrast Mode Optimizations */
+@media (prefers-contrast: high) {
+  .glass-morphism {
+    background: rgb(var(--color-base-background-1));
+    backdrop-filter: none;
+    -webkit-backdrop-filter: none;
+    border: 2px solid rgb(var(--color-base-text));
+  }
+}
+
+/* ==========================================
+   PRINT OPTIMIZATIONS
+   ========================================== */
+
+@media print {
+  .no-print,
+  .video-hero,
+  .store-locator__map-wrapper,
+  .cart-drawer,
+  .modal {
+    display: none !important;
+  }
+  
+  .print-optimize {
+    background: white !important;
+    color: black !important;
+    box-shadow: none !important;
+    border: 1px solid #ccc !important;
+  }
+}
+
+/* ==========================================
+   PROGRESSIVE ENHANCEMENT
+   ========================================== */
+
+/* JavaScript Enhancement Classes */
+.js-enhanced .no-js-fallback {
+  display: none;
+}
+
+.no-js .js-only {
+  display: none;
+}
+
+/* WebP Support */
+.webp .jpg-fallback {
+  display: none;
+}
+
+.no-webp .webp-image {
+  display: none;
+}
+
+/* ==========================================
+   PERFORMANCE MONITORING
+   ========================================== */
+
+/* Mark performance-critical elements */
+.performance-critical {
+  /* This class is used for performance monitoring */
+  contain: layout style paint;
+}
+
+/* Mark interactive elements for monitoring */
+.interaction-tracking {
+  /* This class is used for interaction tracking */
+}
+
+/* ==========================================
+   FUTURE-PROOFING
+   ========================================== */
+
+/* Container Queries (when supported) */
+@supports (container-type: inline-size) {
+  .responsive-container {
+    container-type: inline-size;
+  }
+  
+  @container (min-width: 400px) {
+    .container-responsive {
+      grid-template-columns: repeat(2, 1fr);
+    }
+  }
+  
+  @container (min-width: 600px) {
+    .container-responsive {
+      grid-template-columns: repeat(3, 1fr);
+    }
+  }
+}
+
+/* CSS Cascade Layers (when supported) */
+@supports (at-rule(@layer)) {
+  @layer reset, base, components, utilities;
+  
+  @layer utilities {
+    .performance-utility {
+      contain: layout style paint;
+    }
+  }
+}
+
+/* ==========================================
+   DEBUGGING AIDS (Development Only)
+   ========================================== */
+
+/* Performance debugging (remove in production) */
+.debug-performance * {
+  outline: 1px solid red;
+}
+
+.debug-layout * {
+  background: rgba(255, 0, 0, 0.1);
+}
+
+/* Layout shift debugging */
+.debug-layout-shift {
+  animation: debug-shift 0.5s ease-in-out;
+}
+
+@keyframes debug-shift {
+  0% { background: yellow; }
+  100% { background: transparent; }
+}

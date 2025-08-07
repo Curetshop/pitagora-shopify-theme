@@ -56,6 +56,9 @@
   {{ 'critical.css' | asset_url | stylesheet_tag }}
   {{ 'color-scheme-system.css' | asset_url | stylesheet_tag }}
 
+  {%- comment -%} Performance optimizations CSS - Critical {%- endcomment -%}
+  {{ 'performance-optimizations.css' | asset_url | stylesheet_tag }}
+
   {%- comment -%} Preload non-critical CSS and load asynchronously {%- endcomment -%}
   <link rel="preload" href="{{ 'app.css' | asset_url }}" as="style" onload="this.onload=null;this.rel='stylesheet'">
   <noscript><link rel="stylesheet" href="{{ 'app.css' | asset_url }}"></noscript>
@@ -219,6 +222,9 @@
   {{ 'error-handler.js' | asset_url | script_tag }}
   {{ 'css-loader.js' | asset_url | script_tag }}
   {{ 'custom-elements.js' | asset_url | script_tag }}
+  
+  {%- comment -%} Performance optimizations JavaScript - Critical for Web Vitals {%- endcomment -%}
+  <script src="{{ 'performance-optimizations.js' | asset_url }}" defer></script>
   
   {%- comment -%} Main JavaScript - Deferred for performance {%- endcomment -%}
   <script src="{{ 'app.js' | asset_url }}" defer></script>
