@@ -143,19 +143,38 @@ function mergeDeep(target, source) {
 function updateTranslations() {
   try {
     // Leer el archivo actual
-    const currentContent = fs.readFileSync(translationsFile, 'utf8');
+    let currentContent = fs.readFileSync(translationsFile, 'utf8');
+    
+    // Remover comentarios del inicio del archivo si existen
+    const jsonStartIndex = currentContent.indexOf('{');
+    if (jsonStartIndex > 0) {
+      currentContent = currentContent.substring(jsonStartIndex);
+    }
+    
     const currentTranslations = JSON.parse(currentContent);
     
-    // Crear backup
+    // Crear backup con el contenido original
+    const originalContent = fs.readFileSync(translationsFile, 'utf8');
     const backupFile = translationsFile.replace('.json', '.backup.json');
-    fs.writeFileSync(backupFile, currentContent);
+    fs.writeFileSync(backupFile, originalContent);
     console.log(`✅ Backup creado: ${backupFile}`);
     
     // Fusionar las traducciones
     const updatedTranslations = mergeDeep(currentTranslations, criticalTranslations);
     
-    // Escribir el archivo actualizado
-    const updatedContent = JSON.stringify(updatedTranslations, null, 2);
+    // Escribir el archivo actualizado preservando los comentarios
+    const updatedJSON = JSON.stringify(updatedTranslations, null, 2);
+    const header = `/*
+ * ------------------------------------------------------------
+ * IMPORTANT: The contents of this file are auto-generated.
+ *
+ * This file may be updated by the Shopify admin language editor
+ * or related systems. Please exercise caution as any changes
+ * made to this file may be overwritten.
+ * ------------------------------------------------------------
+ */
+`;
+    const updatedContent = header + updatedJSON;
     fs.writeFileSync(translationsFile, updatedContent);
     
     console.log('✅ Traducciones actualizadas exitosamente');

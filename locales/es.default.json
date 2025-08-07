@@ -9,6 +9,11 @@
  */
 {
   "general": {
+    "404": {
+      "title": "Página no encontrada",
+      "subtext": "La página que estás buscando no existe.",
+      "link": "Continuar comprando"
+    },
     "accessibility": {
       "skip_to_content": "Saltar al contenido",
       "loading": "Cargando...",
@@ -56,14 +61,15 @@
       "tags": "Etiquetado \"{{ tags }}\"",
       "page": "Página {{ page }}"
     },
-    "404": {
-      "title": "Página no encontrada",
-      "subtext": "La página que estás buscando no existe.",
-      "link": "Continuar comprando"
-    },
     "instagram": {
       "setup_required": "Se requiere configuración de Instagram",
-      "setup_instructions": "Para mostrar publicaciones de Instagram, configura tu cuenta en las opciones del tema."
+      "setup_instructions": "Para mostrar publicaciones de Instagram, configura tu cuenta en las opciones del tema.",
+      "loading": "Cargando publicaciones de Instagram...",
+      "demo_caption": "Publicación de ejemplo {{ number }}",
+      "view_post": "Ver publicación en Instagram",
+      "learn_more": "Aprender más",
+      "error_title": "Error al cargar Instagram",
+      "follow_us": "Síguenos en Instagram @{{ username }}"
     },
     "pagination": {
       "previous": "Anterior",
@@ -81,7 +87,22 @@
       "signup_form_email_label": "Email",
       "signup_form_submit": "Enviar",
       "admin_link_html": "¿Eres el propietario de la tienda? <a href=\"/admin\" class=\"text-link\">Entra aquí</a>"
-    }
+    },
+    "search": {
+      "title": "Buscar",
+      "placeholder": "Buscar productos...",
+      "search": "Buscar",
+      "submit": "Enviar búsqueda",
+      "loading": "Buscando..."
+    },
+    "newsletter": {
+      "name": "Nombre",
+      "name_placeholder": "Tu nombre",
+      "email": "Email",
+      "email_placeholder": "Tu email",
+      "submitting": "Enviando..."
+    },
+    "continue_shopping": "Continuar comprando"
   },
   "products": {
     "product": {
@@ -109,7 +130,27 @@
       "in_stock": "En stock",
       "out_of_stock": "Agotado",
       "low_stock": "{{ count }} disponibles",
-      "you_might_like": "También te puede gustar"
+      "you_might_like": "También te puede gustar",
+      "coming_soon": "Próximamente",
+      "add_to_wishlist": "Añadir a favoritos",
+      "quick_add_to_cart": "Añadir rápidamente al carrito",
+      "color_swatch_label": "Color: {{ color }}",
+      "media": {
+        "zoom_image": "Ampliar imagen",
+        "play_video": "Reproducir video",
+        "load_model": "Cargar modelo 3D",
+        "video_alt": "Video: {{ title }}",
+        "load_image": "Cargar imagen {{ index }}"
+      },
+      "view_in_space_label": "Ver en espacio 3D",
+      "view_in_space": "Ver en espacio 3D",
+      "next_incoming_date": "Próximo envío: {{ date }}",
+      "notify_when_available": "Notificarme cuando esté disponible",
+      "price": {
+        "from_price_html": "Desde {{ price }}"
+      },
+      "shipping_policy_html": "Envío calculado en el <a href=\"{{ link }}\">checkout</a>",
+      "taxes_included_and_shipping_policy_html": "Impuestos incluidos. <a href=\"{{ link }}\">Envío</a> calculado en el checkout"
     },
     "recommendations": {
       "loading": "Cargando recomendaciones..."
@@ -198,7 +239,18 @@
       "items_with_count": {
         "one": "{{ count }} artículo",
         "other": "{{ count }} artículos"
-      }
+      },
+      "products_count": "{{ count }} productos",
+      "no_products": "No hay productos",
+      "no_products_message": "No se encontraron productos que coincidan con los filtros aplicados",
+      "empty": "Colección vacía",
+      "empty_message": "Esta colección no tiene productos",
+      "browse_all": "Explorar todos los productos",
+      "load_more": "Cargar más",
+      "loading": "Cargando...",
+      "filter_and_sort": "Filtrar y ordenar",
+      "no_products_html": "No se encontraron productos. <a href=\"/collections/all\">Ver todos los productos</a>",
+      "items": "artículos"
     },
     "sorting": {
       "title": "Ordenar por",
@@ -209,7 +261,17 @@
       "price_low_to_high": "Precio, menor a mayor",
       "price_high_to_low": "Precio, mayor a menor",
       "date_old_to_new": "Fecha, antigua a nueva",
-      "date_new_to_old": "Fecha, nueva a antigua"
+      "date_new_to_old": "Fecha, nueva a antigua",
+      "options": {
+        "manual": "Destacados",
+        "best_selling": "Más vendidos",
+        "title_ascending": "Alfabéticamente, A-Z",
+        "title_descending": "Alfabéticamente, Z-A",
+        "price_ascending": "Precio, menor a mayor",
+        "price_descending": "Precio, mayor a menor",
+        "created_descending": "Fecha, nueva a antigua",
+        "created_ascending": "Fecha, antigua a nueva"
+      }
     },
     "filters": {
       "title_tags": "Filtrar",
@@ -217,7 +279,18 @@
       "categories": "Categorías",
       "clear_all": "Limpiar todo",
       "apply": "Aplicar",
-      "clear": "Limpiar"
+      "clear": "Limpiar",
+      "remove_filter": "Eliminar filtro {{ filter }}: {{ value }}",
+      "price_from": "Precio desde",
+      "price_to": "Precio hasta",
+      "clear_price": "Limpiar precio",
+      "search_placeholder": "Buscar en {{ filter }}",
+      "show_more": "Mostrar más",
+      "show_less": "Mostrar menos"
+    },
+    "view": {
+      "grid": "Vista de cuadrícula",
+      "list": "Vista de lista"
     }
   },
   "search": {
@@ -234,7 +307,7 @@
     "suggestions": {
       "title": "Sugerencias:",
       "products": "Productos",
-      "collections": "Colecciones", 
+      "collections": "Colecciones",
       "pages": "Páginas",
       "articles": "Artículos"
     }
@@ -245,7 +318,7 @@
       "read_more_title": "Leer más: {{ title }}",
       "read_more": "Leer más",
       "author": "por {{ author }}",
-      "older_post": "Entrada anterior", 
+      "older_post": "Entrada anterior",
       "newer_post": "Entrada siguiente",
       "tags": "Etiquetas",
       "comment_form_title": "Dejar un comentario",
@@ -260,7 +333,7 @@
       "title": "Dejar un comentario",
       "name": "Nombre",
       "email": "Email",
-      "message": "Mensaje", 
+      "message": "Mensaje",
       "post": "Publicar comentario",
       "moderated": "Ten en cuenta que los comentarios deben aprobarse antes de que se publiquen",
       "success": "Tu comentario se publicó correctamente. ¡Gracias!",
@@ -302,7 +375,8 @@
       "cart_count": {
         "one": "{{ count }} artículo",
         "other": "{{ count }} artículos"
-      }
+      },
+      "blog": "Blog"
     },
     "cart": {
       "title": "Tu carrito",
@@ -318,7 +392,8 @@
       "taxes_and_shipping_policy_at_checkout_html": "Impuestos y <a href=\"{{ link }}\">envío</a> calculados en el checkout",
       "taxes_included_but_shipping_at_checkout": "Impuestos incluidos y envío calculado en el checkout",
       "taxes_included_and_shipping_policy_html": "Impuestos incluidos. <a href=\"{{ link }}\">Envío</a> calculado en el checkout",
-      "taxes_and_shipping_at_checkout": "Impuestos y envío calculados en el checkout"
+      "taxes_and_shipping_at_checkout": "Impuestos y envío calculados en el checkout",
+      "empty_description": "Tu carrito está vacío. ¡Agrega algunos productos para comenzar!"
     },
     "footer": {
       "payment": "Métodos de pago"
@@ -407,6 +482,18 @@
       "blog_excerpt": "Tu tienda no ha publicado ninguna entrada del blog. Un blog se puede usar para hablar sobre lanzamientos de nuevos productos, consejos u otras noticias que quieras compartir con tus clientes. Puedes consultar el blog de comercio electrónico de Shopify para obtener inspiración e ideas para tu propia tienda y blog.",
       "blog_author": "Nombre del autor",
       "no_content": "Esta sección no incluye contenido actualmente. Agrega contenido a esta sección usando la barra lateral."
+    }
+  },
+  "templates": {
+    "404": {
+      "title": "Página no encontrada",
+      "subtext": "La página que buscas no existe",
+      "go_back": "Volver atrás",
+      "popular_links": "Enlaces populares",
+      "browse_collections": "Explora nuestras colecciones",
+      "search_products": "Busca productos específicos",
+      "read_blog": "Lee nuestro blog",
+      "account_access": "Accede a tu cuenta"
     }
   }
 }
