@@ -1,9 +1,9 @@
 # 🚀 PITAGORA THEME
 ## El Primer Tema Shopify con Inteligencia Artificial y Búsqueda por Voz
 
-[![Version](https://img.shields.io/badge/version-5.0.0-blue.svg)](https://github.com/pitagora-theme)
-[![AI Powered](https://img.shields.io/badge/AI-Powered-purple.svg)](https://github.com/pitagora-theme)
-[![Voice Search](https://img.shields.io/badge/Voice-Search-green.svg)](https://github.com/pitagora-theme)
+[![Version](https://img.shields.io/badge/version-5.0.0-blue.svg)](https://github.com/Curetshop/pitagora-shopify-theme/releases)
+[![AI Powered](https://img.shields.io/badge/AI-Powered-purple.svg)](https://github.com/Curetshop/pitagora-shopify-theme)
+[![Voice Search](https://img.shields.io/badge/Voice-Search-green.svg)](https://github.com/Curetshop/pitagora-shopify-theme)
 [![Lighthouse](https://img.shields.io/badge/Lighthouse-95/100-brightgreen.svg)](https://developers.google.com/web/tools/lighthouse)
 [![License](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
 
@@ -20,11 +20,20 @@
 
 ---
 
-## ⚡ QUICK START
+## 🚨 IMPORTANT: Installation & Configuration
+
+This theme requires proper setup to work correctly after downloading from GitHub:
+
+### Prerequisites
+- Shopify Partner account or store
+- Node.js 14+ installed
+- Shopify CLI installed
+
+### Installation Steps
 
 ```bash
 # Clonar el repositorio
-git clone https://github.com/your-repo/pitagora-theme.git
+git clone https://github.com/Curetshop/pitagora-shopify-theme.git
 
 # Instalar Shopify CLI
 npm install -g @shopify/cli @shopify/theme

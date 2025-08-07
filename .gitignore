@@ -34,7 +34,7 @@ tmp/
 temp/
 
 # Theme specific ignores
-config/settings_data.json
+# config/settings_data.json - Needed for GitHub installations
 
 # Backup files
 *backup*
