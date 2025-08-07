@@ -344,6 +344,7 @@
       "next": "Siguiente",
       "no_articles": "No hay artículos en este blog",
       "no_articles_description": "Vuelve a consultar pronto para ver nuevas entradas del blog.",
+      "no_articles_html": "No hay artículos relacionados. <a href=\"/blogs\">Ver todos los blogs</a>",
       "comments": {
         "one": "{{ count }} comentario",
         "other": "{{ count }} comentarios"
@@ -482,6 +483,14 @@
       "blog_excerpt": "Tu tienda no ha publicado ninguna entrada del blog. Un blog se puede usar para hablar sobre lanzamientos de nuevos productos, consejos u otras noticias que quieras compartir con tus clientes. Puedes consultar el blog de comercio electrónico de Shopify para obtener inspiración e ideas para tu propia tienda y blog.",
       "blog_author": "Nombre del autor",
       "no_content": "Esta sección no incluye contenido actualmente. Agrega contenido a esta sección usando la barra lateral."
+    }
+  },
+  "newsletter": {
+    "label": "Email"
+  },
+  "header": {
+    "general": {
+      "menu": "Menú"
     }
   },
   "templates": {
