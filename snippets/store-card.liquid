@@ -1,0 +1,223 @@
+{%- liquid
+  assign store_index = store_index | default: 1
+  assign store_name = block.settings.store_name
+  assign address = block.settings.address
+  assign city = block.settings.city
+  assign state = block.settings.state
+  assign zip = block.settings.zip
+  assign country = block.settings.country
+  assign phone = block.settings.phone
+  assign email = block.settings.email
+  assign website = block.settings.website
+  assign latitude = block.settings.latitude
+  assign longitude = block.settings.longitude
+  assign store_type = block.settings.store_type
+  assign description = block.settings.description
+  assign store_image = block.settings.store_image
+  
+  # Services
+  assign pickup_available = block.settings.pickup_available
+  assign fitting_room = block.settings.fitting_room
+  assign repair_service = block.settings.repair_service
+  
+  # Hours
+  assign hours_monday = block.settings.hours_monday
+  assign hours_tuesday = block.settings.hours_tuesday
+  assign hours_wednesday = block.settings.hours_wednesday
+  assign hours_thursday = block.settings.hours_thursday
+  assign hours_friday = block.settings.hours_friday
+  assign hours_saturday = block.settings.hours_saturday
+  assign hours_sunday = block.settings.hours_sunday
+  
+  # Full address
+  assign full_address = address
+  if city != blank
+    assign full_address = full_address | append: ', ' | append: city
+  endif
+  if state != blank
+    assign full_address = full_address | append: ', ' | append: state
+  endif
+  if zip != blank
+    assign full_address = full_address | append: ' ' | append: zip
+  endif
+-%}
+
+<div class="store-card" 
+     data-store-id="{{ block.id }}"
+     data-store-lat="{{ latitude }}"
+     data-store-lng="{{ longitude }}"
+     data-store-type="{{ store_type }}"
+     data-store-services="{{ pickup_available }},{{ fitting_room }},{{ repair_service }}"
+     {{ block.shopify_attributes }}>
+  
+  {%- comment -%} Store Image {%- endcomment -%}
+  {%- if store_image != blank -%}
+    <div class="store-card__image-wrapper">
+      {{ store_image | image_url: width: 400 | image_tag: 
+        class: 'store-card__image',
+        loading: 'lazy',
+        sizes: '(min-width: 768px) 300px, 250px',
+        widths: '250, 300, 400, 500'
+      }}
+      
+      {%- comment -%} Store Type Badge {%- endcomment -%}
+      <div class="store-card__badge store-card__badge--{{ store_type }}">
+        {%- case store_type -%}
+          {%- when 'flagship' -%}
+            {{ 'store_locator.flagship' | t }}
+          {%- when 'outlet' -%}
+            {{ 'store_locator.outlet' | t }}
+          {%- when 'partner' -%}
+            {{ 'store_locator.partner' | t }}
+        {%- endcase -%}
+      </div>
+    </div>
+  {%- endif -%}
+
+  {%- comment -%} Store Info {%- endcomment -%}
+  <div class="store-card__content">
+    
+    {%- comment -%} Header {%- endcomment -%}
+    <div class="store-card__header">
+      <h3 class="store-card__name">{{ store_name }}</h3>
+      
+      {%- comment -%} Distance (will be populated by JS) {%- endcomment -%}
+      <div class="store-card__distance" data-store-distance style="display: none;"></div>
+    </div>
+    
+    {%- comment -%} Address {%- endcomment -%}
+    <div class="store-card__address">
+      <svg class="store-card__address-icon" viewBox="0 0 24 24" aria-hidden="true">
+        <path fill="currentColor" d="M12,11.5A2.5,2.5 0 0,1 9.5,9A2.5,2.5 0 0,1 12,6.5A2.5,2.5 0 0,1 14.5,9A2.5,2.5 0 0,1 12,11.5M12,2A7,7 0 0,0 5,9C5,14.25 12,22 12,22C12,22 19,14.25 19,9A7,7 0 0,0 12,2Z"/>
+      </svg>
+      <span class="store-card__address-text">{{ full_address }}</span>
+    </div>
+    
+    {%- comment -%} Contact Info {%- endcomment -%}
+    <div class="store-card__contact">
+      {%- if phone != blank -%}
+        <a href="tel:{{ phone | replace: ' ', '' | replace: '(', '' | replace: ')', '' | replace: '-', '' }}" 
+           class="store-card__contact-item store-card__phone">
+          <svg class="store-card__contact-icon" viewBox="0 0 24 24" aria-hidden="true">
+            <path fill="currentColor" d="M6.62,10.79C8.06,13.62 10.38,15.94 13.21,17.38L15.41,15.18C15.69,14.9 16.08,14.82 16.43,14.93C17.55,15.3 18.75,15.5 20,15.5A1,1 0 0,1 21,16.5V20A1,1 0 0,1 20,21A17,17 0 0,1 3,4A1,1 0 0,1 4,3H7.5A1,1 0 0,1 8.5,4C8.5,5.25 8.7,6.45 9.07,7.57C9.18,7.92 9.1,8.31 8.82,8.59L6.62,10.79Z"/>
+          </svg>
+          <span>{{ phone }}</span>
+        </a>
+      {%- endif -%}
+      
+      {%- if email != blank -%}
+        <a href="mailto:{{ email }}" class="store-card__contact-item store-card__email">
+          <svg class="store-card__contact-icon" viewBox="0 0 24 24" aria-hidden="true">
+            <path fill="currentColor" d="M20,8L12,13L4,8V6L12,11L20,6M20,4H4C2.89,4 2,4.89 2,6V18A2,2 0 0,0 4,20H20A2,2 0 0,0 22,18V6C22,4.89 21.1,4 20,4Z"/>
+          </svg>
+          <span>{{ email }}</span>
+        </a>
+      {%- endif -%}
+      
+      {%- if website != blank -%}
+        <a href="{{ website }}" 
+           target="_blank" 
+           rel="noopener noreferrer"
+           class="store-card__contact-item store-card__website">
+          <svg class="store-card__contact-icon" viewBox="0 0 24 24" aria-hidden="true">
+            <path fill="currentColor" d="M16.36,14C16.44,13.34 16.5,12.68 16.5,12C16.5,11.32 16.44,10.66 16.36,10H19.74C19.9,10.64 20,11.31 20,12C20,12.69 19.9,13.36 19.74,14M14.59,19.56C15.19,18.45 15.65,17.25 15.97,16H18.92C17.96,17.65 16.43,18.93 14.59,19.56M14.34,14H9.66C9.56,13.34 9.5,12.68 9.5,12C9.5,11.32 9.56,10.65 9.66,10H14.34C14.43,10.65 14.5,11.32 14.5,12C14.5,12.68 14.43,13.34 14.34,14M12,19.96C11.17,18.76 10.5,17.43 10.09,16H13.91C13.5,17.43 12.83,18.76 12,19.96M8,8H5.08C6.03,6.34 7.57,5.06 9.4,4.44C8.8,5.55 8.35,6.75 8,8M5.08,16H8C8.35,17.25 8.8,18.45 9.4,19.56C7.57,18.93 6.03,17.65 5.08,16M4.26,14C4.1,13.36 4,12.69 4,12C4,11.31 4.1,10.64 4.26,10H7.64C7.56,10.66 7.5,11.32 7.5,12C7.5,12.68 7.56,13.34 7.64,14M12,4.03C12.83,5.23 13.5,6.57 13.91,8H10.09C10.5,6.57 11.17,5.23 12,4.03M18.92,8H15.97C15.65,6.75 15.19,5.55 14.59,4.44C16.43,5.07 17.96,6.34 18.92,8M12,2C6.47,2 2,6.5 2,12A10,10 0 0,0 12,22A10,10 0 0,0 22,12A10,10 0 0,0 12,2Z"/>
+          </svg>
+          <span>{{ 'store_locator.visit_website' | t }}</span>
+        </a>
+      {%- endif -%}
+    </div>
+    
+    {%- comment -%} Services {%- endcomment -%}
+    {%- if pickup_available or fitting_room or repair_service -%}
+      <div class="store-card__services">
+        <div class="store-card__services-label">{{ 'store_locator.services' | t }}:</div>
+        <div class="store-card__services-list">
+          {%- if pickup_available -%}
+            <span class="store-card__service">
+              <svg class="store-card__service-icon" viewBox="0 0 24 24" aria-hidden="true">
+                <path fill="currentColor" d="M18,8H17V6A5,5 0 0,0 12,1A5,5 0 0,0 7,6V8H6A2,2 0 0,0 4,10V20A2,2 0 0,0 6,22H18A2,2 0 0,0 20,20V10A2,2 0 0,0 18,8M9,6A3,3 0 0,1 12,3A3,3 0 0,1 15,6V8H9V6M18,20H6V10H18V20M12,17A2,2 0 0,1 10,15A2,2 0 0,1 12,13A2,2 0 0,1 14,15A2,2 0 0,1 12,17Z"/>
+              </svg>
+              {{ 'store_locator.pickup' | t }}
+            </span>
+          {%- endif -%}
+          
+          {%- if fitting_room -%}
+            <span class="store-card__service">
+              <svg class="store-card__service-icon" viewBox="0 0 24 24" aria-hidden="true">
+                <path fill="currentColor" d="M12,2A2,2 0 0,1 14,4A2,2 0 0,1 12,6A2,2 0 0,1 10,4A2,2 0 0,1 12,2M21,9V7L15,1H9V3H15.5L20.5,8H3L8,2H9V1A1,1 0 0,0 8,0H7A1,1 0 0,0 6,1V3H4.5L1,7V9A1,1 0 0,0 0,10V11A1,1 0 0,0 1,12H3V22A1,1 0 0,0 4,23H20A1,1 0 0,0 21,22V12H23A1,1 0 0,0 24,11V10A1,1 0 0,0 23,9H21M19,12V21H5V12H19Z"/>
+              </svg>
+              {{ 'store_locator.fitting_room' | t }}
+            </span>
+          {%- endif -%}
+          
+          {%- if repair_service -%}
+            <span class="store-card__service">
+              <svg class="store-card__service-icon" viewBox="0 0 24 24" aria-hidden="true">
+                <path fill="currentColor" d="M22.7,19L13.6,9.9C14.5,7.6 14,4.9 12.1,3C10.1,1 7.1,0.6 4.7,1.7L9,6L6,9L1.6,4.7C0.4,7.1 0.9,10.1 2.9,12.1C4.8,14 7.5,14.5 9.8,13.6L18.9,22.7C19.3,23.1 19.9,23.1 20.3,22.7L22.6,20.4C23.1,20 23.1,19.3 22.7,19Z"/>
+              </svg>
+              {{ 'store_locator.repair_service' | t }}
+            </span>
+          {%- endif -%}
+        </div>
+      </div>
+    {%- endif -%}
+    
+    {%- comment -%} Current Hours {%- endcomment -%}
+    <div class="store-card__hours">
+      <div class="store-card__hours-today" data-store-hours>
+        <svg class="store-card__hours-icon" viewBox="0 0 24 24" aria-hidden="true">
+          <path fill="currentColor" d="M12,2A10,10 0 0,0 2,12A10,10 0 0,0 12,22A10,10 0 0,0 22,12A10,10 0 0,0 12,2M16.2,16.2L11,13V7H12.5V12.2L17,14.7L16.2,16.2Z"/>
+        </svg>
+        <span class="store-card__hours-text" data-current-hours>
+          {%- comment -%} Current day hours will be populated by JS {%- endcomment -%}
+          {{ 'store_locator.view_hours' | t }}
+        </span>
+      </div>
+    </div>
+    
+    {%- comment -%} Actions {%- endcomment -%}
+    <div class="store-card__actions">
+      <button class="store-card__action-button store-card__action-button--directions"
+              data-get-directions
+              data-address="{{ full_address | escape }}">
+        <svg class="store-card__action-icon" viewBox="0 0 24 24" aria-hidden="true">
+          <path fill="currentColor" d="M21.71,11.29L12.71,2.29C12.32,1.9 11.69,1.9 11.3,2.29L2.29,11.29C1.9,11.68 1.9,12.32 2.29,12.71L11.3,21.71C11.69,22.1 12.32,22.1 12.71,21.71L21.71,12.71C22.1,12.32 22.1,11.68 21.71,11.29M13,17.42V10.5H17L12,5.5L7,10.5H11V17.42L6.41,12.83L5,14.24L12,21.24L19,14.24L17.59,12.83L13,17.42Z"/>
+        </svg>
+        {{ 'store_locator.directions' | t }}
+      </button>
+      
+      <button class="store-card__action-button store-card__action-button--details"
+              data-view-details
+              data-store-id="{{ block.id }}">
+        <svg class="store-card__action-icon" viewBox="0 0 24 24" aria-hidden="true">
+          <path fill="currentColor" d="M11,9H13V7H11M12,20C7.59,20 4,16.41 4,12C4,7.59 7.59,4 12,4C16.41,4 20,7.59 20,12C20,16.41 16.41,20 12,20M12,2A10,10 0 0,0 2,12A10,10 0 0,0 12,22A10,10 0 0,0 22,12A10,10 0 0,0 12,2M11,17H13V11H11V17Z"/>
+        </svg>
+        {{ 'store_locator.details' | t }}
+      </button>
+      
+      <button class="store-card__action-button store-card__action-button--map"
+              data-show-on-map
+              data-store-lat="{{ latitude }}"
+              data-store-lng="{{ longitude }}"
+              data-store-name="{{ store_name | escape }}">
+        <svg class="store-card__action-icon" viewBox="0 0 24 24" aria-hidden="true">
+          <path fill="currentColor" d="M15,19L9,16.89V5L15,7.11M20.5,3C20.44,3 20.39,3 20.34,3L15,5.1L9,3L3.36,4.9C3.15,4.97 3,5.15 3,5.38V20.5A0.5,0.5 0 0,0 3.5,21C3.55,21 3.61,21 3.66,21L9,18.9L15,21L20.64,19.1C20.85,19.03 21,18.85 21,18.62V3.5A0.5,0.5 0 0,0 20.5,3Z"/>
+        </svg>
+        {{ 'store_locator.show_on_map' | t }}
+      </button>
+    </div>
+  </div>
+
+  {%- comment -%} Hidden store data for JS {%- endcomment -%}
+  <script type="application/json" data-store-hours>
+    {
+      "monday": {{ hours_monday | json }},
+      "tuesday": {{ hours_tuesday | json }},
+      "wednesday": {{ hours_wednesday | json }},
+      "thursday": {{ hours_thursday | json }},
+      "friday": {{ hours_friday | json }},
+      "saturday": {{ hours_saturday | json }},
+      "sunday": {{ hours_sunday | json }}
+    }
+  </script>
+</div>

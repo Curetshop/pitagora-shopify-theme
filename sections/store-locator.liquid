@@ -1,0 +1,574 @@
+{{ 'store-locator.css' | asset_url | stylesheet_tag }}
+
+{%- liquid
+  assign map_api_key = section.settings.map_api_key
+  assign default_lat = section.settings.default_lat | default: 40.7128
+  assign default_lng = section.settings.default_lng | default: -74.0060
+  assign default_zoom = section.settings.default_zoom | default: 12
+  assign show_search_filters = section.settings.show_search_filters
+  assign max_search_radius = section.settings.max_search_radius | default: 50
+  assign color_scheme = section.settings.color_scheme
+-%}
+
+<div class="store-locator color-{{ color_scheme }}" 
+     data-section-id="{{ section.id }}"
+     data-api-key="{{ map_api_key }}"
+     data-default-lat="{{ default_lat }}"
+     data-default-lng="{{ default_lng }}"
+     data-default-zoom="{{ default_zoom }}"
+     data-max-radius="{{ max_search_radius }}">
+  
+  {%- comment -%} Header {%- endcomment -%}
+  <div class="store-locator__header">
+    <div class="page-width">
+      <h2 class="store-locator__title">
+        {{ section.settings.title | default: 'Find Our Stores' }}
+      </h2>
+      {%- if section.settings.subtitle != blank -%}
+        <p class="store-locator__subtitle">{{ section.settings.subtitle }}</p>
+      {%- endif -%}
+    </div>
+  </div>
+
+  {%- comment -%} Main Container {%- endcomment -%}
+  <div class="store-locator__container page-width">
+    
+    {%- comment -%} Search & Filters {%- endcomment -%}
+    <div class="store-locator__search-section">
+      
+      {%- comment -%} Location Search {%- endcomment -%}
+      <div class="store-locator__search-wrapper">
+        <div class="store-locator__search-input-wrapper">
+          <input type="text" 
+                 class="store-locator__search-input"
+                 data-location-search
+                 placeholder="{{ 'store_locator.search_placeholder' | t }}"
+                 autocomplete="off">
+          <button type="button" 
+                  class="store-locator__search-button"
+                  data-search-submit
+                  aria-label="{{ 'store_locator.search_button' | t }}">
+            <svg class="store-locator__search-icon" viewBox="0 0 24 24" aria-hidden="true">
+              <path fill="currentColor" d="M9.5,3A6.5,6.5 0 0,1 16,9.5C16,11.11 15.41,12.59 14.44,13.73L14.71,14H15.5L20.5,19L19,20.5L14,15.5V14.71L13.73,14.44C12.59,15.41 11.11,16 9.5,16A6.5,6.5 0 0,1 3,9.5A6.5,6.5 0 0,1 9.5,3M9.5,5C7,5 5,7 5,9.5C5,12 7,14 9.5,14C12,14 14,12 14,9.5C14,7 12,5 9.5,5Z"/>
+            </svg>
+          </button>
+          <button type="button" 
+                  class="store-locator__location-button"
+                  data-use-location
+                  aria-label="{{ 'store_locator.use_location' | t }}"
+                  title="{{ 'store_locator.use_location' | t }}">
+            <svg class="store-locator__location-icon" viewBox="0 0 24 24" aria-hidden="true">
+              <path fill="currentColor" d="M12,11.5A2.5,2.5 0 0,1 9.5,9A2.5,2.5 0 0,1 12,6.5A2.5,2.5 0 0,1 14.5,9A2.5,2.5 0 0,1 12,11.5M12,2A7,7 0 0,0 5,9C5,14.25 12,22 12,22C12,22 19,14.25 19,9A7,7 0 0,0 12,2Z"/>
+            </svg>
+          </button>
+        </div>
+        
+        {%- comment -%} Search Results Dropdown {%- endcomment -%}
+        <div class="store-locator__search-results" data-search-results style="display: none;"></div>
+      </div>
+      
+      {%- comment -%} Filters {%- endcomment -%}
+      {%- if show_search_filters -%}
+        <div class="store-locator__filters">
+          
+          {%- comment -%} Distance Filter {%- endcomment -%}
+          <div class="store-locator__filter-group">
+            <label class="store-locator__filter-label">{{ 'store_locator.distance' | t }}</label>
+            <select class="store-locator__filter-select" data-distance-filter>
+              <option value="">{{ 'store_locator.any_distance' | t }}</option>
+              <option value="5">5 {{ 'store_locator.miles' | t }}</option>
+              <option value="10">10 {{ 'store_locator.miles' | t }}</option>
+              <option value="25">25 {{ 'store_locator.miles' | t }}</option>
+              <option value="50">50 {{ 'store_locator.miles' | t }}</option>
+            </select>
+          </div>
+          
+          {%- comment -%} Store Type Filter {%- endcomment -%}
+          <div class="store-locator__filter-group">
+            <label class="store-locator__filter-label">{{ 'store_locator.store_type' | t }}</label>
+            <select class="store-locator__filter-select" data-type-filter>
+              <option value="">{{ 'store_locator.all_types' | t }}</option>
+              <option value="flagship">{{ 'store_locator.flagship' | t }}</option>
+              <option value="outlet">{{ 'store_locator.outlet' | t }}</option>
+              <option value="partner">{{ 'store_locator.partner' | t }}</option>
+            </select>
+          </div>
+          
+          {%- comment -%} Services Filter {%- endcomment -%}
+          <div class="store-locator__filter-group">
+            <label class="store-locator__filter-label">{{ 'store_locator.services' | t }}</label>
+            <div class="store-locator__checkbox-group">
+              <label class="store-locator__checkbox-wrapper">
+                <input type="checkbox" class="store-locator__checkbox" data-service-filter value="pickup">
+                <span class="store-locator__checkmark"></span>
+                <span class="store-locator__checkbox-label">{{ 'store_locator.pickup' | t }}</span>
+              </label>
+              <label class="store-locator__checkbox-wrapper">
+                <input type="checkbox" class="store-locator__checkbox" data-service-filter value="fitting">
+                <span class="store-locator__checkmark"></span>
+                <span class="store-locator__checkbox-label">{{ 'store_locator.fitting_room' | t }}</span>
+              </label>
+              <label class="store-locator__checkbox-wrapper">
+                <input type="checkbox" class="store-locator__checkbox" data-service-filter value="repair">
+                <span class="store-locator__checkmark"></span>
+                <span class="store-locator__checkbox-label">{{ 'store_locator.repair_service' | t }}</span>
+              </label>
+            </div>
+          </div>
+        </div>
+      {%- endif -%}
+    </div>
+
+    {%- comment -%} Content Area {%- endcomment -%}
+    <div class="store-locator__content">
+      
+      {%- comment -%} Map Container {%- endcomment -%}
+      <div class="store-locator__map-wrapper">
+        <div class="store-locator__map" 
+             data-map-container
+             aria-label="{{ 'store_locator.map_label' | t }}">
+          
+          {%- comment -%} Loading State {%- endcomment -%}
+          <div class="store-locator__map-loading" data-map-loading>
+            <div class="store-locator__spinner"></div>
+            <p class="store-locator__loading-text">{{ 'store_locator.loading_map' | t }}</p>
+          </div>
+          
+          {%- comment -%} Error State {%- endcomment -%}
+          <div class="store-locator__map-error" data-map-error style="display: none;">
+            <div class="store-locator__error-icon">
+              <svg viewBox="0 0 24 24" aria-hidden="true">
+                <path fill="currentColor" d="M13,14H11V10H13M13,18H11V16H13M1,21H23L12,2L1,21Z"/>
+              </svg>
+            </div>
+            <h3 class="store-locator__error-title">{{ 'store_locator.map_error_title' | t }}</h3>
+            <p class="store-locator__error-text">{{ 'store_locator.map_error_text' | t }}</p>
+            <button class="store-locator__retry-button button button--secondary" data-retry-map>
+              {{ 'store_locator.retry' | t }}
+            </button>
+          </div>
+        </div>
+        
+        {%- comment -%} Map Controls {%- endcomment -%}
+        <div class="store-locator__map-controls">
+          <button class="store-locator__control-button" 
+                  data-reset-map
+                  aria-label="{{ 'store_locator.reset_map' | t }}">
+            <svg viewBox="0 0 24 24" aria-hidden="true">
+              <path fill="currentColor" d="M12,2A10,10 0 0,0 2,12A10,10 0 0,0 12,22A10,10 0 0,0 22,12A10,10 0 0,0 12,2M18,11H13L14.5,9.5C13.66,8.66 12.38,8.66 11.54,9.5C10.7,10.34 10.7,11.62 11.54,12.46L12,12.92L12.46,12.46C13.3,11.62 13.3,10.34 12.46,9.5L11,11H6L12,2L18,11Z"/>
+            </svg>
+          </button>
+          
+          <button class="store-locator__control-button" 
+                  data-fullscreen-map
+                  aria-label="{{ 'store_locator.fullscreen' | t }}">
+            <svg viewBox="0 0 24 24" aria-hidden="true">
+              <path fill="currentColor" d="M5,5H10V7H7V10H5V5M14,5H19V10H17V7H14V5M17,14H19V19H14V17H17V14M10,17V19H5V14H7V17H10Z"/>
+            </svg>
+          </button>
+        </div>
+      </div>
+
+      {%- comment -%} Store List {%- endcomment -%}
+      <div class="store-locator__sidebar">
+        
+        {%- comment -%} Results Header {%- endcomment -%}
+        <div class="store-locator__results-header">
+          <h3 class="store-locator__results-title" data-results-title>
+            {{ 'store_locator.all_stores' | t }}
+          </h3>
+          <div class="store-locator__results-count" data-results-count>
+            {%- if section.blocks.size > 0 -%}
+              {{ section.blocks.size }} {{ 'store_locator.stores_found' | t }}
+            {%- endif -%}
+          </div>
+        </div>
+        
+        {%- comment -%} Store Cards {%- endcomment -%}
+        <div class="store-locator__stores" data-stores-list>
+          
+          {%- if section.blocks.size > 0 -%}
+            {%- for block in section.blocks -%}
+              {%- case block.type -%}
+                {%- when 'store' -%}
+                  {%- render 'store-card', 
+                      block: block,
+                      store_index: forloop.index -%}
+              {%- endcase -%}
+            {%- endfor -%}
+          {%- else -%}
+            
+            {%- comment -%} Empty State {%- endcomment -%}
+            <div class="store-locator__empty" data-empty-state>
+              <div class="store-locator__empty-icon">
+                <svg viewBox="0 0 24 24" aria-hidden="true">
+                  <path fill="currentColor" d="M19,7H18V6A2,2 0 0,0 16,4H8A2,2 0 0,0 6,6V7H5A1,1 0 0,0 4,8V19A3,3 0 0,0 7,22H17A3,3 0 0,0 20,19V8A1,1 0 0,0 19,7M8,6H16V7H8V6M18,19A1,1 0 0,1 17,20H7A1,1 0 0,1 6,19V9H18V19Z"/>
+                </svg>
+              </div>
+              <h3 class="store-locator__empty-title">{{ 'store_locator.no_stores_title' | t }}</h3>
+              <p class="store-locator__empty-text">{{ 'store_locator.no_stores_text' | t }}</p>
+            </div>
+            
+          {%- endif -%}
+        </div>
+        
+        {%- comment -%} No Results State {%- endcomment -%}
+        <div class="store-locator__no-results" data-no-results style="display: none;">
+          <div class="store-locator__no-results-icon">
+            <svg viewBox="0 0 24 24" aria-hidden="true">
+              <path fill="currentColor" d="M9.5,3A6.5,6.5 0 0,1 16,9.5C16,11.11 15.41,12.59 14.44,13.73L14.71,14H15.5L20.5,19L19,20.5L14,15.5V14.71L13.73,14.44C12.59,15.41 11.11,16 9.5,16A6.5,6.5 0 0,1 3,9.5A6.5,6.5 0 0,1 9.5,3M9.5,5C7,5 5,7 5,9.5C5,12 7,14 9.5,14C12,14 14,12 14,9.5C14,7 12,5 9.5,5Z"/>
+            </svg>
+          </div>
+          <h3 class="store-locator__no-results-title">{{ 'store_locator.no_results_title' | t }}</h3>
+          <p class="store-locator__no-results-text">{{ 'store_locator.no_results_text' | t }}</p>
+          <button class="store-locator__clear-filters button button--secondary" data-clear-filters>
+            {{ 'store_locator.clear_filters' | t }}
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  {%- comment -%} Store Detail Modal {%- endcomment -%}
+  <store-modal class="store-locator__modal" data-store-modal style="display: none;">
+    <div class="store-locator__modal-overlay" data-modal-overlay>
+      <div class="store-locator__modal-content" data-modal-content>
+        
+        <button class="store-locator__modal-close" 
+                data-modal-close
+                aria-label="{{ 'accessibility.close' | t }}">
+          <svg class="icon icon--close" viewBox="0 0 24 24" aria-hidden="true">
+            <path fill="currentColor" d="M19,6.41L17.59,5L12,10.59L6.41,5L5,6.41L10.59,12L5,17.59L6.41,19L12,13.41L17.59,19L19,17.59L13.41,12L19,6.41Z"/>
+          </svg>
+        </button>
+
+        <div class="store-locator__modal-body" data-modal-body>
+          {%- comment -%} Store details will be loaded here {%- endcomment -%}
+        </div>
+      </div>
+    </div>
+  </store-modal>
+</div>
+
+{%- comment -%} Store Data JSON {%- endcomment -%}
+<script type="application/json" data-stores-data>
+  {
+    "stores": [
+      {%- for block in section.blocks -%}
+        {%- case block.type -%}
+          {%- when 'store' -%}
+            {
+              "id": "{{ block.id }}",
+              "name": {{ block.settings.store_name | json }},
+              "address": {{ block.settings.address | json }},
+              "city": {{ block.settings.city | json }},
+              "state": {{ block.settings.state | json }},
+              "zip": {{ block.settings.zip | json }},
+              "country": {{ block.settings.country | json }},
+              "phone": {{ block.settings.phone | json }},
+              "email": {{ block.settings.email | json }},
+              "website": {{ block.settings.website | json }},
+              "lat": {{ block.settings.latitude | default: 0 }},
+              "lng": {{ block.settings.longitude | default: 0 }},
+              "type": {{ block.settings.store_type | json }},
+              "services": [
+                {%- assign services = '' -%}
+                {%- if block.settings.pickup_available -%}
+                  {%- assign services = services | append: 'pickup,' -%}
+                {%- endif -%}
+                {%- if block.settings.fitting_room -%}
+                  {%- assign services = services | append: 'fitting,' -%}
+                {%- endif -%}
+                {%- if block.settings.repair_service -%}
+                  {%- assign services = services | append: 'repair,' -%}
+                {%- endif -%}
+                {{ services | remove_last: ',' | split: ',' | json }}
+              ],
+              "hours": {
+                "monday": {{ block.settings.hours_monday | json }},
+                "tuesday": {{ block.settings.hours_tuesday | json }},
+                "wednesday": {{ block.settings.hours_wednesday | json }},
+                "thursday": {{ block.settings.hours_thursday | json }},
+                "friday": {{ block.settings.hours_friday | json }},
+                "saturday": {{ block.settings.hours_saturday | json }},
+                "sunday": {{ block.settings.hours_sunday | json }}
+              },
+              "description": {{ block.settings.description | json }},
+              "image": {{ block.settings.store_image | image_url: width: 600 | json }}
+            }{% unless forloop.last %},{% endunless %}
+        {%- endcase -%}
+      {%- endfor -%}
+    ]
+  }
+</script>
+
+<script src="{{ 'store-locator.js' | asset_url }}" defer></script>
+
+{% schema %}
+{
+  "name": "Store Locator",
+  "tag": "section",
+  "class": "section-store-locator",
+  "settings": [
+    {
+      "type": "header",
+      "content": "Content"
+    },
+    {
+      "type": "text",
+      "id": "title",
+      "label": "Title",
+      "default": "Find Our Stores"
+    },
+    {
+      "type": "textarea",
+      "id": "subtitle",
+      "label": "Subtitle",
+      "info": "Optional subtitle text"
+    },
+    {
+      "type": "header",
+      "content": "Map Settings"
+    },
+    {
+      "type": "text",
+      "id": "map_api_key",
+      "label": "Google Maps API Key",
+      "info": "Required for map functionality. Get your API key from Google Cloud Console."
+    },
+    {
+      "type": "number",
+      "id": "default_lat",
+      "label": "Default latitude",
+      "default": 40.7128,
+      "info": "Center of map when no search is performed"
+    },
+    {
+      "type": "number",
+      "id": "default_lng",
+      "label": "Default longitude",
+      "default": -74.0060,
+      "info": "Center of map when no search is performed"
+    },
+    {
+      "type": "range",
+      "id": "default_zoom",
+      "min": 1,
+      "max": 20,
+      "step": 1,
+      "label": "Default zoom level",
+      "default": 12
+    },
+    {
+      "type": "header",
+      "content": "Search & Filters"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_search_filters",
+      "label": "Show search filters",
+      "default": true
+    },
+    {
+      "type": "range",
+      "id": "max_search_radius",
+      "min": 10,
+      "max": 200,
+      "step": 5,
+      "unit": "miles",
+      "label": "Maximum search radius",
+      "default": 50
+    },
+    {
+      "type": "color_scheme",
+      "id": "color_scheme",
+      "label": "Color scheme",
+      "default": "background-1"
+    }
+  ],
+  "blocks": [
+    {
+      "type": "store",
+      "name": "Store Location",
+      "settings": [
+        {
+          "type": "header",
+          "content": "Store Information"
+        },
+        {
+          "type": "text",
+          "id": "store_name",
+          "label": "Store name",
+          "default": "Store Location"
+        },
+        {
+          "type": "textarea",
+          "id": "address",
+          "label": "Street address"
+        },
+        {
+          "type": "text",
+          "id": "city",
+          "label": "City"
+        },
+        {
+          "type": "text",
+          "id": "state",
+          "label": "State/Province"
+        },
+        {
+          "type": "text",
+          "id": "zip",
+          "label": "ZIP/Postal code"
+        },
+        {
+          "type": "text",
+          "id": "country",
+          "label": "Country",
+          "default": "United States"
+        },
+        {
+          "type": "number",
+          "id": "latitude",
+          "label": "Latitude",
+          "info": "Required for map display. Use Google Maps to find coordinates."
+        },
+        {
+          "type": "number",
+          "id": "longitude",
+          "label": "Longitude",
+          "info": "Required for map display. Use Google Maps to find coordinates."
+        },
+        {
+          "type": "header",
+          "content": "Contact Information"
+        },
+        {
+          "type": "text",
+          "id": "phone",
+          "label": "Phone number"
+        },
+        {
+          "type": "email",
+          "id": "email",
+          "label": "Email address"
+        },
+        {
+          "type": "url",
+          "id": "website",
+          "label": "Website URL"
+        },
+        {
+          "type": "header",
+          "content": "Store Details"
+        },
+        {
+          "type": "select",
+          "id": "store_type",
+          "label": "Store type",
+          "options": [
+            {
+              "value": "flagship",
+              "label": "Flagship Store"
+            },
+            {
+              "value": "outlet",
+              "label": "Outlet Store"
+            },
+            {
+              "value": "partner",
+              "label": "Partner Store"
+            }
+          ],
+          "default": "flagship"
+        },
+        {
+          "type": "textarea",
+          "id": "description",
+          "label": "Store description"
+        },
+        {
+          "type": "image_picker",
+          "id": "store_image",
+          "label": "Store image"
+        },
+        {
+          "type": "header",
+          "content": "Services Available"
+        },
+        {
+          "type": "checkbox",
+          "id": "pickup_available",
+          "label": "Pickup available",
+          "default": true
+        },
+        {
+          "type": "checkbox",
+          "id": "fitting_room",
+          "label": "Fitting room available",
+          "default": false
+        },
+        {
+          "type": "checkbox",
+          "id": "repair_service",
+          "label": "Repair service available",
+          "default": false
+        },
+        {
+          "type": "header",
+          "content": "Store Hours"
+        },
+        {
+          "type": "text",
+          "id": "hours_monday",
+          "label": "Monday hours",
+          "default": "9:00 AM - 9:00 PM",
+          "info": "Use format: '9:00 AM - 9:00 PM' or 'Closed'"
+        },
+        {
+          "type": "text",
+          "id": "hours_tuesday",
+          "label": "Tuesday hours",
+          "default": "9:00 AM - 9:00 PM"
+        },
+        {
+          "type": "text",
+          "id": "hours_wednesday",
+          "label": "Wednesday hours",
+          "default": "9:00 AM - 9:00 PM"
+        },
+        {
+          "type": "text",
+          "id": "hours_thursday",
+          "label": "Thursday hours",
+          "default": "9:00 AM - 9:00 PM"
+        },
+        {
+          "type": "text",
+          "id": "hours_friday",
+          "label": "Friday hours",
+          "default": "9:00 AM - 9:00 PM"
+        },
+        {
+          "type": "text",
+          "id": "hours_saturday",
+          "label": "Saturday hours",
+          "default": "10:00 AM - 8:00 PM"
+        },
+        {
+          "type": "text",
+          "id": "hours_sunday",
+          "label": "Sunday hours",
+          "default": "11:00 AM - 6:00 PM"
+        }
+      ]
+    }
+  ],
+  "max_blocks": 50,
+  "presets": [
+    {
+      "name": "Store Locator"
+    }
+  ]
+}
+{% endschema %}
