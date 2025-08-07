@@ -9,8 +9,11 @@
  */
 {
   "current": {
+    "heading_font": "arvo_n4",
     "logo_width": 90,
     "show_vendor": false,
+    "ai_recommendation_algorithm": "collaborative",
+    "voice_search_language": "es-ES",
     "colors_solid_button_labels": "#ffffff",
     "colors_accent_1": "#121212",
     "gradient_accent_1": "",
@@ -215,7 +218,24 @@
     "sections": {
       "header": {
         "type": "header",
-        "settings": {}
+        "settings": {
+          "header_layout": "logo_left_navigation_inline",
+          "navigation_menu": "main-menu",
+          "menu_links_limit": 6,
+          "logo_max_width": 160,
+          "mobile_logo_max_width": 120,
+          "enable_transparent_header": false,
+          "transparent_header_text_color": "#ffffff",
+          "enable_sticky_header": true,
+          "header_background": "#ffffff",
+          "header_text_color": "#000000",
+          "header_accent_color": "#ff6b35",
+          "show_search": true,
+          "show_account": true,
+          "show_cart": true,
+          "show_country_selector": true,
+          "show_locale_selector": true
+        }
       },
       "footer": {
         "type": "footer",
@@ -265,9 +285,15 @@
       "announcement-bar": {
         "type": "announcement-bar",
         "settings": {
-          "enable_bar": true,
-          "text": "<p>Welcome to our store</p>",
-          "link": ""
+          "message": "Free shipping on orders over $75",
+          "link": "",
+          "show_close_button": true,
+          "sticky": false,
+          "auto_rotate": false,
+          "auto_rotate_speed": 5,
+          "background_color": "#1f2937",
+          "text_color": "#ffffff",
+          "link_color": "#60a5fa"
         }
       }
     },
@@ -366,10 +392,9 @@
         "announcement-bar": {
           "type": "announcement-bar",
           "settings": {
-            "enable_bar": true,
-            "text": "<p>Welcome to our store</p>",
             "background_color": "#1f2937",
-            "text_color": "#ffffff"
+            "text_color": "#ffffff",
+            "link_color": "#60a5fa"
           }
         }
       }
