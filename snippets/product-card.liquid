@@ -53,18 +53,18 @@ Parámetros:
       assign sold_out = true
     endunless
     
-    comment 'Check for coming soon tag'
+    # Check for coming soon tag
     if product.tags contains 'coming-soon'
       assign coming_soon = true
     endif
     
-    comment 'Quick buy availability'
+    # Quick buy availability
     assign quick_buyable = false
     if product.available and product.variants.size == 1 and show_quick_buy
       assign quick_buyable = true
     endif
     
-    comment 'Color swatch setup'
+    # Color swatch setup
     assign color_option = null
     assign first_color = null
     for option in product.options_with_values
