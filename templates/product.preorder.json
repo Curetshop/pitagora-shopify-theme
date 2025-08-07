@@ -94,21 +94,21 @@
       },
       "blocks": {
         "faq1": {
-          "type": "faq",
+          "type": "faq_item",
           "settings": {
             "question": "¿Cuándo se cobrará mi tarjeta?",
             "answer": "Tu tarjeta será cargada únicamente cuando el producto esté listo para enviar."
           }
         },
         "faq2": {
-          "type": "faq",
+          "type": "faq_item",
           "settings": {
             "question": "¿Puedo cancelar mi pre-orden?",
             "answer": "Sí, puedes cancelar tu pre-orden en cualquier momento antes del envío sin costo alguno."
           }
         },
         "faq3": {
-          "type": "faq",
+          "type": "faq_item",
           "settings": {
             "question": "¿Qué pasa si hay retrasos?",
             "answer": "Te notificaremos inmediatamente sobre cualquier cambio en la fecha de envío estimada."

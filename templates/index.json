@@ -66,7 +66,7 @@
       "type": "announcement-bar",
       "settings": {
         "enable_bar": true,
-        "text": "🚚 Envío gratis en pedidos superiores a $75 | 📞 Soporte 24/7",
+        "text": "<p>🚚 Envío gratis en pedidos superiores a $75 | 📞 Soporte 24/7</p>",
         "link": "/pages/shipping",
         "background_color": "#1f2937",
         "text_color": "#ffffff",
@@ -260,7 +260,7 @@
       "settings": {
         "image": "",
         "image_position": "right",
-        "image_width": "50",
+        "image_width": 50,
         "heading": "Calidad que perdura",
         "subheading": "Productos diseñados para durar",
         "text": "<p>Utilizamos únicamente materiales de primera calidad y trabajamos con proveedores que comparten nuestra visión de excelencia.</p><p>Cada producto pasa por rigurosos controles de calidad antes de llegar a tus manos.</p>",

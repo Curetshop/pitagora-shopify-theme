@@ -189,21 +189,12 @@
       },
       "announcement-bar": {
         "type": "announcement-bar",
-        "blocks": {
-          "announcement-bar-0": {
-            "type": "announcement",
-            "settings": {
-              "text": "Welcome to our store",
-              "text_alignment": "center",
-              "color_scheme": "background-1",
-              "link": ""
-            }
-          }
-        },
-        "block_order": [
-          "announcement-bar-0"
-        ],
         "settings": {
+          "enable_bar": true,
+          "text": "<p>Welcome to our store</p>",
+          "text_alignment": "center",
+          "color_scheme": "background-1",
+          "link": ""
         }
       }
     },
@@ -239,18 +230,10 @@
       "sections": {
         "announcement-bar": {
           "type": "announcement-bar",
-          "blocks": {
-            "announcement-bar-0": {
-              "type": "announcement",
-              "settings": {
-                "color_scheme": "background-1"
-              }
-            }
-          },
-          "block_order": [
-            "announcement-bar-0"
-          ],
           "settings": {
+            "enable_bar": true,
+            "text": "<p>Welcome to our store</p>",
+            "color_scheme": "background-1"
           }
         }
       }
