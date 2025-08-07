@@ -494,6 +494,20 @@
       "search_products": "Busca productos específicos",
       "read_blog": "Lee nuestro blog",
       "account_access": "Accede a tu cuenta"
+    },
+    "contact": {
+      "form": {
+        "name": "Nombre",
+        "email": "Email",
+        "phone": "Teléfono",
+        "comment": "Mensaje",
+        "send": "Enviar",
+        "post_success": "Gracias por contactarnos. Te responderemos lo antes posible.",
+        "error_heading": "Por favor, corrige lo siguiente:",
+        "title": "Formulario de contacto",
+        "subject": "Asunto",
+        "privacy_policy_html": "Al enviar este formulario, aceptas nuestra <a href=\"{{ privacy_policy_url }}\">política de privacidad</a>"
+      }
     }
   }
 }
