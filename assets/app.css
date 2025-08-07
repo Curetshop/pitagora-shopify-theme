@@ -1,29 +1,9 @@
-/* Pitagora Theme - Main CSS */
+/* Pitagora Theme - Optimized CSS (Non-Critical Styles) */
 
-/* Import all modular stylesheets */
-@import url('header.css');
-@import url('product-card.css');
-@import url('collection.css');
-@import url('cart-drawer.css');
-@import url('announcement-bar.css');
-@import url('newsletter.css');
-@import url('testimonials.css');
-@import url('featured-collections.css');
-@import url('featured-products.css');
-@import url('rich-text.css');
-@import url('image-with-text.css');
-@import url('blog-posts.css');
-@import url('instagram-feed.css');
-@import url('ai-recommendations.css');
-@import url('voice-search.css');
-@import url('search.css');
-@import url('cart.css');
-@import url('product.css');
-@import url('product-siblings.css');
-@import url('404.css');
-@import url('blog.css');
-@import url('article.css');
-@import url('page.css');
+/* 
+ * Critical CSS is now inlined in theme.liquid for faster loading
+ * This file contains non-critical styles loaded asynchronously
+ */
 
 /* Global styles */
 :root {

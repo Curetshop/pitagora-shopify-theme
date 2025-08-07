@@ -485,6 +485,397 @@
     ]
   },
   {
+    "name": "Performance Settings",
+    "settings": [
+      {
+        "type": "paragraph",
+        "content": "Configure performance optimization settings for faster loading times."
+      },
+      {
+        "type": "header",
+        "content": "CSS Loading"
+      },
+      {
+        "type": "checkbox",
+        "id": "enable_critical_css",
+        "label": "Enable critical CSS inline",
+        "default": true,
+        "info": "Loads essential CSS inline for faster rendering"
+      },
+      {
+        "type": "checkbox",
+        "id": "enable_css_async_loading",
+        "label": "Enable asynchronous CSS loading",
+        "default": true,
+        "info": "Load non-critical CSS asynchronously"
+      },
+      {
+        "type": "header",
+        "content": "JavaScript Optimization"
+      },
+      {
+        "type": "checkbox",
+        "id": "enable_script_defer",
+        "label": "Defer JavaScript loading",
+        "default": true,
+        "info": "Defer non-critical JavaScript for better performance"
+      },
+      {
+        "type": "checkbox",
+        "id": "enable_lazy_loading",
+        "label": "Enable lazy loading",
+        "default": true,
+        "info": "Load images and components when they enter viewport"
+      },
+      {
+        "type": "header",
+        "content": "Caching & Preloading"
+      },
+      {
+        "type": "checkbox",
+        "id": "enable_resource_preload",
+        "label": "Enable resource preloading",
+        "default": true,
+        "info": "Preload critical resources like fonts and images"
+      },
+      {
+        "type": "select",
+        "id": "cache_strategy",
+        "label": "Cache strategy",
+        "options": [
+          {
+            "value": "aggressive",
+            "label": "Aggressive (best performance)"
+          },
+          {
+            "value": "balanced",
+            "label": "Balanced (recommended)"
+          },
+          {
+            "value": "conservative",
+            "label": "Conservative (frequent updates)"
+          }
+        ],
+        "default": "balanced"
+      },
+      {
+        "type": "header",
+        "content": "Image Optimization"
+      },
+      {
+        "type": "range",
+        "id": "webp_quality",
+        "label": "WebP image quality",
+        "min": 60,
+        "max": 95,
+        "step": 5,
+        "default": 80,
+        "info": "Higher values = better quality, larger file size"
+      },
+      {
+        "type": "checkbox",
+        "id": "enable_responsive_images",
+        "label": "Enable responsive images",
+        "default": true,
+        "info": "Serve appropriately sized images based on device"
+      }
+    ]
+  },
+  {
+    "name": "Security Settings",
+    "settings": [
+      {
+        "type": "paragraph",
+        "content": "Configure security features to protect your store and customers."
+      },
+      {
+        "type": "header",
+        "content": "Content Security Policy"
+      },
+      {
+        "type": "checkbox",
+        "id": "enable_csp",
+        "label": "Enable Content Security Policy",
+        "default": true,
+        "info": "Prevents XSS attacks by restricting resource loading"
+      },
+      {
+        "type": "checkbox",
+        "id": "enable_html_sanitization",
+        "label": "Enable HTML sanitization",
+        "default": true,
+        "info": "Automatically sanitize user-generated content"
+      },
+      {
+        "type": "header",
+        "content": "Input Validation"
+      },
+      {
+        "type": "checkbox",
+        "id": "strict_form_validation",
+        "label": "Strict form validation",
+        "default": true,
+        "info": "Enhanced validation for all form inputs"
+      },
+      {
+        "type": "checkbox",
+        "id": "enable_csrf_protection",
+        "label": "CSRF protection",
+        "default": true,
+        "info": "Protect forms against cross-site request forgery"
+      },
+      {
+        "type": "header",
+        "content": "Privacy & Data Protection"
+      },
+      {
+        "type": "checkbox",
+        "id": "anonymize_user_data",
+        "label": "Anonymize user data",
+        "default": false,
+        "info": "Anonymize user data in analytics and logs"
+      },
+      {
+        "type": "select",
+        "id": "cookie_consent_level",
+        "label": "Cookie consent level",
+        "options": [
+          {
+            "value": "none",
+            "label": "None"
+          },
+          {
+            "value": "basic",
+            "label": "Basic (essential cookies only)"
+          },
+          {
+            "value": "advanced",
+            "label": "Advanced (with preferences)"
+          }
+        ],
+        "default": "basic"
+      },
+      {
+        "type": "header",
+        "content": "Error Handling"
+      },
+      {
+        "type": "checkbox",
+        "id": "hide_error_details",
+        "label": "Hide error details in production",
+        "default": true,
+        "info": "Prevents exposure of sensitive error information"
+      },
+      {
+        "type": "select",
+        "id": "error_reporting_level",
+        "label": "Error reporting level",
+        "options": [
+          {
+            "value": "none",
+            "label": "None"
+          },
+          {
+            "value": "errors",
+            "label": "Errors only"
+          },
+          {
+            "value": "warnings",
+            "label": "Errors and warnings"
+          },
+          {
+            "value": "all",
+            "label": "All (debug mode)"
+          }
+        ],
+        "default": "errors"
+      }
+    ]
+  },
+  {
+    "name": "Advanced Features",
+    "settings": [
+      {
+        "type": "paragraph",
+        "content": "Configure advanced AI and voice features."
+      },
+      {
+        "type": "header",
+        "content": "AI Recommendations"
+      },
+      {
+        "type": "checkbox",
+        "id": "enable_ai_recommendations",
+        "label": "Enable AI product recommendations",
+        "default": true,
+        "info": "Machine learning powered product suggestions"
+      },
+      {
+        "type": "range",
+        "id": "ai_recommendation_count",
+        "label": "Number of AI recommendations",
+        "min": 4,
+        "max": 12,
+        "step": 2,
+        "default": 8
+      },
+      {
+        "type": "select",
+        "id": "ai_recommendation_algorithm",
+        "label": "Recommendation algorithm",
+        "options": [
+          {
+            "value": "collaborative",
+            "label": "Collaborative filtering"
+          },
+          {
+            "value": "content_based",
+            "label": "Content-based filtering"
+          },
+          {
+            "value": "hybrid",
+            "label": "Hybrid approach (recommended)"
+          }
+        ],
+        "default": "hybrid"
+      },
+      {
+        "type": "header",
+        "content": "Voice Search"
+      },
+      {
+        "type": "checkbox",
+        "id": "enable_voice_search",
+        "label": "Enable voice search",
+        "default": true,
+        "info": "Allow customers to search using voice commands"
+      },
+      {
+        "type": "select",
+        "id": "voice_search_language",
+        "label": "Voice search language",
+        "options": [
+          {
+            "value": "en-US",
+            "label": "English (US)"
+          },
+          {
+            "value": "es-ES",
+            "label": "Spanish (Spain)"
+          },
+          {
+            "value": "es-MX",
+            "label": "Spanish (Mexico)"
+          },
+          {
+            "value": "fr-FR",
+            "label": "French"
+          },
+          {
+            "value": "de-DE",
+            "label": "German"
+          }
+        ],
+        "default": "en-US"
+      },
+      {
+        "type": "range",
+        "id": "voice_search_confidence",
+        "label": "Voice recognition confidence threshold",
+        "min": 50,
+        "max": 90,
+        "step": 5,
+        "default": 70,
+        "info": "Lower values = more permissive, higher values = more accurate"
+      },
+      {
+        "type": "header",
+        "content": "Product Siblings"
+      },
+      {
+        "type": "checkbox",
+        "id": "enable_product_siblings",
+        "label": "Enable product siblings",
+        "default": true,
+        "info": "Show related products and variants"
+      },
+      {
+        "type": "range",
+        "id": "product_siblings_count",
+        "label": "Number of product siblings",
+        "min": 3,
+        "max": 10,
+        "step": 1,
+        "default": 6
+      }
+    ]
+  },
+  {
+    "name": "Developer Settings",
+    "settings": [
+      {
+        "type": "paragraph",
+        "content": "Advanced settings for developers and debugging."
+      },
+      {
+        "type": "header",
+        "content": "Debug & Development"
+      },
+      {
+        "type": "checkbox",
+        "id": "debug_mode",
+        "label": "Enable debug mode",
+        "default": false,
+        "info": "Shows additional logging and debug information"
+      },
+      {
+        "type": "checkbox",
+        "id": "show_performance_metrics",
+        "label": "Show performance metrics",
+        "default": false,
+        "info": "Display Core Web Vitals and performance data"
+      },
+      {
+        "type": "header",
+        "content": "Custom Code"
+      },
+      {
+        "type": "textarea",
+        "id": "custom_css",
+        "label": "Custom CSS",
+        "info": "Add custom CSS that will be loaded after theme styles"
+      },
+      {
+        "type": "textarea",
+        "id": "custom_js",
+        "label": "Custom JavaScript",
+        "info": "Add custom JavaScript (will be executed after theme scripts)"
+      },
+      {
+        "type": "header",
+        "content": "Third-party Integrations"
+      },
+      {
+        "type": "text",
+        "id": "custom_tracking_id",
+        "label": "Custom tracking ID",
+        "info": "For additional analytics or tracking services"
+      },
+      {
+        "type": "textarea",
+        "id": "custom_head_code",
+        "label": "Custom head code",
+        "info": "HTML/JavaScript to be inserted in the <head> section"
+      },
+      {
+        "type": "textarea",
+        "id": "custom_body_code",
+        "label": "Custom body code",
+        "info": "HTML/JavaScript to be inserted before closing </body> tag"
+      }
+    ]
+  },
+  {
     "name": "Favicon",
     "settings": [
       {

@@ -52,12 +52,21 @@
 
   {%- comment -%} CSS Custom Properties - Dynamic theme variables {%- endcomment -%}
   :root {
-    /* Colors - RGB format for compatibility */
-    --color-primary: {{ settings.color_primary | default: '#000000' | color_to_rgb | remove: 'rgb(' | remove: ')' }};
-    --color-secondary: {{ settings.color_secondary | default: '#666666' | color_to_rgb | remove: 'rgb(' | remove: ')' }};
-    --color-accent: {{ settings.color_accent | default: '#ff6b35' | color_to_rgb | remove: 'rgb(' | remove: ')' }};
-    --color-foreground: {{ settings.color_text | default: '#000000' | color_to_rgb | remove: 'rgb(' | remove: ')' }};
-    --color-background: {{ settings.color_background | default: '#ffffff' | color_to_rgb | remove: 'rgb(' | remove: ')' }};
+    /* Colors - RGB format with comprehensive fallbacks */
+    --color-primary: {{ settings.color_primary | default: '#3b82f6' | color_to_rgb | remove: 'rgb(' | remove: ')' | default: '59, 130, 246' }};
+    --color-primary-fallback: 59, 130, 246; /* Blue fallback */
+    
+    --color-secondary: {{ settings.color_secondary | default: '#6b7280' | color_to_rgb | remove: 'rgb(' | remove: ')' | default: '107, 114, 128' }};
+    --color-secondary-fallback: 107, 114, 128; /* Gray fallback */
+    
+    --color-accent: {{ settings.color_accent | default: '#f59e0b' | color_to_rgb | remove: 'rgb(' | remove: ')' | default: '245, 158, 11' }};
+    --color-accent-fallback: 245, 158, 11; /* Amber fallback */
+    
+    --color-foreground: {{ settings.color_text | default: '#1f2937' | color_to_rgb | remove: 'rgb(' | remove: ')' | default: '31, 41, 55' }};
+    --color-foreground-fallback: 31, 41, 55; /* Dark gray fallback */
+    
+    --color-background: {{ settings.color_background | default: '#ffffff' | color_to_rgb | remove: 'rgb(' | remove: ')' | default: '255, 255, 255' }};
+    --color-background-fallback: 255, 255, 255; /* White fallback */
     
     /* Hex format for backward compatibility */
     --color-primary-hex: {{ settings.color_primary | default: '#000000' }};
@@ -72,13 +81,24 @@
     --color-text-light: rgba(var(--color-foreground), 0.7);
     --color-text-lighter: rgba(var(--color-foreground), 0.5);
     
-    /* Typography */
-    --font-heading: {{ settings.heading_font.family | default: 'Arial, sans-serif' }}, {{ settings.heading_font.fallback_families }};
-    --font-body: {{ settings.body_font.family | default: 'Arial, sans-serif' }}, {{ settings.body_font.fallback_families }};
-    --font-heading-scale: {{ settings.heading_font_scale | default: 120 | divided_by: 100.0 }};
-    --font-body-scale: {{ settings.body_font_scale | default: 100 | divided_by: 100.0 }};
-    --font-heading-weight: {{ settings.heading_font.weight | default: 'normal' }};
-    --font-body-weight: {{ settings.body_font.weight | default: 'normal' }};
+    /* Typography with robust fallbacks */
+    --font-heading: {{ settings.heading_font.family | default: 'Inter' | append: ', system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif' }};
+    --font-heading-fallback: 'Inter', system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    
+    --font-body: {{ settings.body_font.family | default: 'Inter' | append: ', system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif' }};
+    --font-body-fallback: 'Inter', system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    
+    --font-heading-scale: {{ settings.heading_font_scale | default: 120 | divided_by: 100.0 | default: 1.2 }};
+    --font-heading-scale-fallback: 1.2;
+    
+    --font-body-scale: {{ settings.body_font_scale | default: 100 | divided_by: 100.0 | default: 1.0 }};
+    --font-body-scale-fallback: 1.0;
+    
+    --font-heading-weight: {{ settings.heading_font.weight | default: '700' }};
+    --font-heading-weight-fallback: 700;
+    
+    --font-body-weight: {{ settings.body_font.weight | default: '400' }};
+    --font-body-weight-fallback: 400;
     
     /* Font sizes - Fluid typography */
     --font-size-xs: calc(0.75rem * var(--font-body-scale));
@@ -91,11 +111,18 @@
     --font-size-4xl: calc(2.25rem * var(--font-heading-scale));
     --font-size-5xl: calc(3rem * var(--font-heading-scale));
     
-    /* Layout & Spacing */
-    --container-width: {{ settings.container_width | default: '1400' | append: 'px' }};
-    --border-radius-sm: {{ settings.button_border_radius | default: 4 | divided_by: 2 }}px;
-    --border-radius: {{ settings.button_border_radius | default: 4 }}px;
-    --border-radius-lg: {{ settings.button_border_radius | default: 4 | times: 1.5 }}px;
+    /* Layout & Spacing with fallbacks */
+    --container-width: {{ settings.container_width | default: '1400' | append: 'px' | default: '1400px' }};
+    --container-width-fallback: 1400px;
+    
+    --border-radius-sm: {{ settings.button_border_radius | default: 4 | divided_by: 2 | default: 2 }}px;
+    --border-radius-sm-fallback: 2px;
+    
+    --border-radius: {{ settings.button_border_radius | default: 4 | default: 4 }}px;
+    --border-radius-fallback: 4px;
+    
+    --border-radius-lg: {{ settings.button_border_radius | default: 4 | times: 1.5 | default: 6 }}px;
+    --border-radius-lg-fallback: 6px;
     
     /* Spacing scale */
     --spacing-xs: 0.5rem;

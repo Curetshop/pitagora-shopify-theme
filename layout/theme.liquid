@@ -52,24 +52,55 @@
   {%- comment -%} Social meta tags {%- endcomment -%}
   {%- render 'social-meta-tags' -%}
 
-  {%- comment -%} Critical CSS inline {%- endcomment -%}
-  <style>
-    /* Critical CSS - Above the fold optimization */
-    :root {
-      --color-primary: {{ settings.color_primary | default: '#000000' }};
-      --color-secondary: {{ settings.color_secondary | default: '#666666' }};
-      --color-background: {{ settings.color_background | default: '#ffffff' }};
-      --font-heading: {{ settings.heading_font.family | default: 'Arial, sans-serif' }};
-      --font-body: {{ settings.body_font.family | default: 'Arial, sans-serif' }};
-    }
-    
-    .no-js { opacity: 0; }
-    body { font-family: var(--font-body); }
-    .loading-overlay { display: none; }
-  </style>
+  {%- comment -%} Critical CSS inline for fastest loading {%- endcomment -%}
+  {{ 'critical.css' | asset_url | stylesheet_tag }}
 
-  {%- comment -%} Main stylesheet {%- endcomment -%}
-  {{ 'app.css' | asset_url | stylesheet_tag }}
+  {%- comment -%} Preload non-critical CSS and load asynchronously {%- endcomment -%}
+  <link rel="preload" href="{{ 'app.css' | asset_url }}" as="style" onload="this.onload=null;this.rel='stylesheet'">
+  <noscript><link rel="stylesheet" href="{{ 'app.css' | asset_url }}"></noscript>
+
+  {%- comment -%} Preload individual component stylesheets {%- endcomment -%}
+  <link rel="preload" href="{{ 'header.css' | asset_url }}" as="style" onload="this.onload=null;this.rel='stylesheet'">
+  <link rel="preload" href="{{ 'product-card.css' | asset_url }}" as="style" onload="this.onload=null;this.rel='stylesheet'">
+  <link rel="preload" href="{{ 'collection.css' | asset_url }}" as="style" onload="this.onload=null;this.rel='stylesheet'">
+  <link rel="preload" href="{{ 'product.css' | asset_url }}" as="style" onload="this.onload=null;this.rel='stylesheet'">
+  
+  {%- comment -%} Template-specific CSS loading {%- endcomment -%}
+  {%- case template.name -%}
+    {%- when 'product' -%}
+      <link rel="preload" href="{{ 'product-siblings.css' | asset_url }}" as="style" onload="this.onload=null;this.rel='stylesheet'">
+      <link rel="preload" href="{{ 'ai-recommendations.css' | asset_url }}" as="style" onload="this.onload=null;this.rel='stylesheet'">
+    {%- when 'collection' -%}
+      <link rel="preload" href="{{ 'collection.css' | asset_url }}" as="style" onload="this.onload=null;this.rel='stylesheet'">
+    {%- when 'cart' -%}
+      <link rel="preload" href="{{ 'cart.css' | asset_url }}" as="style" onload="this.onload=null;this.rel='stylesheet'">
+      <link rel="preload" href="{{ 'cart-drawer.css' | asset_url }}" as="style" onload="this.onload=null;this.rel='stylesheet'">
+    {%- when 'blog' -%}
+      <link rel="preload" href="{{ 'blog.css' | asset_url }}" as="style" onload="this.onload=null;this.rel='stylesheet'">
+      <link rel="preload" href="{{ 'blog-posts.css' | asset_url }}" as="style" onload="this.onload=null;this.rel='stylesheet'">
+    {%- when 'article' -%}
+      <link rel="preload" href="{{ 'article.css' | asset_url }}" as="style" onload="this.onload=null;this.rel='stylesheet'">
+    {%- when '404' -%}
+      <link rel="preload" href="{{ '404.css' | asset_url }}" as="style" onload="this.onload=null;this.rel='stylesheet'">
+  {%- endcase -%}
+  
+  {%- comment -%} Section-specific CSS loading {%- endcomment -%}
+  {%- for section in sections -%}
+    {%- case section.type -%}
+      {%- when 'testimonials' -%}
+        <link rel="preload" href="{{ 'testimonials.css' | asset_url }}" as="style" onload="this.onload=null;this.rel='stylesheet'">
+      {%- when 'featured-collections' -%}
+        <link rel="preload" href="{{ 'featured-collections.css' | asset_url }}" as="style" onload="this.onload=null;this.rel='stylesheet'">
+      {%- when 'featured-products' -%}
+        <link rel="preload" href="{{ 'featured-products.css' | asset_url }}" as="style" onload="this.onload=null;this.rel='stylesheet'">
+      {%- when 'newsletter' -%}
+        <link rel="preload" href="{{ 'newsletter.css' | asset_url }}" as="style" onload="this.onload=null;this.rel='stylesheet'">
+      {%- when 'instagram-feed' -%}
+        <link rel="preload" href="{{ 'instagram-feed.css' | asset_url }}" as="style" onload="this.onload=null;this.rel='stylesheet'">
+      {%- when 'voice-search' -%}
+        <link rel="preload" href="{{ 'voice-search.css' | asset_url }}" as="style" onload="this.onload=null;this.rel='stylesheet'">
+    {%- endcase -%}
+  {%- endfor -%}
 
   {%- comment -%} CSS Variables - Focal v4 system {%- endcomment -%}
   {%- render 'css-variables' -%}
@@ -184,6 +215,8 @@
   {%- comment -%} Security utilities - Load first {%- endcomment -%}
   {{ 'security-utils.js' | asset_url | script_tag }}
   {{ 'error-handler.js' | asset_url | script_tag }}
+  {{ 'css-loader.js' | asset_url | script_tag }}
+  {{ 'custom-elements.js' | asset_url | script_tag }}
   
   {%- comment -%} Main JavaScript - Deferred for performance {%- endcomment -%}
   {{ 'app.js' | asset_url | script_tag: defer: 'defer' }}
