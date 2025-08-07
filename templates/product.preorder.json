@@ -88,34 +88,13 @@
       }
     },
     "preorder-faq": {
-      "type": "faq",
+      "type": "rich-text",
       "settings": {
-        "heading": "Preguntas frecuentes sobre pre-órdenes"
-      },
-      "blocks": {
-        "faq1": {
-          "type": "faq_item",
-          "settings": {
-            "question": "¿Cuándo se cobrará mi tarjeta?",
-            "answer": "Tu tarjeta será cargada únicamente cuando el producto esté listo para enviar."
-          }
-        },
-        "faq2": {
-          "type": "faq_item",
-          "settings": {
-            "question": "¿Puedo cancelar mi pre-orden?",
-            "answer": "Sí, puedes cancelar tu pre-orden en cualquier momento antes del envío sin costo alguno."
-          }
-        },
-        "faq3": {
-          "type": "faq_item",
-          "settings": {
-            "question": "¿Qué pasa si hay retrasos?",
-            "answer": "Te notificaremos inmediatamente sobre cualquier cambio en la fecha de envío estimada."
-          }
-        }
-      },
-      "block_order": ["faq1", "faq2", "faq3"]
+        "heading": "Preguntas frecuentes sobre pre-órdenes",
+        "text": "<h3>¿Cuándo se cobrará mi tarjeta?</h3><p>Tu tarjeta será cargada únicamente cuando el producto esté listo para enviar.</p><h3>¿Puedo cancelar mi pre-orden?</h3><p>Sí, puedes cancelar tu pre-orden en cualquier momento antes del envío sin costo alguno.</p><h3>¿Qué pasa si hay retrasos?</h3><p>Te notificaremos inmediatamente sobre cualquier cambio en la fecha de envío estimada.</p>",
+        "desktop_content_position": "center",
+        "content_alignment": "left"
+      }
     }
   },
   "order": [
