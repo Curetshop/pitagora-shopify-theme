@@ -1,276 +1,407 @@
 {%- comment -%}
 Hero Banner Section - Pitagora Theme
-Slideshow hero con video support, parallax y animaciones modernas
+Main hero section with background image, overlay, and call-to-action
 {%- endcomment -%}
-
-{{ 'hero-banner.css' | asset_url | stylesheet_tag }}
-<script src="{{ 'hero-banner.js' | asset_url }}" defer="defer"></script>
 
 <style>
   #shopify-section-{{ section.id }} {
-    --hero-height-mobile: {% case section.settings.mobile_height %}{% when 'small' %}50vh{% when 'medium' %}70vh{% when 'large' %}90vh{% when 'screen' %}100vh{% else %}70vh{% endcase %};
-    --hero-height-desktop: {% case section.settings.desktop_height %}{% when 'small' %}50vh{% when 'medium' %}70vh{% when 'large' %}90vh{% when 'screen' %}100vh{% else %}70vh{% endcase %};
+    --hero-text-color: {{ section.settings.text_color | default: '#ffffff' }};
+    --hero-overlay-opacity: {{ section.settings.overlay_opacity | default: 50 | divided_by: 100.0 }};
+    --hero-content-position: {{ section.settings.content_position | default: 'center' }};
+    --hero-min-height: {{ section.settings.height | default: '500' }}px;
   }
 </style>
 
-<hero-banner 
-  class="hero-banner hero-banner--{{ section.settings.layout }}"
-  data-section-id="{{ section.id }}"
-  data-autoplay="{% if section.settings.enable_autoplay %}true{% else %}false{% endif %}"
-  data-autoplay-duration="{{ section.settings.autoplay_duration | default: 5 }}"
->
-  {%- if section.blocks.size > 0 -%}
-    <div class="hero-banner__slides">
-      {%- for block in section.blocks -%}
-        {%- liquid
-          assign text_position_parts = block.settings.text_position | split: '_'
-          assign vertical_position = text_position_parts[0]
-          assign horizontal_position = text_position_parts[1]
-        -%}
-        
-        <div 
-          class="hero-slide hero-slide--{{ vertical_position }}-{{ horizontal_position }} hero-slide--align-{{ block.settings.text_alignment }}{% if forloop.first %} hero-slide--active{% endif %}"
-          data-slide-index="{{ forloop.index0 }}"
-          {{ block.shopify_attributes }}
-          style="
-            --overlay-opacity: {{ block.settings.overlay_opacity | divided_by: 100.0 }};
-            --overlay-color: {{ block.settings.overlay_color }};
-            --text-color: {{ block.settings.text_color }};
-          "
-        >
-          {%- comment -%} Background Media {%- endcomment -%}
-          <div class="hero-slide__media">
-            {%- if block.settings.video_url != blank -%}
-              {%- liquid
-                assign video_id = block.settings.video_url | split: 'v=' | last | split: '&' | first
-                if block.settings.video_url contains 'vimeo.com'
-                  assign video_id = block.settings.video_url | split: '/' | last
-                endif
-              -%}
-              
-              <div class="hero-slide__video">
-                {%- if block.settings.video_url contains 'youtube.com' or block.settings.video_url contains 'youtu.be' -%}
-                  <iframe
-                    src="https://www.youtube.com/embed/{{ video_id }}?autoplay=1&mute=1&loop=1&playlist={{ video_id }}&controls=0&showinfo=0&rel=0&iv_load_policy=3&modestbranding=1"
-                    frameborder="0"
-                    allow="autoplay; encrypted-media"
-                    allowfullscreen
-                  ></iframe>
-                {%- elsif block.settings.video_url contains 'vimeo.com' -%}
-                  <iframe
-                    src="https://player.vimeo.com/video/{{ video_id }}?autoplay=1&muted=1&loop=1&background=1&controls=0"
-                    frameborder="0"
-                    allow="autoplay; fullscreen"
-                    allowfullscreen
-                  ></iframe>
-                {%- endif -%}
-              </div>
-              
-              {%- comment -%} Fallback image for mobile {%- endcomment -%}
-              {%- if block.settings.mobile_image != blank or block.settings.image != blank -%}
-                <div class="hero-slide__image hero-slide__image--mobile-fallback">
-                  {%- assign fallback_image = block.settings.mobile_image | default: block.settings.image -%}
-                  <img
-                    src="{{ fallback_image | image_url: width: 800 }}"
-                    alt="{{ fallback_image.alt | escape | default: block.settings.heading | escape }}"
-                    width="{{ fallback_image.width }}"
-                    height="{{ fallback_image.height }}"
-                    loading="eager"
-                    sizes="100vw"
-                    srcset="
-                      {{ fallback_image | image_url: width: 400 }} 400w,
-                      {{ fallback_image | image_url: width: 800 }} 800w,
-                      {{ fallback_image | image_url: width: 1200 }} 1200w,
-                      {{ fallback_image | image_url: width: 1600 }} 1600w,
-                      {{ fallback_image | image_url: width: 2000 }} 2000w
-                    "
-                  >
-                </div>
-              {%- endif -%}
-            {%- elsif block.settings.image != blank -%}
-              <div class="hero-slide__image">
-                <img
-                  src="{{ block.settings.image | image_url: width: 1600 }}"
-                  alt="{{ block.settings.image.alt | escape | default: block.settings.heading | escape }}"
-                  width="{{ block.settings.image.width }}"
-                  height="{{ block.settings.image.height }}"
-                  loading="{% if forloop.first %}eager{% else %}lazy{% endif %}"
-                  sizes="100vw"
-                  srcset="
-                    {{ block.settings.image | image_url: width: 400 }} 400w,
-                    {{ block.settings.image | image_url: width: 800 }} 800w,
-                    {{ block.settings.image | image_url: width: 1200 }} 1200w,
-                    {{ block.settings.image | image_url: width: 1600 }} 1600w,
-                    {{ block.settings.image | image_url: width: 2000 }} 2000w,
-                    {{ block.settings.image | image_url: width: 2400 }} 2400w
-                  "
-                >
-                
-                {%- comment -%} Mobile specific image {%- endcomment -%}
-                {%- if block.settings.mobile_image != blank -%}
-                  <img
-                    class="hero-slide__image--mobile"
-                    src="{{ block.settings.mobile_image | image_url: width: 800 }}"
-                    alt="{{ block.settings.mobile_image.alt | escape | default: block.settings.heading | escape }}"
-                    width="{{ block.settings.mobile_image.width }}"
-                    height="{{ block.settings.mobile_image.height }}"
-                    loading="{% if forloop.first %}eager{% else %}lazy{% endif %}"
-                    sizes="100vw"
-                    srcset="
-                      {{ block.settings.mobile_image | image_url: width: 400 }} 400w,
-                      {{ block.settings.mobile_image | image_url: width: 800 }} 800w,
-                      {{ block.settings.mobile_image | image_url: width: 1200 }} 1200w
-                    "
-                  >
-                {%- endif -%}
-              </div>
-            {%- endif -%}
-            
-            <div class="hero-slide__overlay"></div>
-          </div>
-
-          {%- comment -%} Content {%- endcomment -%}
-          <div class="hero-slide__content">
-            <div class="hero-slide__content-wrapper">
-              {%- if block.settings.subheading != blank -%}
-                <p class="hero-slide__subheading">
-                  {{ block.settings.subheading | escape }}
-                </p>
-              {%- endif -%}
-
-              {%- if block.settings.heading != blank -%}
-                <h1 class="hero-slide__heading">
-                  {{ block.settings.heading | escape }}
-                </h1>
-              {%- endif -%}
-
-              {%- if block.settings.text != blank -%}
-                <div class="hero-slide__text rte">
-                  {{ block.settings.text }}
-                </div>
-              {%- endif -%}
-
-              {%- if block.settings.button_1_text != blank or block.settings.button_2_text != blank -%}
-                <div class="hero-slide__buttons">
-                  {%- if block.settings.button_1_text != blank -%}
-                    <a 
-                      href="{{ block.settings.button_1_url | default: '#' }}"
-                      class="hero-slide__button button button--{{ block.settings.button_1_style }}"
-                    >
-                      {{ block.settings.button_1_text | escape }}
-                    </a>
-                  {%- endif -%}
-
-                  {%- if block.settings.button_2_text != blank -%}
-                    <a 
-                      href="{{ block.settings.button_2_url | default: '#' }}"
-                      class="hero-slide__button button button--{{ block.settings.button_2_style }}"
-                    >
-                      {{ block.settings.button_2_text | escape }}
-                    </a>
-                  {%- endif -%}
-                </div>
-              {%- endif -%}
-            </div>
-          </div>
-        </div>
-      {%- endfor -%}
-    </div>
-
-    {%- if section.blocks.size > 1 -%}
-      {%- comment -%} Navigation Controls {%- endcomment -%}
-      {%- if section.settings.show_navigation -%}
-        <div class="hero-banner__navigation">
-          <button 
-            class="hero-banner__nav-button hero-banner__nav-button--prev"
-            type="button"
-            aria-label="{{ 'accessibility.previous' | t }}"
-          >
-            {% render 'icon-chevron-left' %}
-          </button>
-          <button 
-            class="hero-banner__nav-button hero-banner__nav-button--next"
-            type="button"
-            aria-label="{{ 'accessibility.next' | t }}"
-          >
-            {% render 'icon-chevron-right' %}
-          </button>
-        </div>
-      {%- endif -%}
-
-      {%- comment -%} Pagination Dots {%- endcomment -%}
-      {%- if section.settings.show_pagination -%}
-        <div class="hero-banner__pagination">
-          {%- for block in section.blocks -%}
-            <button 
-              class="hero-banner__pagination-bullet{% if forloop.first %} hero-banner__pagination-bullet--active{% endif %}"
-              type="button"
-              data-slide-index="{{ forloop.index0 }}"
-              aria-label="{{ 'accessibility.slide' | t }} {{ forloop.index }}"
-            ></button>
-          {%- endfor -%}
-        </div>
-      {%- endif -%}
+<div class="hero-banner hero-banner--{{ section.settings.height_mobile }} hero-banner--{{ section.settings.content_alignment }}">
+  <div class="hero-banner__media">
+    {%- if section.settings.image != blank -%}
+      <img
+        src="{{ section.settings.image | image_url: width: 1920 }}"
+        srcset="
+          {{ section.settings.image | image_url: width: 375 }} 375w,
+          {{ section.settings.image | image_url: width: 750 }} 750w,
+          {{ section.settings.image | image_url: width: 1100 }} 1100w,
+          {{ section.settings.image | image_url: width: 1500 }} 1500w,
+          {{ section.settings.image | image_url: width: 1920 }} 1920w
+        "
+        sizes="100vw"
+        alt="{{ section.settings.image.alt | escape }}"
+        loading="eager"
+        fetchpriority="high"
+        width="{{ section.settings.image.width }}"
+        height="{{ section.settings.image.height }}"
+        class="hero-banner__image"
+      >
+    {%- else -%}
+      <div class="hero-banner__placeholder" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);">
+        <svg width="100" height="100" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <rect x="10" y="30" width="80" height="40" rx="4" stroke="white" stroke-width="2" fill="none"/>
+          <circle cx="25" cy="45" r="3" fill="white"/>
+          <path d="m35 55 10-10 15 15 20-20" stroke="white" stroke-width="2" fill="none"/>
+        </svg>
+      </div>
     {%- endif -%}
-  {%- endif -%}
-  
-  {%- comment -%} Empty state {%- endcomment -%}
-  {%- if section.blocks.size == 0 -%}
-    <div class="hero-banner__empty">
-      <div class="hero-slide">
-        <div class="hero-slide__media">
-          <div class="hero-slide__placeholder">
-            {{ 'lifestyle-1' | placeholder_svg_tag: 'hero-slide__placeholder-svg' }}
-          </div>
-        </div>
-        <div class="hero-slide__content">
-          <div class="hero-slide__content-wrapper">
-            <h1 class="hero-slide__heading">{{ 'onboarding.hero.title' | t }}</h1>
-            <div class="hero-slide__text">
-              <p>{{ 'onboarding.hero.subtitle' | t }}</p>
-            </div>
-            <div class="hero-slide__buttons">
-              <a href="/admin/themes/current/editor?section=hero-banner" class="button button--primary">
-                {{ 'onboarding.hero.button' | t }}
+    
+    {%- if section.settings.overlay_opacity > 0 -%}
+      <div class="hero-banner__overlay" style="opacity: var(--hero-overlay-opacity);"></div>
+    {%- endif -%}
+  </div>
+
+  <div class="hero-banner__content" style="color: var(--hero-text-color);">
+    <div class="hero-banner__content-wrapper page-width">
+      <div class="hero-banner__text">
+        {%- if section.settings.subheading != blank -%}
+          <p class="hero-banner__subheading">{{ section.settings.subheading | escape }}</p>
+        {%- endif -%}
+        
+        {%- if section.settings.heading != blank -%}
+          <h1 class="hero-banner__heading">{{ section.settings.heading | escape }}</h1>
+        {%- endif -%}
+        
+        {%- if section.settings.text != blank -%}
+          <div class="hero-banner__text-content rte">{{ section.settings.text }}</div>
+        {%- endif -%}
+        
+        {%- if section.settings.button_label != blank and section.settings.button_link != blank -%}
+          <div class="hero-banner__buttons">
+            <a 
+              href="{{ section.settings.button_link }}" 
+              class="hero-banner__button button button--{{ section.settings.button_style }} button--large"
+            >
+              {{ section.settings.button_label | escape }}
+            </a>
+            
+            {%- if section.settings.button_label_2 != blank and section.settings.button_link_2 != blank -%}
+              <a 
+                href="{{ section.settings.button_link_2 }}" 
+                class="hero-banner__button button button--{{ section.settings.button_style_2 }} button--large"
+              >
+                {{ section.settings.button_label_2 | escape }}
               </a>
-            </div>
+            {%- endif -%}
           </div>
-        </div>
+        {%- endif -%}
       </div>
     </div>
-  {%- endif -%}
-</hero-banner>
+  </div>
+</div>
+
+<style>
+  .hero-banner {
+    position: relative;
+    display: flex;
+    align-items: var(--hero-content-position, center);
+    min-height: var(--hero-min-height, 500px);
+    overflow: hidden;
+  }
+
+  .hero-banner__media {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 0;
+  }
+
+  .hero-banner__image {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: center;
+  }
+
+  .hero-banner__placeholder {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .hero-banner__overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.5);
+    z-index: 1;
+  }
+
+  .hero-banner__content {
+    position: relative;
+    z-index: 2;
+    width: 100%;
+    padding: 4rem 0;
+  }
+
+  .hero-banner__content-wrapper {
+    display: flex;
+    align-items: center;
+    min-height: 50vh;
+  }
+
+  .hero-banner__text {
+    max-width: 600px;
+  }
+
+  .hero-banner--left .hero-banner__text {
+    margin-left: 0;
+    margin-right: auto;
+  }
+
+  .hero-banner--center .hero-banner__text {
+    margin: 0 auto;
+    text-align: center;
+  }
+
+  .hero-banner--right .hero-banner__text {
+    margin-left: auto;
+    margin-right: 0;
+  }
+
+  .hero-banner__subheading {
+    font-size: 1.125rem;
+    font-weight: 500;
+    margin-bottom: 1rem;
+    opacity: 0.9;
+  }
+
+  .hero-banner__heading {
+    font-size: clamp(2.5rem, 5vw, 4rem);
+    font-weight: 700;
+    line-height: 1.1;
+    margin-bottom: 1.5rem;
+  }
+
+  .hero-banner__text-content {
+    font-size: 1.25rem;
+    line-height: 1.6;
+    margin-bottom: 2rem;
+    opacity: 0.9;
+  }
+
+  .hero-banner__buttons {
+    display: flex;
+    gap: 1rem;
+    flex-wrap: wrap;
+  }
+
+  .hero-banner--center .hero-banner__buttons {
+    justify-content: center;
+  }
+
+  .hero-banner--right .hero-banner__buttons {
+    justify-content: flex-end;
+  }
+
+  /* Height variations */
+  .hero-banner--small {
+    min-height: 400px;
+  }
+
+  .hero-banner--medium {
+    min-height: 500px;
+  }
+
+  .hero-banner--large {
+    min-height: 600px;
+  }
+
+  .hero-banner--full {
+    min-height: 100vh;
+  }
+
+  /* Mobile adjustments */
+  @media screen and (max-width: 749px) {
+    .hero-banner {
+      min-height: 400px;
+    }
+    
+    .hero-banner--full {
+      min-height: 70vh;
+    }
+
+    .hero-banner__content {
+      padding: 2rem 0;
+    }
+
+    .hero-banner__heading {
+      font-size: clamp(2rem, 8vw, 2.5rem);
+      margin-bottom: 1rem;
+    }
+
+    .hero-banner__text-content {
+      font-size: 1.125rem;
+      margin-bottom: 1.5rem;
+    }
+
+    .hero-banner__buttons {
+      flex-direction: column;
+      align-items: stretch;
+    }
+
+    .hero-banner--center .hero-banner__buttons {
+      align-items: center;
+    }
+
+    .hero-banner--right .hero-banner__buttons {
+      align-items: flex-end;
+    }
+
+    .hero-banner__text {
+      max-width: 100%;
+    }
+  }
+</style>
 
 {% schema %}
 {
   "name": "Hero banner",
   "class": "shopify-section-hero-banner",
   "tag": "section",
-  "max_blocks": 5,
   "settings": [
+    {
+      "type": "header",
+      "content": "Image"
+    },
+    {
+      "type": "image_picker",
+      "id": "image",
+      "label": "Background image"
+    },
+    {
+      "type": "range",
+      "id": "overlay_opacity",
+      "label": "Overlay opacity",
+      "min": 0,
+      "max": 100,
+      "step": 10,
+      "unit": "%",
+      "default": 30
+    },
+    {
+      "type": "header",
+      "content": "Content"
+    },
+    {
+      "type": "text",
+      "id": "subheading",
+      "label": "Subheading"
+    },
+    {
+      "type": "text",
+      "id": "heading",
+      "label": "Heading",
+      "default": "Welcome to our store"
+    },
+    {
+      "type": "richtext",
+      "id": "text",
+      "label": "Description",
+      "default": "<p>Discover our amazing products and exceptional service.</p>"
+    },
+    {
+      "type": "header",
+      "content": "First button"
+    },
+    {
+      "type": "text",
+      "id": "button_label",
+      "label": "Button label",
+      "default": "Shop now"
+    },
+    {
+      "type": "url",
+      "id": "button_link",
+      "label": "Button link"
+    },
+    {
+      "type": "select",
+      "id": "button_style",
+      "label": "Button style",
+      "options": [
+        {
+          "value": "primary",
+          "label": "Primary"
+        },
+        {
+          "value": "secondary",
+          "label": "Secondary"
+        },
+        {
+          "value": "outline",
+          "label": "Outline"
+        }
+      ],
+      "default": "primary"
+    },
+    {
+      "type": "header",
+      "content": "Second button"
+    },
+    {
+      "type": "text",
+      "id": "button_label_2",
+      "label": "Second button label"
+    },
+    {
+      "type": "url",
+      "id": "button_link_2",
+      "label": "Second button link"
+    },
+    {
+      "type": "select",
+      "id": "button_style_2",
+      "label": "Second button style",
+      "options": [
+        {
+          "value": "primary",
+          "label": "Primary"
+        },
+        {
+          "value": "secondary",
+          "label": "Secondary"
+        },
+        {
+          "value": "outline",
+          "label": "Outline"
+        }
+      ],
+      "default": "outline"
+    },
     {
       "type": "header",
       "content": "Layout"
     },
     {
       "type": "select",
-      "id": "layout",
-      "label": "Layout",
+      "id": "height",
+      "label": "Desktop height",
       "options": [
         {
-          "value": "full_screen",
-          "label": "Full screen"
+          "value": "small",
+          "label": "Small (400px)"
         },
         {
-          "value": "boxed",
-          "label": "Boxed"
+          "value": "medium",
+          "label": "Medium (500px)"
+        },
+        {
+          "value": "large",
+          "label": "Large (600px)"
+        },
+        {
+          "value": "full",
+          "label": "Full screen"
         }
       ],
-      "default": "full_screen"
+      "default": "medium"
     },
     {
       "type": "select",
-      "id": "mobile_height",
+      "id": "height_mobile",
       "label": "Mobile height",
       "options": [
         {
@@ -284,290 +415,70 @@ Slideshow hero con video support, parallax y animaciones modernas
         {
           "value": "large",
           "label": "Large"
-        },
-        {
-          "value": "screen",
-          "label": "Full screen"
         }
       ],
       "default": "medium"
     },
     {
       "type": "select",
-      "id": "desktop_height",
-      "label": "Desktop height",
+      "id": "content_alignment",
+      "label": "Content alignment",
       "options": [
         {
-          "value": "small",
-          "label": "Small"
+          "value": "left",
+          "label": "Left"
         },
         {
-          "value": "medium",
-          "label": "Medium"
+          "value": "center",
+          "label": "Center"
         },
         {
-          "value": "large",
-          "label": "Large"
-        },
-        {
-          "value": "screen",
-          "label": "Full screen"
+          "value": "right",
+          "label": "Right"
         }
       ],
-      "default": "large"
+      "default": "center"
+    },
+    {
+      "type": "select",
+      "id": "content_position",
+      "label": "Content vertical position",
+      "options": [
+        {
+          "value": "flex-start",
+          "label": "Top"
+        },
+        {
+          "value": "center",
+          "label": "Center"
+        },
+        {
+          "value": "flex-end",
+          "label": "Bottom"
+        }
+      ],
+      "default": "center"
     },
     {
       "type": "header",
-      "content": "Slideshow"
+      "content": "Colors"
     },
     {
-      "type": "checkbox",
-      "id": "enable_autoplay",
-      "label": "Enable autoplay",
-      "default": true
-    },
-    {
-      "type": "range",
-      "id": "autoplay_duration",
-      "label": "Autoplay duration",
-      "min": 2,
-      "max": 10,
-      "step": 1,
-      "unit": "s",
-      "default": 5,
-      "info": "Only applies when autoplay is enabled"
-    },
-    {
-      "type": "checkbox",
-      "id": "show_navigation",
-      "label": "Show navigation arrows",
-      "default": true
-    },
-    {
-      "type": "checkbox",
-      "id": "show_pagination",
-      "label": "Show pagination dots",
-      "default": true
-    }
-  ],
-  "blocks": [
-    {
-      "type": "slide",
-      "name": "Slide",
-      "settings": [
-        {
-          "type": "header",
-          "content": "Media"
-        },
-        {
-          "type": "image_picker",
-          "id": "image",
-          "label": "Image"
-        },
-        {
-          "type": "image_picker",
-          "id": "mobile_image",
-          "label": "Mobile image",
-          "info": "Optional. Will use main image if not provided."
-        },
-        {
-          "type": "url",
-          "id": "video_url",
-          "label": "Background video URL",
-          "info": "YouTube or Vimeo URL. Will override image on desktop."
-        },
-        {
-          "type": "header",
-          "content": "Content"
-        },
-        {
-          "type": "text",
-          "id": "subheading",
-          "label": "Subheading",
-          "default": "Subheading"
-        },
-        {
-          "type": "text",
-          "id": "heading",
-          "label": "Heading",
-          "default": "Hero heading"
-        },
-        {
-          "type": "richtext",
-          "id": "text",
-          "label": "Text",
-          "default": "<p>This is your hero section description text.</p>"
-        },
-        {
-          "type": "header",
-          "content": "Buttons"
-        },
-        {
-          "type": "text",
-          "id": "button_1_text",
-          "label": "Button 1 text",
-          "default": "Shop now"
-        },
-        {
-          "type": "url",
-          "id": "button_1_url",
-          "label": "Button 1 URL"
-        },
-        {
-          "type": "select",
-          "id": "button_1_style",
-          "label": "Button 1 style",
-          "options": [
-            {
-              "value": "primary",
-              "label": "Primary"
-            },
-            {
-              "value": "secondary",
-              "label": "Secondary"
-            },
-            {
-              "value": "outline",
-              "label": "Outline"
-            }
-          ],
-          "default": "primary"
-        },
-        {
-          "type": "text",
-          "id": "button_2_text",
-          "label": "Button 2 text"
-        },
-        {
-          "type": "url",
-          "id": "button_2_url",
-          "label": "Button 2 URL"
-        },
-        {
-          "type": "select",
-          "id": "button_2_style",
-          "label": "Button 2 style",
-          "options": [
-            {
-              "value": "primary",
-              "label": "Primary"
-            },
-            {
-              "value": "secondary",
-              "label": "Secondary"
-            },
-            {
-              "value": "outline",
-              "label": "Outline"
-            }
-          ],
-          "default": "secondary"
-        },
-        {
-          "type": "header",
-          "content": "Layout"
-        },
-        {
-          "type": "select",
-          "id": "text_position",
-          "label": "Content position",
-          "options": [
-            {
-              "value": "top_left",
-              "label": "Top left"
-            },
-            {
-              "value": "top_center",
-              "label": "Top center"
-            },
-            {
-              "value": "top_right",
-              "label": "Top right"
-            },
-            {
-              "value": "center_left",
-              "label": "Middle left"
-            },
-            {
-              "value": "center_center",
-              "label": "Middle center"
-            },
-            {
-              "value": "center_right",
-              "label": "Middle right"
-            },
-            {
-              "value": "bottom_left",
-              "label": "Bottom left"
-            },
-            {
-              "value": "bottom_center",
-              "label": "Bottom center"
-            },
-            {
-              "value": "bottom_right",
-              "label": "Bottom right"
-            }
-          ],
-          "default": "center_center"
-        },
-        {
-          "type": "select",
-          "id": "text_alignment",
-          "label": "Content alignment",
-          "options": [
-            {
-              "value": "left",
-              "label": "Left"
-            },
-            {
-              "value": "center",
-              "label": "Center"
-            },
-            {
-              "value": "right",
-              "label": "Right"
-            }
-          ],
-          "default": "center"
-        },
-        {
-          "type": "header",
-          "content": "Colors"
-        },
-        {
-          "type": "range",
-          "id": "overlay_opacity",
-          "label": "Overlay opacity",
-          "min": 0,
-          "max": 100,
-          "step": 5,
-          "unit": "%",
-          "default": 40
-        },
-        {
-          "type": "color",
-          "id": "overlay_color",
-          "label": "Overlay color",
-          "default": "#000000"
-        },
-        {
-          "type": "color",
-          "id": "text_color",
-          "label": "Text color",
-          "default": "#ffffff"
-        }
-      ]
+      "type": "color",
+      "id": "text_color",
+      "label": "Text color",
+      "default": "#ffffff"
     }
   ],
   "presets": [
     {
       "name": "Hero banner",
-      "blocks": [
-        {
-          "type": "slide"
-        }
-      ]
+      "settings": {
+        "heading": "Welcome to our store",
+        "text": "<p>Discover our amazing products and exceptional service.</p>",
+        "button_label": "Shop now",
+        "button_style": "primary"
+      }
     }
   ]
 }
