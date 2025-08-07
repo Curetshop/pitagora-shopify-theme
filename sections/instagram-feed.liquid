@@ -54,11 +54,13 @@ Grid de posts de Instagram con integration simulada
         {%- comment -%} Demo/Placeholder content {%- endcomment -%}
         <div class="instagram-feed__grid instagram-feed__grid--demo">
           {%- assign demo_posts = section.settings.posts_to_show | default: 6 -%}
+          {%- assign valid_placeholders = 'lifestyle-1,lifestyle-2,product-1,product-2,collection-1,collection-2' | split: ',' -%}
           {%- for i in (1..demo_posts) -%}
+            {%- assign placeholder_index = i | minus: 1 | modulo: valid_placeholders.size -%}
             <div class="instagram-post instagram-post--demo">
               <div class="instagram-post__media">
                 <div class="instagram-post__placeholder">
-                  {{ 'lifestyle-' | append: i | placeholder_svg_tag: 'instagram-post__placeholder-svg' }}
+                  {{ valid_placeholders[placeholder_index] | placeholder_svg_tag: 'instagram-post__placeholder-svg' }}
                 </div>
                 
                 <div class="instagram-post__overlay">
