@@ -9,6 +9,27 @@
  */
 {
   "sections": {
+    "hero_banner_iEhncV": {
+      "type": "hero-banner",
+      "name": "Hero banner",
+      "settings": {
+        "overlay_opacity": 30,
+        "subheading": "",
+        "heading": "Welcome to our store",
+        "text": "<p>Discover our amazing products and exceptional service.</p>",
+        "button_label": "Shop now",
+        "button_link": "",
+        "button_style": "primary",
+        "button_label_2": "",
+        "button_link_2": "",
+        "button_style_2": "outline",
+        "height": "medium",
+        "height_mobile": "medium",
+        "content_alignment": "center",
+        "content_position": "center",
+        "text_color": "#ffffff"
+      }
+    },
     "rich_text_VMDpUf": {
       "type": "rich-text",
       "name": "Rich text",
@@ -174,12 +195,15 @@
       "type": "announcement-bar",
       "name": "Announcement bar",
       "settings": {
-        "enable_bar": true,
-        "text": "<p>🚚 Free shipping on orders over $75 | 📞 24/7 Support</p>",
+        "message": "Free shipping on orders over $75",
         "link": "",
-        "show_close": true,
+        "show_close_button": true,
+        "sticky": false,
+        "auto_rotate": false,
+        "auto_rotate_speed": 5,
         "background_color": "#1f2937",
-        "text_color": "#ffffff"
+        "text_color": "#ffffff",
+        "link_color": "#60a5fa"
       }
     },
     "blog_posts_UA6rPe": {
@@ -324,44 +348,6 @@
         "view_all_url": "",
         "background_color": "",
         "text_color": ""
-      }
-    },
-    "hero_banner_iEhncV": {
-      "type": "hero-banner",
-      "blocks": {
-        "slide_7gX3pg": {
-          "type": "slide",
-          "settings": {
-            "video_url": "",
-            "subheading": "Subheading",
-            "heading": "Hero heading",
-            "text": "<p>This is your hero section description text.</p>",
-            "button_1_text": "Shop now",
-            "button_1_url": "",
-            "button_1_style": "primary",
-            "button_2_text": "",
-            "button_2_url": "",
-            "button_2_style": "secondary",
-            "text_position": "center_center",
-            "text_alignment": "center",
-            "overlay_opacity": 40,
-            "overlay_color": "#000000",
-            "text_color": "#ffffff"
-          }
-        }
-      },
-      "block_order": [
-        "slide_7gX3pg"
-      ],
-      "name": "Hero banner",
-      "settings": {
-        "layout": "full_screen",
-        "mobile_height": "medium",
-        "desktop_height": "large",
-        "enable_autoplay": true,
-        "autoplay_duration": 5,
-        "show_navigation": true,
-        "show_pagination": true
       }
     },
     "instagram_feed_bNbdqr": {
@@ -718,6 +704,7 @@
     }
   },
   "order": [
+    "hero_banner_iEhncV",
     "rich_text_VMDpUf",
     "image_with_text_RC4JAG",
     "multicolumn_JWBmyE",
@@ -728,7 +715,6 @@
     "countdown_timer_9LEa9n",
     "featured_collections_Wfajei",
     "featured_products_FmT3M4",
-    "hero_banner_iEhncV",
     "instagram_feed_bNbdqr",
     "page_content_blocks_AgPAKa",
     "product_recommendations_aKgynM",
