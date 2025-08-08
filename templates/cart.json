@@ -20,7 +20,12 @@
       "type": "main-cart",
       "settings": {
         "show_cart_note": true,
-        "show_vendor": false
+        "show_vendor": false,
+        "show_quantity_selector": true,
+        "enable_cart_drawer": true,
+        "show_shipping_estimator": true,
+        "show_gift_wrapping": false,
+        "show_cart_recommendations": true
       }
     },
     "cart_benefits": {

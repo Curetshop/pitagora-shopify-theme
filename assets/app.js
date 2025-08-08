@@ -66,24 +66,79 @@ window.PitagoraTheme = window.PitagoraTheme || {
       };
     },
 
-    throttle(func, limit) {
+    // Enhanced throttle with leading and trailing options
+    throttle(func, limit, options = {}) {
       let inThrottle;
-      return function() {
-        const args = arguments;
+      let lastFunc;
+      let lastRan;
+      const { leading = true, trailing = true } = options;
+      
+      return function throttled(...args) {
         const context = this;
-        if (!inThrottle) {
+        
+        if (!lastRan && leading) {
           func.apply(context, args);
+          lastRan = Date.now();
+        } else if (!inThrottle) {
+          if (trailing) {
+            lastFunc = setTimeout(() => {
+              if (Date.now() - lastRan >= limit) {
+                func.apply(context, args);
+                lastRan = Date.now();
+              }
+            }, limit - (Date.now() - lastRan));
+          }
           inThrottle = true;
-          setTimeout(() => inThrottle = false, limit);
+          setTimeout(() => {
+            inThrottle = false;
+          }, limit);
         }
+      };
+    },
+
+    // Enhanced price formatting with localization
+    formatPrice(cents, options = {}) {
+      const currency = options.currency || window.theme?.settings?.currency || 'EUR';
+      const locale = options.locale || document.documentElement.lang || 'es-ES';
+      
+      try {
+        return new Intl.NumberFormat(locale, {
+          style: 'currency',
+          currency: currency,
+          minimumFractionDigits: options.showDecimals !== false ? 2 : 0,
+          maximumFractionDigits: 2
+        }).format(cents / 100);
+      } catch (error) {
+        // Fallback for unsupported locales
+        console.warn('Price formatting failed, using fallback:', error);
+        return `${currency} ${(cents / 100).toFixed(2)}`;
       }
     },
 
-    formatPrice(cents) {
-      return new Intl.NumberFormat('es-ES', {
-        style: 'currency',
-        currency: 'EUR'
-      }).format(cents / 100);
+    // Modern async utilities
+    async delay(ms) {
+      return new Promise(resolve => setTimeout(resolve, ms));
+    },
+
+    // Performance-optimized RAF wrapper
+    raf(callback) {
+      if ('requestAnimationFrame' in window) {
+        return requestAnimationFrame(callback);
+      } else {
+        return setTimeout(callback, 16); // ~60fps fallback
+      }
+    },
+
+    // Enhanced requestIdleCallback wrapper
+    idle(callback, options = {}) {
+      if ('requestIdleCallback' in window) {
+        return requestIdleCallback(callback, {
+          timeout: options.timeout || 5000,
+          ...options
+        });
+      } else {
+        return setTimeout(callback, options.fallbackDelay || 1);
+      }
     },
 
     dispatchCustomEvent(name, data = {}) {

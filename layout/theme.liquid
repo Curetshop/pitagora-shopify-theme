@@ -22,13 +22,15 @@
   <meta charset="utf-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=5, viewport-fit=cover">
-  <meta name="theme-color" content="{{ settings.color_primary | default: '#000000' }}">
+  <meta name="theme-color" content="{{ settings.colors_accent_1 | default: '#121212' }}">
   
   <link rel="canonical" href="{{ canonical_url }}">
   <link rel="preconnect" href="https://cdn.shopify.com" crossorigin>
   
   {%- comment -%} Preload critical resources {%- endcomment -%}
-  {%- render 'head-preload' -%}
+  {%- if settings.enable_resource_preload -%}
+    {%- render 'head-preload' -%}
+  {%- endif -%}
 
   {%- comment -%} Favicon {%- endcomment -%}
   {%- if settings.favicon != blank -%}
@@ -53,15 +55,21 @@
   {%- render 'social-meta-tags' -%}
 
   {%- comment -%} Critical CSS inline for fastest loading {%- endcomment -%}
-  {{ 'critical.css' | asset_url | stylesheet_tag }}
+  {%- if settings.enable_critical_css -%}
+    {{ 'critical.css' | asset_url | stylesheet_tag }}
+  {%- endif -%}
   {{ 'color-scheme-system.css' | asset_url | stylesheet_tag }}
 
   {%- comment -%} Performance optimizations CSS - Critical {%- endcomment -%}
   {{ 'performance-optimizations.css' | asset_url | stylesheet_tag }}
 
   {%- comment -%} Preload non-critical CSS and load asynchronously {%- endcomment -%}
-  <link rel="preload" href="{{ 'app.css' | asset_url }}" as="style" onload="this.onload=null;this.rel='stylesheet'">
-  <noscript><link rel="stylesheet" href="{{ 'app.css' | asset_url }}"></noscript>
+  {%- if settings.enable_css_async_loading -%}
+    <link rel="preload" href="{{ 'app.css' | asset_url }}" as="style" onload="this.onload=null;this.rel='stylesheet'">
+    <noscript><link rel="stylesheet" href="{{ 'app.css' | asset_url }}"></noscript>
+  {%- else -%}
+    {{ 'app.css' | asset_url | stylesheet_tag }}
+  {%- endif -%}
 
   {%- comment -%} Preload individual component stylesheets {%- endcomment -%}
   <link rel="preload" href="{{ 'header.css' | asset_url }}" as="style" onload="this.onload=null;this.rel='stylesheet'">
@@ -109,14 +117,40 @@
   {%- comment -%} CSS Variables - Focal v4 system {%- endcomment -%}
   {%- render 'css-variables' -%}
 
-  {%- comment -%} Analytics Enterprise - Vettro base {%- endcomment -%}
+  {%- comment -%} Analytics Enterprise - Enhanced Implementation {%- endcomment -%}
   {%- if settings.google_analytics_4 != blank -%}
     <script async src="https://www.googletagmanager.com/gtag/js?id={{ settings.google_analytics_4 }}"></script>
     <script>
       window.dataLayer = window.dataLayer || [];
       function gtag(){dataLayer.push(arguments);}
       gtag('js', new Date());
-      gtag('config', '{{ settings.google_analytics_4 }}');
+      gtag('config', '{{ settings.google_analytics_4 }}', {
+        {%- if settings.enhanced_ecommerce -%}
+        enhanced_conversions: true,
+        {%- endif -%}
+        anonymize_ip: true,
+        cookie_expires: 63072000,
+        send_page_view: true
+      });
+      
+      {%- comment -%} Enhanced E-commerce tracking {%- endcomment -%}
+      {%- if settings.enhanced_ecommerce -%}
+        {%- if template.name == 'product' -%}
+          gtag('event', 'view_item', {
+            currency: '{{ cart.currency.iso_code }}',
+            value: {{ product.price | money_without_currency }},
+            item_id: '{{ product.id }}',
+            item_name: {{ product.title | json }},
+            item_category: {% if product.type != blank %}{{ product.type | json }}{% else %}'Product'{% endif %},
+            item_brand: {% if product.vendor != blank %}{{ product.vendor | json }}{% else %}{{ shop.name | json }}{% endif %}
+          });
+        {%- elsif template.name == 'collection' -%}
+          gtag('event', 'view_item_list', {
+            item_list_id: '{{ collection.id }}',
+            item_list_name: {{ collection.title | json }}
+          });
+        {%- endif -%}
+      {%- endif -%}
     </script>
   {%- endif -%}
 
@@ -132,7 +166,27 @@
       'https://connect.facebook.net/en_US/fbevents.js');
       fbq('init', '{{ settings.facebook_pixel }}');
       fbq('track', 'PageView');
+      
+      {%- comment -%} Enhanced Facebook tracking {%- endcomment -%}
+      {%- if template.name == 'product' -%}
+        fbq('track', 'ViewContent', {
+          content_type: 'product',
+          content_ids: ['{{ product.id }}'],
+          content_name: {{ product.title | json }},
+          value: {{ product.price | money_without_currency }},
+          currency: '{{ cart.currency.iso_code }}'
+        });
+      {%- elsif template.name == 'collection' -%}
+        fbq('track', 'ViewContent', {
+          content_type: 'product_group',
+          content_name: {{ collection.title | json }}
+        });
+      {%- endif -%}
     </script>
+    <noscript>
+      <img height="1" width="1" style="display:none" 
+           src="https://www.facebook.com/tr?id={{ settings.facebook_pixel }}&ev=PageView&noscript=1"/>
+    </noscript>
   {%- endif -%}
 
   {%- if settings.hotjar_site_id != blank -%}
@@ -148,6 +202,47 @@
     </script>
   {%- endif -%}
 
+  {%- comment -%} Structured Data (JSON-LD) - Enhanced SEO {%- endcomment -%}
+  <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "Organization",
+      "name": {{ shop.name | json }},
+      "url": "{{ shop.url }}{{ routes.root_url }}",
+      "logo": {% if settings.logo %}"{{ settings.logo | image_url: width: 512 }}"{% else %}null{% endif %},
+      "sameAs": [
+        {%- if settings.social_facebook != blank -%}{{ settings.social_facebook | json }}{%- endif -%}
+        {%- if settings.social_twitter != blank -%}{%- if settings.social_facebook != blank -%},{%- endif -%}{{ settings.social_twitter | json }}{%- endif -%}
+        {%- if settings.social_instagram != blank -%}{%- if settings.social_facebook != blank or settings.social_twitter != blank -%},{%- endif -%}{{ settings.social_instagram | json }}{%- endif -%}
+        {%- if settings.social_youtube != blank -%}{%- if settings.social_facebook != blank or settings.social_twitter != blank or settings.social_instagram != blank -%},{%- endif -%}{{ settings.social_youtube | json }}{%- endif -%}
+      ],
+      "contactPoint": {
+        "@type": "ContactPoint",
+        "email": {{ shop.email | json }},
+        "contactType": "customer service"
+      }
+      {%- if template.name == 'product' -%}
+        ,"hasOfferCatalog": {
+          "@type": "OfferCatalog",
+          "name": "Products",
+          "itemListElement": {
+            "@type": "Product",
+            "name": {{ product.title | json }},
+            "image": "{{ product.featured_image | image_url: width: 1200 }}",
+            "description": {{ product.description | strip_html | json }},
+            "sku": {{ product.selected_or_first_available_variant.sku | json }},
+            "offers": {
+              "@type": "Offer",
+              "price": {{ product.selected_or_first_available_variant.price | money_without_currency | json }},
+              "priceCurrency": {{ cart.currency.iso_code | json }},
+              "availability": "{% if product.selected_or_first_available_variant.available %}https://schema.org/InStock{% else %}https://schema.org/OutOfStock{% endif %}"
+            }
+          }
+        }
+      {%- endif -%}
+    }
+  </script>
+
   {%- comment -%} Theme JavaScript variables {%- endcomment -%}
   <script>
     window.theme = window.theme || {};
@@ -160,10 +255,17 @@
       settings: {
         money_format: {{ shop.money_format | json }},
         money_with_currency_format: {{ shop.money_with_currency_format | json }},
-        cart_drawer: {{ settings.cart_drawer | default: false }},
-        product_id: {% if product %}{{ product.id }}{% else %}false{% endif %},
-        predictive_search: {{ settings.predictive_search | default: true }},
-        quick_view: {{ settings.enable_quick_view | default: true }}
+        cart_drawer: {{ settings.cart_drawer | default: false | json }},
+        product_id: {% if product %}{{ product.id }}{% else %}null{% endif %},
+        predictive_search: {{ settings.predictive_search | default: true | json }},
+        quick_view: {{ settings.enable_quick_view | default: true | json }},
+        animations_enabled: {{ settings.animations_enabled | default: true | json }},
+        lazy_loading: {{ settings.enable_lazy_loading | default: true | json }},
+        voice_search: {{ settings.enable_voice_search | default: true | json }},
+        ai_recommendations: {{ settings.enable_ai_recommendations | default: true | json }},
+        debug_mode: {{ settings.debug_mode | default: false | json }},
+        performance_metrics: {{ settings.show_performance_metrics | default: false | json }},
+        csp_enabled: {{ settings.enable_csp | default: true | json }}
       },
       routes: {
         root_url: '{{ routes.root_url }}',
@@ -184,12 +286,21 @@
         close: {{ 'general.accessibility.close' | t | json }}
       }
     };
+    
+    {%- comment -%} Performance optimization flags {%- endcomment -%}
+    window.themeFeatures = {
+      criticalCSS: {{ settings.enable_critical_css | default: true | json }},
+      asyncCSS: {{ settings.enable_css_async_loading | default: true | json }},
+      lazyLoading: {{ settings.enable_lazy_loading | default: true | json }},
+      scriptDefer: {{ settings.enable_script_defer | default: true | json }},
+      resourcePreload: {{ settings.enable_resource_preload | default: true | json }}
+    };
   </script>
 
   {{ content_for_header }}
 </head>
 
-<body class="template-{{ template.name | handle }}{% if customer %} customer-logged-in{% endif %}{% if settings.animations_enabled %} animations-enabled{% endif %}">
+<body class="template-{{ template.name | handle }}{% if template.suffix %} template-suffix-{{ template.suffix }}{% endif %}{% if customer %} customer-logged-in{% endif %}{% if settings.animations_enabled %} animations-enabled{% endif %}{% unless settings.enable_lazy_loading %} no-lazy-loading{% endunless %}">
   
   {%- comment -%} Skip link for accessibility {%- endcomment -%}
   <a class="skip-link visually-hidden" href="#MainContent">
@@ -224,10 +335,16 @@
   {{ 'custom-elements.js' | asset_url | script_tag }}
   
   {%- comment -%} Performance optimizations JavaScript - Critical for Web Vitals {%- endcomment -%}
-  <script src="{{ 'performance-optimizations.js' | asset_url }}" defer></script>
+  {%- if settings.show_performance_metrics or settings.enable_lazy_loading -%}
+    <script src="{{ 'performance-optimizations.js' | asset_url }}" defer></script>
+  {%- endif -%}
   
   {%- comment -%} Main JavaScript - Deferred for performance {%- endcomment -%}
-  <script src="{{ 'app.js' | asset_url }}" defer></script>
+  {%- if settings.enable_script_defer -%}
+    <script src="{{ 'app.js' | asset_url }}" defer></script>
+  {%- else -%}
+    <script src="{{ 'app.js' | asset_url }}"></script>
+  {%- endif -%}
 
   {%- comment -%} Remove no-js class {%- endcomment -%}
   <script>
@@ -246,8 +363,53 @@
     });
   </script>
 
-  {%- comment -%} WhatsApp Floating Button - Global {%- endcomment -%}
+  {%- comment -%} WhatsApp Floating Button - Enhanced Integration {%- endcomment -%}
   {%- sections 'whatsapp-group' -%}
+  
+  {%- comment -%} Cookie Consent (GDPR Compliance) {%- endcomment -%}
+  {%- if settings.cookie_consent_level != 'none' -%}
+    <div id="cookie-consent" class="cookie-consent" style="display: none;">
+      <div class="cookie-consent__content">
+        <p class="cookie-consent__text">{{ 'general.cookie_consent.message' | t }}</p>
+        <div class="cookie-consent__actions">
+          <button type="button" class="cookie-consent__accept button button--primary">
+            {{ 'general.cookie_consent.accept' | t }}
+          </button>
+          {%- if settings.cookie_consent_level == 'advanced' -%}
+            <button type="button" class="cookie-consent__settings button button--secondary">
+              {{ 'general.cookie_consent.settings' | t }}
+            </button>
+          {%- endif -%}
+        </div>
+      </div>
+    </div>
+    <script>
+      // Simple cookie consent implementation
+      (function() {
+        const consent = localStorage.getItem('cookie-consent');
+        if (!consent) {
+          document.getElementById('cookie-consent').style.display = 'block';
+          document.querySelector('.cookie-consent__accept').addEventListener('click', function() {
+            localStorage.setItem('cookie-consent', 'accepted');
+            document.getElementById('cookie-consent').style.display = 'none';
+          });
+        }
+      })();
+    </script>
+  {%- endif -%}
+  
+  {%- comment -%} Custom CSS/JS from settings {%- endcomment -%}
+  {%- if settings.custom_css != blank -%}
+    <style>{{ settings.custom_css }}</style>
+  {%- endif -%}
+  
+  {%- if settings.custom_js != blank -%}
+    <script>{{ settings.custom_js }}</script>
+  {%- endif -%}
+  
+  {%- if settings.custom_head_code != blank -%}
+    {{ settings.custom_head_code }}
+  {%- endif -%}
 
   {%- comment -%} Theme editor support {%- endcomment -%}
   {%- if request.design_mode -%}

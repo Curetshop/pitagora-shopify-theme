@@ -20,17 +20,32 @@ Parameters:
 {%- comment -%} Handle different icon types {%- endcomment -%}
 {%- if icon contains '<svg' -%}
   {%- comment -%} Direct SVG code {%- endcomment -%}
-  <span class="{{ icon_class }}" style="{% if color %}color: {{ color }};{% endif %} width: {{ icon_size }}px; height: {{ icon_size }}px; display: inline-flex; align-items: center; justify-content: center;">
+  <span 
+    class="{{ icon_class }}{% if is_common_size %} icon--{{ icon_size }}{% endif %}" 
+    style="{% if color %}color: {{ color }};{% endif %}{% unless is_common_size %} width: {{ icon_size }}px; height: {{ icon_size }}px;{% endunless %} display: inline-flex; align-items: center; justify-content: center;"
+    role="img"
+    aria-hidden="true"
+  >
     {{ icon }}
   </span>
 {%- elsif icon contains 'icon-' -%}
   {%- comment -%} Icon class reference - render specific icon snippet {%- endcomment -%}
-  <span class="{{ icon_class }}" style="{% if color %}color: {{ color }};{% endif %} width: {{ icon_size }}px; height: {{ icon_size }}px; display: inline-flex; align-items: center; justify-content: center;">
+  <span 
+    class="{{ icon_class }}{% if is_common_size %} icon--{{ icon_size }}{% endif %}" 
+    style="{% if color %}color: {{ color }};{% endif %}{% unless is_common_size %} width: {{ icon_size }}px; height: {{ icon_size }}px;{% endunless %} display: inline-flex; align-items: center; justify-content: center;"
+    role="img"
+    aria-hidden="true"
+  >
     {%- render icon -%}
   </span>
 {%- else -%}
   {%- comment -%} Handle common icon names {%- endcomment -%}
-  <span class="{{ icon_class }}" style="{% if color %}color: {{ color }};{% endif %} width: {{ icon_size }}px; height: {{ icon_size }}px; display: inline-flex; align-items: center; justify-content: center;">
+  <span 
+    class="{{ icon_class }}{% if is_common_size %} icon--{{ icon_size }}{% endif %}" 
+    style="{% if color %}color: {{ color }};{% endif %}{% unless is_common_size %} width: {{ icon_size }}px; height: {{ icon_size }}px;{% endunless %} display: inline-flex; align-items: center; justify-content: center;"
+    role="img"
+    aria-hidden="true"
+  >
     {%- case icon -%}
       {%- when 'shipping', 'truck', 'delivery' -%}
         <svg viewBox="0 0 24 24" fill="currentColor">
@@ -85,3 +100,57 @@ Parameters:
     {%- endcase -%}
   </span>
 {%- endif -%}
+<style>
+  /* Icon system with optimized common sizes */
+  .icon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    vertical-align: middle;
+  }
+  
+  .icon svg {
+    width: 100%;
+    height: 100%;
+    display: block;
+  }
+  
+  /* Common icon sizes for performance */
+  .icon--16 { width: 16px; height: 16px; }
+  .icon--20 { width: 20px; height: 20px; }
+  .icon--24 { width: 24px; height: 24px; }
+  .icon--32 { width: 32px; height: 32px; }
+  .icon--48 { width: 48px; height: 48px; }
+  
+  /* Icon states */
+  .icon--interactive {
+    cursor: pointer;
+    transition: opacity var(--transition-fast, 150ms ease-in-out);
+  }
+  
+  .icon--interactive:hover {
+    opacity: 0.7;
+  }
+  
+  .icon--loading {
+    animation: icon-spin 1s linear infinite;
+  }
+  
+  @keyframes icon-spin {
+    from { transform: rotate(0deg); }
+    to { transform: rotate(360deg); }
+  }
+  
+  /* Reduced motion support */
+  @media (prefers-reduced-motion: reduce) {
+    .icon--loading {
+      animation: none;
+    }
+    
+    .icon--interactive {
+      transition: none;
+    }
+  }
+</style>
+EOF < /dev/null

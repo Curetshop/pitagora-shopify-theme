@@ -28,16 +28,58 @@
   <link rel="preload" href="{{ product.featured_media | image_url: width: 800 }}" as="image">
 {%- endif -%}
 
-{%- comment -%} DNS prefetch for external services {%- endcomment -%}
+{%- comment -%} Responsive image preloading based on viewport {%- endcomment -%}
+<script>
+  // Preload images based on device capabilities
+  if ('loading' in HTMLImageElement.prototype && 'IntersectionObserver' in window) {
+    // Modern browsers with native lazy loading
+    const isHighDensityDisplay = window.devicePixelRatio > 1.5;
+    const preloadWidth = window.innerWidth < 768 ? (isHighDensityDisplay ? 800 : 400) : (isHighDensityDisplay ? 1600 : 800);
+    
+    // Preload hero images with appropriate sizing
+    {%- if template.name == 'index' and section.blocks.size > 0 -%}
+      {%- for block in section.blocks limit: 2 -%}
+        {%- if block.settings.image != blank -%}
+          const heroImg{{ forloop.index }} = new Image();
+          heroImg{{ forloop.index }}.src = '{{ block.settings.image | image_url: width: 800 }}';
+          if (isHighDensityDisplay) {
+            heroImg{{ forloop.index }}.srcset = '{{ block.settings.image | image_url: width: 800 }} 1x, {{ block.settings.image | image_url: width: 1600 }} 2x';
+          }
+        {%- endif -%}
+      {%- endfor -%}
+    {%- endif -%}
+  }
+</script>
+
+{%- comment -%} Enhanced DNS prefetch with preconnect for critical resources {%- endcomment -%}
+<link rel="preconnect" href="//fonts.googleapis.com" crossorigin>
+<link rel="preconnect" href="//fonts.gstatic.com" crossorigin>
 <link rel="dns-prefetch" href="//fonts.googleapis.com">
 <link rel="dns-prefetch" href="//fonts.gstatic.com">
+
+{%- comment -%} Analytics preloading {%- endcomment -%}
 {%- if settings.google_analytics_4 != blank -%}
-  <link rel="dns-prefetch" href="//www.googletagmanager.com">
+  <link rel="preconnect" href="//www.googletagmanager.com">
   <link rel="dns-prefetch" href="//www.google-analytics.com">
 {%- endif -%}
+
+{%- comment -%} Social media preloading {%- endcomment -%}
 {%- if settings.facebook_pixel != blank -%}
-  <link rel="dns-prefetch" href="//connect.facebook.net">
+  <link rel="preconnect" href="//connect.facebook.net">
 {%- endif -%}
+
+{%- comment -%} Hotjar preloading {%- endcomment -%}
 {%- if settings.hotjar_site_id != blank -%}
-  <link rel="dns-prefetch" href="//static.hotjar.com">
+  <link rel="preconnect" href="//static.hotjar.com">
 {%- endif -%}
+
+{%- comment -%} Template-specific resource hints {%- endcomment -%}
+{%- case template.name -%}
+  {%- when 'collection' -%}
+    <link rel="prefetch" href="{{ routes.search_url }}">
+  {%- when 'product' -%}
+    <link rel="prefetch" href="{{ routes.cart_url }}">
+    <link rel="prefetch" href="{{ routes.cart_add_url }}">
+  {%- when 'cart' -%}
+    <link rel="prefetch" href="{{ routes.all_products_collection_url }}">
+{%- endcase -%}

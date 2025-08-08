@@ -81,7 +81,15 @@ Parámetros:
     class="product-card product-card--{{ image_aspect_ratio }}{% if on_sale %} product-card--on-sale{% endif %}{% if sold_out %} product-card--sold-out{% endif %}{% if coming_soon %} product-card--coming-soon{% endif %}" 
     data-product-id="{{ product.id }}"
     data-product-handle="{{ product.handle }}"
+    itemscope 
+    itemtype="https://schema.org/Product"
+    role="article"
+    aria-label="{{ product.title | escape }}"
   >
+    {%- comment -%} Structured Data for SEO {%- endcomment -%}
+    <meta itemprop="name" content="{{ product.title | escape }}">
+    <meta itemprop="brand" content="{{ product.vendor | escape }}">
+    <meta itemprop="url" content="{{ shop.url }}{{ product.url | within: collection }}">
     <div class="product-card__media">
       {%- comment -%} Product Badge {%- endcomment -%}
       {%- if on_sale or sold_out or coming_soon -%}
@@ -123,6 +131,7 @@ Parámetros:
                 width="{{ featured_image.width }}"
                 height="{{ featured_image.height }}"
                 loading="{{ loading }}"
+                decoding="async"
                 sizes="{{ sizes }}"
                 srcset="
                   {{ featured_image | image_url: width: 200 }} 200w,
@@ -133,6 +142,7 @@ Parámetros:
                   {{ featured_image | image_url: width: 700 }} 700w,
                   {{ featured_image | image_url: width: 800 }} 800w
                 "
+                itemprop="image"
               >
               
               {%- comment -%} Hover Image {%- endcomment -%}
@@ -173,8 +183,10 @@ Parámetros:
           type="button"
           aria-label="{{ 'products.product.add_to_wishlist' | t: product: product.title }}"
           data-product-id="{{ product.id }}"
+          data-wishlist-toggle
         >
           {%- render 'icon-heart' -%}
+          <span class="visually-hidden">{{ 'products.product.add_to_wishlist' | t: product: product.title }}</span>
         </button>
 
         {%- comment -%} Quick View Button {%- endcomment -%}
@@ -184,8 +196,10 @@ Parámetros:
           aria-label="{{ 'products.product.quick_view' | t: product: product.title }}"
           data-product-handle="{{ product.handle }}"
           data-quick-view
+          aria-expanded="false"
         >
           {%- render 'icon-eye' -%}
+          <span class="visually-hidden">{{ 'products.product.quick_view' | t: product: product.title }}</span>
         </button>
 
         {%- comment -%} Quick Buy Button {%- endcomment -%}
@@ -227,8 +241,8 @@ Parámetros:
         </div>
       {%- endif -%}
 
-      <h3 class="product-card__title">
-        <a href="{{ product.url | within: collection }}" class="product-card__title-link">
+      <h3 class="product-card__title" itemprop="name">
+        <a href="{{ product.url | within: collection }}" class="product-card__title-link" itemprop="url">
           {{ product.title | escape }}
         </a>
       </h3>
@@ -252,13 +266,16 @@ Parámetros:
         </div>
       {%- endif -%}
 
-      {%- comment -%} Product Price {%- endcomment -%}
-      <div class="product-card__price">
+      {%- comment -%} Product Price with Structured Data {%- endcomment -%}
+      <div class="product-card__price" itemscope itemtype="https://schema.org/Offer">
+        <meta itemprop="priceCurrency" content="{{ cart.currency.iso_code }}">
+        <meta itemprop="availability" content="{% if product.available %}https://schema.org/InStock{% else %}https://schema.org/OutOfStock{% endif %}">
+        
         {%- if on_sale -%}
-          <span class="product-card__price-sale">{{ product.price | money }}</span>
+          <span class="product-card__price-sale" itemprop="price" content="{{ product.price | money_without_currency }}">{{ product.price | money }}</span>
           <span class="product-card__price-compare">{{ product.compare_at_price | money }}</span>
         {%- else -%}
-          <span class="product-card__price-regular">
+          <span class="product-card__price-regular" itemprop="price" content="{{ product.price | money_without_currency }}">
             {%- if product.price_varies -%}
               {{ 'products.product.price.from_price_html' | t: price: product.price_min | money }}
             {%- else -%}

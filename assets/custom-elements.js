@@ -4,39 +4,201 @@
  * Based on Shopify best practices and accessibility standards
  */
 
-// Base Custom Element Class
+/**
+ * Enhanced Base Custom Element Class
+ * Modern Web Components with performance optimizations
+ */
 class PitagoraElement extends HTMLElement {
   constructor() {
     super();
-    this.debug = window.theme?.debug || false;
+    this.debug = window.PitagoraTheme?.config?.debug || false;
     this.boundEventListeners = new Map();
+    this.scheduledTasks = new Set();
+    this.isConnected = false;
+    this.performanceMarker = `${this.constructor.name}-${Date.now()}`;
+    
+    // Performance monitoring
+    if (this.debug && 'performance' in window) {
+      performance.mark(`${this.performanceMarker}-construct-start`);
+    }
   }
 
   connectedCallback() {
-    this.setup();
-    if (this.debug) console.log(`✅ ${this.constructor.name} connected`);
+    if (this.isConnected) return; // Prevent double initialization
+    
+    try {
+      this.isConnected = true;
+      
+      if (this.debug && 'performance' in window) {
+        performance.mark(`${this.performanceMarker}-connect-start`);
+      }
+      
+      // Use requestIdleCallback for non-critical setup
+      if ('requestIdleCallback' in window) {
+        requestIdleCallback(() => this.setup(), { timeout: 2000 });
+      } else {
+        // Fallback for browsers without requestIdleCallback
+        setTimeout(() => this.setup(), 0);
+      }
+      
+      if (this.debug) {
+        console.log(`✅ ${this.constructor.name} connected`);
+        
+        if ('performance' in window) {
+          performance.mark(`${this.performanceMarker}-connect-end`);
+          performance.measure(
+            `${this.constructor.name} connection time`,
+            `${this.performanceMarker}-connect-start`,
+            `${this.performanceMarker}-connect-end`
+          );
+        }
+      }
+    } catch (error) {
+      console.error(`Error connecting ${this.constructor.name}:`, error);
+    }
   }
 
   disconnectedCallback() {
-    this.cleanup();
-    if (this.debug) console.log(`♻️ ${this.constructor.name} disconnected`);
+    if (!this.isConnected) return;
+    
+    try {
+      this.isConnected = false;
+      this.cleanup();
+      
+      if (this.debug) {
+        console.log(`♻️ ${this.constructor.name} disconnected`);
+      }
+    } catch (error) {
+      console.error(`Error disconnecting ${this.constructor.name}:`, error);
+    }
   }
 
   setup() {
     // Override in child classes
+    if (this.debug) {
+      console.log(`🔧 ${this.constructor.name} setup completed`);
+    }
   }
 
   cleanup() {
+    // Cancel scheduled tasks
+    this.scheduledTasks.forEach(taskId => {
+      if (typeof taskId === 'number') {
+        clearTimeout(taskId);
+        clearInterval(taskId);
+      }
+    });
+    this.scheduledTasks.clear();
+    
     // Remove all bound event listeners
-    this.boundEventListeners.forEach((listener, element) => {
-      element.removeEventListener(listener.event, listener.handler);
+    this.boundEventListeners.forEach((listeners, element) => {
+      listeners.forEach(({ event, handler, options }) => {
+        try {
+          element.removeEventListener(event, handler, options);
+        } catch (error) {
+          console.warn('Error removing event listener:', error);
+        }
+      });
     });
     this.boundEventListeners.clear();
   }
 
-  addListener(element, event, handler) {
-    element.addEventListener(event, handler);
-    this.boundEventListeners.set(element, { event, handler });
+  // Enhanced event listener management
+  addListener(element, event, handler, options = {}) {
+    if (!element || typeof handler !== 'function') return;
+    
+    // Auto-detect passive events for better performance
+    const defaultOptions = {
+      passive: ['scroll', 'touchstart', 'touchmove', 'wheel', 'mousewheel'].includes(event),
+      once: false,
+      capture: false,
+      ...options
+    };
+    
+    try {
+      element.addEventListener(event, handler, defaultOptions);
+      
+      // Store listener info for cleanup
+      if (!this.boundEventListeners.has(element)) {
+        this.boundEventListeners.set(element, []);
+      }
+      this.boundEventListeners.get(element).push({ event, handler, options: defaultOptions });
+      
+    } catch (error) {
+      console.error('Error adding event listener:', error);
+    }
+  }
+
+  // Schedule a task and track it for cleanup
+  scheduleTask(callback, delay = 0, isInterval = false) {
+    const taskId = isInterval ? 
+      setInterval(callback, delay) : 
+      setTimeout(callback, delay);
+    
+    this.scheduledTasks.add(taskId);
+    
+    // Auto-remove from tracking after execution (for timeouts)
+    if (!isInterval) {
+      setTimeout(() => this.scheduledTasks.delete(taskId), delay + 100);
+    }
+    
+    return taskId;
+  }
+
+  // Utility methods for child classes
+  query(selector) {
+    return this.querySelector(selector);
+  }
+
+  queryAll(selector) {
+    return Array.from(this.querySelectorAll(selector));
+  }
+
+  // Safe attribute getting/setting
+  getAttr(name, fallback = null) {
+    return this.getAttribute(name) || fallback;
+  }
+
+  setAttr(name, value) {
+    if (value === null || value === undefined) {
+      this.removeAttribute(name);
+    } else {
+      this.setAttribute(name, String(value));
+    }
+  }
+
+  // Custom event dispatch
+  dispatch(eventName, detail = {}, options = {}) {
+    const event = new CustomEvent(eventName, {
+      detail,
+      bubbles: options.bubbles !== false,
+      cancelable: options.cancelable !== false,
+      composed: options.composed !== false
+    });
+    
+    return this.dispatchEvent(event);
+  }
+
+  // Performance measurement helpers
+  startPerformanceMeasure(name) {
+    if (this.debug && 'performance' in window) {
+      performance.mark(`${this.constructor.name}-${name}-start`);
+    }
+  }
+
+  endPerformanceMeasure(name) {
+    if (this.debug && 'performance' in window) {
+      performance.mark(`${this.constructor.name}-${name}-end`);
+      try {
+        performance.measure(
+          `${this.constructor.name} ${name}`,
+          `${this.constructor.name}-${name}-start`,
+          `${this.constructor.name}-${name}-end`
+        );
+      } catch (error) {
+        console.warn('Performance measurement failed:', error);
+      }
+    }
   }
 }
 
@@ -44,10 +206,147 @@ class PitagoraElement extends HTMLElement {
  * Store Header Component
  * Handles navigation, search, cart, and mobile menu
  */
+/**
+ * Enhanced Store Header Component
+ * Handles navigation, search, cart, mobile menu with performance optimizations
+ */
 class StoreHeader extends PitagoraElement {
   setup() {
-    this.menuToggle = this.querySelector('[data-mobile-menu-toggle]');
-    this.mobileMenu = this.querySelector('[data-mobile-menu]');
+    this.startPerformanceMeasure('header-setup');
+    
+    // Cache DOM elements
+    this.menuToggle = this.query('[data-mobile-menu-toggle]');
+    this.mobileMenu = this.query('[data-mobile-menu]');
+    this.searchToggle = this.query('[data-search-toggle]');
+    this.searchForm = this.query('[data-search-form]');
+    this.cartIcon = this.query('[data-cart-icon]');
+    this.cartCount = this.query('[data-cart-count]');
+    
+    // Initialize features
+    this.initMobileMenu();
+    this.initSearch();
+    this.initStickyHeader();
+    this.initCartUpdates();
+    
+    this.endPerformanceMeasure('header-setup');
+  }
+  
+  initMobileMenu() {
+    if (!this.menuToggle || !this.mobileMenu) return;
+    
+    this.addListener(this.menuToggle, 'click', (e) => {
+      e.preventDefault();
+      const isExpanded = this.menuToggle.getAttribute('aria-expanded') === 'true';
+      
+      this.menuToggle.setAttribute('aria-expanded', !isExpanded);
+      this.mobileMenu.classList.toggle('is-open', !isExpanded);
+      document.body.classList.toggle('menu-open', !isExpanded);
+      
+      // Dispatch custom event
+      this.dispatch('mobile-menu-toggle', { isOpen: !isExpanded });
+    });
+    
+    // Close menu on escape key
+    this.addListener(document, 'keydown', (e) => {
+      if (e.key === 'Escape' && this.mobileMenu.classList.contains('is-open')) {
+        this.closeMobileMenu();
+      }
+    });
+    
+    // Close menu when clicking outside
+    this.addListener(document, 'click', (e) => {
+      if (!this.contains(e.target) && this.mobileMenu.classList.contains('is-open')) {
+        this.closeMobileMenu();
+      }
+    });
+  }
+  
+  closeMobileMenu() {
+    this.menuToggle?.setAttribute('aria-expanded', 'false');
+    this.mobileMenu?.classList.remove('is-open');
+    document.body.classList.remove('menu-open');
+    this.dispatch('mobile-menu-close');
+  }
+  
+  initSearch() {
+    if (!this.searchToggle || !this.searchForm) return;
+    
+    this.addListener(this.searchToggle, 'click', (e) => {
+      e.preventDefault();
+      const isExpanded = this.searchForm.classList.contains('is-expanded');
+      
+      this.searchForm.classList.toggle('is-expanded', !isExpanded);
+      
+      if (!isExpanded) {
+        const searchInput = this.searchForm.querySelector('input[type="search"]');
+        searchInput?.focus();
+      }
+      
+      this.dispatch('search-toggle', { isExpanded: !isExpanded });
+    });
+  }
+  
+  initStickyHeader() {
+    let lastScrollY = window.scrollY;
+    let isStuck = false;
+    
+    const stickyHandler = PitagoraTheme.utils.throttle(() => {
+      const currentScrollY = window.scrollY;
+      const shouldStick = currentScrollY > 100;
+      
+      if (shouldStick !== isStuck) {
+        isStuck = shouldStick;
+        this.classList.toggle('header--stuck', isStuck);
+        this.dispatch('header-sticky-change', { isStuck });
+      }
+      
+      // Hide/show header on scroll
+      if (currentScrollY > lastScrollY && currentScrollY > 200) {
+        this.classList.add('header--hidden');
+      } else {
+        this.classList.remove('header--hidden');
+      }
+      
+      lastScrollY = currentScrollY;
+    }, 16, { passive: true }); // ~60fps throttling
+    
+    this.addListener(window, 'scroll', stickyHandler, { passive: true });
+  }
+  
+  initCartUpdates() {
+    if (!this.cartIcon || !this.cartCount) return;
+    
+    // Listen for cart updates
+    this.addListener(document, 'cart:updated', (e) => {
+      const { itemCount } = e.detail;
+      this.updateCartCount(itemCount);
+    });
+    
+    // Update cart count with animation
+    this.updateCartCount(window.theme?.cart?.item_count || 0);
+  }
+  
+  updateCartCount(count) {
+    if (!this.cartCount) return;
+    
+    const currentCount = parseInt(this.cartCount.textContent) || 0;
+    
+    if (count !== currentCount) {
+      this.cartCount.textContent = count;
+      
+      // Add animation class
+      this.cartCount.classList.add('cart-count--updated');
+      
+      this.scheduleTask(() => {
+        this.cartCount?.classList.remove('cart-count--updated');
+      }, 300);
+      
+      // Update visibility
+      this.cartIcon.classList.toggle('has-items', count > 0);
+    }
+  }
+  
+  connectedCallback() {
     this.searchToggle = this.querySelector('[data-search-toggle]');
     this.searchDrawer = this.querySelector('[data-search-drawer]');
     this.cartToggle = this.querySelector('[data-cart-toggle]');

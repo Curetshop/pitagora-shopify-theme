@@ -3,27 +3,46 @@
  * Premium design inspired by Shrine Pro, Vettro & California
  */
 
-/* Premium Product Card Base */
+/* Premium Product Card Base - Performance Optimized */
 .product-card {
   display: block;
   position: relative;
-  background: rgba(var(--color-base-background-1), 1);
-  border: 1px solid rgba(var(--color-base-text), 0.08);
-  border-radius: var(--card-corner-radius, 1.6rem);
+  background: rgb(var(--color-base-background-1, var(--color-background-fallback, 255, 255, 255)));
+  border: 1px solid rgba(var(--color-base-text, var(--color-foreground-fallback, 18, 18, 18)), 0.08);
+  border-radius: var(--card-corner-radius, var(--border-radius-card-fallback, 12px));
   overflow: hidden;
   transition: all 0.5s cubic-bezier(0.4, 0.0, 0.2, 1);
   height: 100%;
   box-shadow: 
-    0 1px 3px rgba(var(--color-base-text), 0.05),
-    0 1px 2px rgba(var(--color-base-text), 0.08);
+    0 1px 3px rgba(var(--color-base-text, var(--color-foreground-fallback, 18, 18, 18)), 0.05),
+    0 1px 2px rgba(var(--color-base-text, var(--color-foreground-fallback, 18, 18, 18)), 0.08);
+  /* Performance optimizations */
+  will-change: transform, box-shadow;
+  backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
+  isolation: isolate;
+  contain: layout style;
 }
 
-.product-card:hover {
-  transform: translateY(-12px) scale(1.02);
-  box-shadow: 
-    0 32px 64px rgba(var(--color-base-text), 0.15),
-    0 16px 32px rgba(var(--color-base-text), 0.1);
-  border-color: rgba(var(--color-base-accent-1), 0.2);
+@media (hover: hover) {
+  .product-card:hover {
+    transform: translateY(-12px) scale(1.02);
+    box-shadow: 
+      0 32px 64px rgba(var(--color-base-text, var(--color-foreground-fallback, 18, 18, 18)), 0.15),
+      0 16px 32px rgba(var(--color-base-text, var(--color-foreground-fallback, 18, 18, 18)), 0.1);
+    border-color: rgba(var(--color-base-accent-1, var(--color-primary-fallback, 18, 18, 18)), 0.2);
+  }
+}
+
+/* Reduce motion for accessibility */
+@media (prefers-reduced-motion: reduce) {
+  .product-card {
+    transition: box-shadow 0.2s ease, border-color 0.2s ease;
+  }
+  
+  .product-card:hover {
+    transform: none;
+  }
 }
 
 /* Media Section */
@@ -48,9 +67,12 @@
   position: relative;
   width: 100%;
   overflow: hidden;
-  background: var(--color-background-secondary, #f8f9fa);
+  background: rgba(var(--color-base-background-2, var(--color-background-fallback, 243, 243, 243)), 0.3);
+  /* Modern aspect ratio */
+  aspect-ratio: var(--product-card-aspect-ratio, 1);
 }
 
+/* Legacy aspect ratio support */
 .aspect-ratio {
   position: relative;
   width: 100%;
@@ -67,6 +89,26 @@
   object-fit: cover;
   transition: all 0.7s cubic-bezier(0.4, 0.0, 0.2, 1);
   filter: contrast(1.05) saturate(1.1);
+  /* Performance optimizations */
+  image-rendering: -webkit-optimize-contrast;
+  image-rendering: crisp-edges;
+  will-change: transform, filter;
+}
+
+/* Image loading states */
+.product-card__image[loading="lazy"] {
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+.product-card__image[loading="lazy"].loaded {
+  opacity: 1;
+}
+
+.product-card__image:not([src]) {
+  background: linear-gradient(135deg, 
+    rgba(var(--color-base-background-2, 243, 243, 243), 0.5) 0%, 
+    rgba(var(--color-base-background-2, 243, 243, 243), 0.3) 100%);
 }
 
 .product-card__image--primary {
