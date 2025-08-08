@@ -1,0 +1,181 @@
+{%- comment -%}
+  Main Collection Banner - Pitagora Theme
+  Displays collection banner with image, title, description and filters
+{%- endcomment -%}
+
+{{ 'collection-banner.css' | asset_url | stylesheet_tag }}
+
+{%- liquid
+  assign show_collection_description = section.settings.show_collection_description
+  assign show_collection_image = section.settings.show_collection_image
+  assign show_breadcrumbs = section.settings.show_breadcrumbs
+  assign enable_sticky_filter = section.settings.enable_sticky_filter
+-%}
+
+<div class="collection-banner color-{{ section.settings.color_scheme }} gradient">
+  <div class="collection-banner__inner page-width">
+    {%- if show_breadcrumbs -%}
+      <nav class="breadcrumb" role="navigation" aria-label="breadcrumbs">
+        <a href="{{ routes.root_url }}" title="{{ 'general.breadcrumbs.home' | t }}">
+          {{ 'general.breadcrumbs.home' | t }}
+        </a>
+        {%- if collection.url != routes.collections_url -%}
+          <span aria-hidden="true">&rsaquo;</span>
+          <a href="{{ routes.collections_url }}" title="{{ 'general.breadcrumbs.collections' | t }}">
+            {{ 'general.breadcrumbs.collections' | t }}
+          </a>
+        {%- endif -%}
+        <span aria-hidden="true">&rsaquo;</span>
+        <span>{{ collection.title }}</span>
+      </nav>
+    {%- endif -%}
+
+    <div class="collection-banner__content{% if show_collection_image and collection.featured_image %} collection-banner__content--with-image{% endif %}">
+      {%- if show_collection_image and collection.featured_image -%}
+        <div class="collection-banner__image">
+          <img
+            src="{{ collection.featured_image | image_url: width: 1200 }}"
+            alt="{{ collection.featured_image.alt | escape | default: collection.title | escape }}"
+            width="{{ collection.featured_image.width }}"
+            height="{{ collection.featured_image.height }}"
+            loading="eager"
+            sizes="(max-width: 767px) 100vw, 1200px"
+            srcset="
+              {{ collection.featured_image | image_url: width: 400 }} 400w,
+              {{ collection.featured_image | image_url: width: 800 }} 800w,
+              {{ collection.featured_image | image_url: width: 1200 }} 1200w,
+              {{ collection.featured_image | image_url: width: 1600 }} 1600w
+            "
+          >
+        </div>
+      {%- endif -%}
+
+      <div class="collection-banner__text">
+        <h1 class="collection-banner__title h1">
+          {%- if collection.title == blank -%}
+            {{ 'sections.collection_template.title' | t }}
+          {%- else -%}
+            {{ collection.title }}
+          {%- endif -%}
+        </h1>
+
+        {%- if show_collection_description and collection.description != blank -%}
+          <div class="collection-banner__description rte">
+            {{ collection.description }}
+          </div>
+        {%- endif -%}
+
+        {%- if collection.products_count > 0 -%}
+          <p class="collection-banner__product-count">
+            {{ 'templates.collection.product_count' | t: count: collection.products_count }}
+          </p>
+        {%- endif -%}
+      </div>
+    </div>
+  </div>
+</div>
+
+<style>
+  .collection-banner {
+    padding: var(--spacing-sections) 0;
+  }
+
+  .collection-banner__inner {
+    display: flex;
+    flex-direction: column;
+    gap: 2rem;
+  }
+
+  .breadcrumb {
+    font-size: var(--font-size-sm);
+    color: rgba(var(--color-base-text), 0.7);
+  }
+
+  .breadcrumb a {
+    color: inherit;
+    text-decoration: none;
+    transition: opacity var(--transition-fast);
+  }
+
+  .breadcrumb a:hover {
+    opacity: 0.7;
+  }
+
+  .collection-banner__content {
+    display: grid;
+    gap: 2rem;
+  }
+
+  .collection-banner__content--with-image {
+    grid-template-columns: 1fr 1fr;
+    align-items: center;
+  }
+
+  .collection-banner__image img {
+    width: 100%;
+    height: auto;
+    object-fit: cover;
+    border-radius: var(--border-radius);
+  }
+
+  .collection-banner__title {
+    margin-bottom: 1rem;
+  }
+
+  .collection-banner__description {
+    margin-bottom: 1.5rem;
+    color: rgba(var(--color-base-text), 0.8);
+  }
+
+  .collection-banner__product-count {
+    font-size: var(--font-size-sm);
+    color: rgba(var(--color-base-text), 0.7);
+    margin: 0;
+  }
+
+  @media screen and (max-width: 767px) {
+    .collection-banner__content--with-image {
+      grid-template-columns: 1fr;
+    }
+    
+    .collection-banner__image {
+      order: -1;
+    }
+  }
+</style>
+
+{% schema %}
+{
+  "name": "Collection banner",
+  "class": "section",
+  "disabled_on": {
+    "groups": ["header", "footer"]
+  },
+  "settings": [
+    {
+      "type": "checkbox",
+      "id": "show_collection_description",
+      "default": true,
+      "label": "Show collection description"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_collection_image",
+      "default": true,
+      "label": "Show collection image"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_breadcrumbs",
+      "default": true,
+      "label": "Show breadcrumbs"
+    },
+    {
+      "type": "color_scheme",
+      "id": "color_scheme",
+      "label": "Color scheme",
+      "default": "background-1"
+    }
+  ]
+}
+{% endschema %}
